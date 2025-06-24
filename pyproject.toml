@@ -1,0 +1,17 @@
+[project]
+name = "fastapi-task-manager"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Matteo Morando", email = "matteo.morando98@gmail.com" }
+]
+requires-python = ">=3.13"
+dependencies = []
+
+[project.scripts]
+fastapi-task-manager = "fastapi_task_manager:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
