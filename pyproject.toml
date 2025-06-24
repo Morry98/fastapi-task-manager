@@ -1,7 +1,7 @@
 [project]
 name = "fastapi-task-manager"
 version = "0.1.0"
-description = "Add your description here"
+description = "A task manager for Fastapi. Robust Scheduling, Distributed Safety"
 readme = "README.md"
 authors = [
     { name = "Matteo Morando", email = "matteo.morando98@gmail.com" }
@@ -15,3 +15,102 @@ fastapi-task-manager = "fastapi_task_manager:main"
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[[tool.uv.index]]
+name = "testpypi"
+url = "https://test.pypi.org/simple/"
+publish-url = "https://test.pypi.org/legacy/"
+explicit = true
+
+[tool.ruff]
+show-fixes = true
+line-length = 120
+
+[tool.ruff.lint]
+# see https://docs.astral.sh/ruff/rules/ for more info
+select = [
+    "F", # Pyflakes
+    "E", # pycodestyle errors
+    "W", # pycodestyle warnings
+    "C90", # mccabe
+    "I", # isort
+    "N", # pep8-naming
+    "S", # flake8-bandit
+    "B", # flake8-bugbear
+    # "D",   # pydocstyle
+    "UP", # pyupgrade
+    "YTT", # flake8-2020
+    # "ANN", # flake8-annotations
+    # "BLE", # flake8-blind-except
+    # "FBT", # flake8-boolean-trap
+    "A", # flake8-builtins
+    "COM", # flake8-commas
+    "C4", # flake8-comprehensions
+    "T10", # flake8-debugger
+    "EXE", # flake8-executable
+    # "DTZ", # flake8-datetimez
+    "DJ", # flake8-django
+    "EM", # flake8-errmsg
+    "ISC", # flake8-implicit-str-concat
+    "ICN", # flake8-import-conventions
+    "G", # flake8-logging-format
+    # "INP", # flake8-no-pep420
+    "PIE", # flake8-pie
+    "T20", # flake8-print
+    "PYI", # flake8-pyi
+    "PT", # flake8-pytest-style
+    "Q", # flake8-quotes
+    "RSE", # flake8-raise
+    "RET", # flake8-return
+    "SLF", # flake8-self
+    "SIM", # flake8-simplify
+    "TID", # flake8-tidy-imports
+    "TCH", # flake8-type-checking
+    "INT", # flake8-gettext
+    "ARG", # flake8-unused-arguments
+    # "PTH", # flake8-use-pathlib
+    "ERA", # eradicate
+    # "PD", # pandas-vet
+    # "PGH", # pygrep-hooks
+    "PL", # Pylint
+    "TRY", # tryceratops
+    "NPY", # NumPy-specific rules
+    "RUF", # Ruff-specific rules
+]
+ignore = [
+    "B008",
+    "N801",
+    "N806",
+    "PD003",
+    "PD011",
+    "Q000",
+    "S101",
+    "S113",
+    "S501",
+    "RUF012",
+]
+
+[tool.ruff.lint.flake8-quotes]
+inline-quotes = "double"
+
+[tool.ruff.lint.mccabe]
+max-complexity = 12
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]
+"tmp*.py" = ["T201"]
+"test_*.py" = ["E402", "PLR2004", "SLF001", "ARG001"]
+
+[tool.ruff.lint.pylint]
+max-args = 8
+
+[tool.mypy]
+no_implicit_optional = true
+check_untyped_defs = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+pretty = true
+ignore_missing_imports = true
+plugins = []
