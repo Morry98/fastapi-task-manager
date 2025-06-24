@@ -1,12 +1,35 @@
 [project]
 name = "fastapi-task-manager"
-version = "0.1.0"
+version = "0.1.1"
 description = "A task manager for Fastapi. Robust Scheduling, Distributed Safety"
 readme = "README.md"
 authors = [
     { name = "Matteo Morando", email = "matteo.morando98@gmail.com" }
 ]
-requires-python = ">=3.13"
+requires-python = ">=3.10"
+keywords = [
+    "fastapi",
+    "task-manager",
+    "task-scheduler",
+    "distributed",
+    "safety",
+    "robust",
+]
+license = { file = "LICENSE" }
+urls = { "Homepage" = "https://github.com/Morry98/fastapi-task-manager", "Bug Tracker"  = "https://github.com/Morry98/fastapi-task-manager/repo/issues" }
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Framework :: FastAPI",
+    "Operating System :: OS Independent",
+]
 dependencies = []
 
 [project.scripts]
