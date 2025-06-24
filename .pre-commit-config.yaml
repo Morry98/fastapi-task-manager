@@ -1,0 +1,73 @@
+default_install_hook_types: [ pre-commit, pre-push ]
+default_language_version:
+  python: "3.13"
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: check-added-large-files
+        stages:
+          - pre-commit
+      - id: check-merge-conflict
+        stages:
+          - pre-commit
+      - id: end-of-file-fixer
+        stages:
+          - pre-commit
+      - id: mixed-line-ending
+        stages:
+          - pre-commit
+
+  - repo: https://github.com/Lucas-C/pre-commit-hooks
+    rev: v1.5.5
+    hooks:
+      - id: remove-tabs
+        stages:
+          - pre-commit
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.15.0
+    hooks:
+      - id: mypy
+        additional_dependencies: [ "types-toml", "types-redis"]
+        stages:
+          - pre-commit
+
+  - repo: local
+    hooks:
+      - id: ruff_format
+        name: ruff_format
+        entry: ruff format
+        language: python
+        types: [ python ]
+        additional_dependencies: [ "ruff" ]
+        stages:
+          - pre-commit
+        require_serial: true
+      - id: ruff_check
+        name: ruff_check
+        entry: ruff check
+        args: [ "--fix", "--unsafe-fixes" ]
+        language: python
+        types: [ python ]
+        additional_dependencies: [ "ruff" ]
+        stages:
+          - pre-commit
+        require_serial: true
+      - id: vermin
+        name: vermin
+        entry: vermin --no-tips -t="3.13-" --violations
+        language: python
+        types: [ python ]
+        additional_dependencies: [ "vermin" ]
+        stages:
+          - pre-commit
+      - id: prune_stale_tags
+        name: prune_stale_tags
+        entry: python pre_commit_prune_stale_tags.py
+        language: python
+        pass_filenames: false
+        always_run: true
+        types: [ python ]
+        stages:
+          - pre-commit
