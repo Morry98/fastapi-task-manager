@@ -1,6 +1,6 @@
 [project]
 name = "fastapi-task-manager"
-version = "0.1.1"
+version = "0.1.2"
 description = "A task manager for Fastapi. Robust Scheduling, Distributed Safety"
 readme = "README.md"
 authors = [
@@ -31,7 +31,9 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
+    "fastapi>=0.115.13",
     "pydantic>=2.11.7",
+    "redis>=6.2.0",
 ]
 
 [project.scripts]
