@@ -30,7 +30,9 @@ classifiers = [
     "Framework :: FastAPI",
     "Operating System :: OS Independent",
 ]
-dependencies = []
+dependencies = [
+    "pydantic>=2.11.7",
+]
 
 [project.scripts]
 fastapi-task-manager = "fastapi_task_manager:main"

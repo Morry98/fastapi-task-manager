@@ -5,13 +5,13 @@ import subprocess
 
 def get_local_tags():
     """Return a set of all local tag names."""
-    out = subprocess.check_output(["git", "tag", "-l"], text=True, stderr=subprocess.DEVNULL)  # noqa: S603, S607
+    out = subprocess.check_output(["git", "tag", "-l"], text=True, stderr=subprocess.DEVNULL)  # noqa: S607
     return {line.strip() for line in out.splitlines() if line.strip()}
 
 
 def get_remote_tags():
     """Return a set of all remote tag names on 'origin'."""
-    out = subprocess.check_output(["git", "ls-remote", "--tags", "origin"], text=True, stderr=subprocess.DEVNULL)  # noqa: S603, S607
+    out = subprocess.check_output(["git", "ls-remote", "--tags", "origin"], text=True, stderr=subprocess.DEVNULL)  # noqa: S607
     tags = set()
     for line in out.splitlines():
         # each line is "<hash>\\trefs/tags/<tagname>" or "<hash>\\trefs/tags/<tagname>^{}"
