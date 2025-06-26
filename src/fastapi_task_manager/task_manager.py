@@ -7,7 +7,7 @@ from redis.asyncio import Redis
 
 from fastapi_task_manager.config import Config
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("fastapi.task-manager")
 
 
 class TaskManager:
@@ -22,6 +22,8 @@ class TaskManager:
         self._redis_client = redis_client
         self._running = False
         self._tasks: list[Any] = []  # TODO Define a proper type for tasks
+
+        logger.setLevel(self._config.level.upper().strip())
 
         self.append_to_app_lifecycle(app)
 

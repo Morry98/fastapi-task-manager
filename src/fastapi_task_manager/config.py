@@ -2,6 +2,10 @@ from pydantic import BaseModel
 
 
 class Config(BaseModel):
+    # --------- Logging config variables ---------
+    level: str = "WARNING"
+    # --------- End of logging config variables ---------
+
     # --------- Redis config variables ---------
     redis_host: str | None = None
     redis_port: int = 6379
