@@ -69,7 +69,8 @@ class TaskManager:
 
         for task in self._tasks:
             func, expr, name, tags = task
-            logger.info(f"Starting task '{name}' with expression '{expr}', function name '{func.__name__}'")
+            msg = f"Registering task '{name}' with expression '{expr}', function name '{func.__name__}'"
+            logger.info(msg)
             # Create a task and add it to the running tasks list
             running_task = asyncio.create_task(self._run_task(func, expr), name=name)
             self._running_tasks.append(running_task)
@@ -82,14 +83,17 @@ class TaskManager:
         logger.info("Stopping TaskManager...")
         for task in self._running_tasks:
             if not task.done():
-                logger.info(f"Cancelling task {task.get_name()}")
+                msg = f"Cancelling task {task.get_name()}"
+                logger.info(msg)
                 task.cancel()
                 try:
                     await task
                 except asyncio.CancelledError:
-                    logger.info(f"Task {task.get_name()} was cancelled.")
-                except Exception as e:
-                    logger.exception(f"Error stopping task {task.get_name()}: {e!r}")
+                    msg = f"Task {task.get_name()} was cancelled."
+                    logger.info(msg)
+                except Exception:
+                    msg = f"Error stopping task {task.get_name()}"
+                    logger.exception(msg)
         logger.info("Stopped TaskManager.")
         self._running = False
 
@@ -99,23 +103,25 @@ class TaskManager:
         def wrapper(func: Callable):
             task = (func, expr, name, tags)
             self._tasks.append(task)
-            logger.info(f"Registered task '{name}' with expression '{expr}', function name '{func.__name__}'")
+            msg = f"Registered task '{name}' with expression '{expr}', function name '{func.__name__}'"
+            logger.info(msg)
 
             # If scheduler is already running, start this job immediately
             if self._running:
-                logger.info(f"Scheduler already running, starting job '{name}' immediately")
-                task = asyncio.create_task(self._run_task(func, expr), name=name)
-                self._running_tasks.append(task)
+                msg = f"Scheduler already running, starting job '{name}' immediately"
+                logger.info(msg)
+                running_task = asyncio.create_task(self._run_task(func, expr), name=name)
+                self._running_tasks.append(running_task)
 
             return func
 
         return wrapper
 
-    async def _run_task(self, func, expr):
-        next_run: datetime | None = None
+    async def _run_task(self, func, expr):  # noqa: PLR0912
+        next_run: datetime = datetime.min
 
         while True:
-            if next_run is None or datetime.now(UTC) >= next_run:
+            if datetime.now(UTC) >= next_run:
                 next_run = next_fire(expr)
                 try:
                     redis_uuid_exists = await self._redis_client.exists(func.__name__ + "_runner_uuid")
@@ -128,8 +134,9 @@ class TaskManager:
                     redis_uuid = redis_uuid_b.decode("utf-8")
                     if redis_uuid != self._uuid:
                         continue
-                except Exception as e:
-                    logger.exception(f"Error checking Redis UUID for task {func.__name__}: {e!r}")
+                except Exception:
+                    msg = f"Error checking Redis UUID for task {func.__name__}"
+                    logger.exception(msg)
                     continue
                 try:
                     redis_key_exists = await self._redis_client.exists(func.__name__ + "_valid")
@@ -147,12 +154,14 @@ class TaskManager:
                         await func()
                     else:
                         await asyncio.to_thread(func)
-                except Exception as e:
-                    logger.exception(f"Error running task {func.__name__}: {e!r}")
+                except Exception:
+                    msg = f"Error running task {func.__name__}"
+                    logger.exception(msg)
                 finally:
                     # Clean up the UUID in Redis after running the task
                     try:
                         await self._redis_client.delete(func.__name__ + "_runner_uuid")
-                    except Exception as e:
-                        logger.exception(f"Error deleting Redis UUID for task {func.__name__}: {e!r}")
+                    except Exception:
+                        msg = f"Error deleting Redis UUID for task {func.__name__}"
+                        logger.exception(msg)
             await asyncio.sleep(1)
