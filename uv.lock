@@ -36,6 +36,51 @@ wheels = [
 ]
 
 [[package]]
+name = "cronexpr"
+version = "0.30.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/01/2a/72d9b939fa00a9e77c613e7d7cee361a81d9df2d036493a522517d083a46/cronexpr-0.30.0.tar.gz", hash = "sha256:994660fdf9195bc2456e69fa447fb06d8256cdfd7fe8829be82add10b9f3e9ac", size = 9350 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/78/22/da06c70e633d7939c7f0b596835a70c0c2061e8f1bce1937626560368bee/cronexpr-0.30.0-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:ae2c90b6240a3be1a4e6ee118055b1212338369ad4524c9e56b7f1ba1495884d", size = 58617 },
+    { url = "https://files.pythonhosted.org/packages/ce/1a/007ef33feeaf8e84da091b1440ceb938e7d551eea8a5684863ec5da3427a/cronexpr-0.30.0-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:3faa4a3e0416f7ada2285af2134b52e4c1958f5bb4838202ff639c7392fcf443", size = 55633 },
+    { url = "https://files.pythonhosted.org/packages/94/c4/ee667eaf1605ce132f23cb4649ee5320467c3a627c1a73dc3645d60a409a/cronexpr-0.30.0-cp310-cp310-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:d8336da63137deca455f5170162fd27a016043e6f5ad1a83d884ad17510d5e80", size = 93074 },
+    { url = "https://files.pythonhosted.org/packages/a2/3a/995d76d3b00588f2c509e704606fec063c59341125f5230912485f42e79b/cronexpr-0.30.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:9ba3c473a7fcced90334931702aca389c058f7aa60f999847a2bff76906f1649", size = 86902 },
+    { url = "https://files.pythonhosted.org/packages/5a/ef/1eab22c6cf02b2e10b63a1648030cbf31e8ff31a1e485a76d05e9fb1f7c4/cronexpr-0.30.0-cp310-cp310-musllinux_1_2_i686.whl", hash = "sha256:c40467180ea05dd7dc5ce191a02a4873e01e0f3297dfe4215eac99c93acd5060", size = 1159329 },
+    { url = "https://files.pythonhosted.org/packages/b5/66/31eef1d473bd3fa4401eacb3a59f9448cddb74525fee4becb0c326254f4d/cronexpr-0.30.0-cp310-cp310-musllinux_1_2_x86_64.whl", hash = "sha256:281bce47793fddba003f246858aae0b8263d028128e96c1e6fa99484870ae86f", size = 1061752 },
+    { url = "https://files.pythonhosted.org/packages/eb/85/d046fc7f717123aec290c709cc7bcadb6ea10259abc8fbbfc8a492920e58/cronexpr-0.30.0-cp310-cp310-win32.whl", hash = "sha256:3cfcc338cfcc9b69e09bdb2ba11a0aaa1603c52e431cfd26e92e227831daa22b", size = 58659 },
+    { url = "https://files.pythonhosted.org/packages/e7/7b/0499b2c5484305606d9244d90adb354021a92bdb8748e62a956ec6694b23/cronexpr-0.30.0-cp310-cp310-win_amd64.whl", hash = "sha256:ad6e6e0616fa731dbdb755e6fa54d28a0bf7915e9fe8ea30b8f2c497d35e00f0", size = 63256 },
+    { url = "https://files.pythonhosted.org/packages/2f/d5/ce627a6d1e4a268e6d88811f01e4edbc5d4bedfb8f3ff41fa10182692f7a/cronexpr-0.30.0-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:617ad204f1db8c09ab57e5e15698b29d8e83634569e953c22b4ca2fb1a631a63", size = 59958 },
+    { url = "https://files.pythonhosted.org/packages/49/fa/751bf123fb0c5e10d37220b690991aa617cebd96e2bbc23851a79b043b46/cronexpr-0.30.0-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:f4b10220ed3e63a4bbaffa835faa1104c1e8a13c905e9413a958ed3c566da268", size = 56983 },
+    { url = "https://files.pythonhosted.org/packages/3c/21/8291ad371c9e4bef2b7f88817e66c287344b5dd35cc5fb69317f4940b6fe/cronexpr-0.30.0-cp311-cp311-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:f6504804326fd99362e20a127e61c031b512c7437a929377c624fb5f4675351c", size = 94254 },
+    { url = "https://files.pythonhosted.org/packages/45/06/08eb634f5e9ee07063db2ccd793dfda46f7bb245a0ef5ed66420f733e402/cronexpr-0.30.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:45bde59a340c6c0019ac83cbc0719f618dd7ec6f293f7c888a43c579ee47c644", size = 88478 },
+    { url = "https://files.pythonhosted.org/packages/16/08/56338ba97756e6f380c9cbb1671f504584e660c3315f55879b1cd1be1b10/cronexpr-0.30.0-cp311-cp311-musllinux_1_2_i686.whl", hash = "sha256:02b69b6fbd4b0b1e862aa5b7cc7f7fd07462804d04036bc493b03a28cda0fa06", size = 1160044 },
+    { url = "https://files.pythonhosted.org/packages/e8/11/09f1f0c13842ad4866c2c0dc698a570ffd3118961193bbcf9674600cd646/cronexpr-0.30.0-cp311-cp311-musllinux_1_2_x86_64.whl", hash = "sha256:2f88a6320956d5b98793d1b82753556c766a113db25cef53429ac30cb09f9e4a", size = 1062723 },
+    { url = "https://files.pythonhosted.org/packages/6d/74/40a91b2c3e735a5d1f8aa5826700dbcaecdb1e654dffde777007f7110e16/cronexpr-0.30.0-cp311-cp311-win32.whl", hash = "sha256:f3f05a53541af3b646912dced6fa0b160435a847a9666bf88783de02474d903f", size = 59856 },
+    { url = "https://files.pythonhosted.org/packages/aa/84/e9eabcc97939546535739d5f40013bed80014d3ad5df13d3983c82c3c15d/cronexpr-0.30.0-cp311-cp311-win_amd64.whl", hash = "sha256:1cf831566fbda55fc5083d101c957921fda0f0cfef4e4e415b21d86bc6a57964", size = 64358 },
+    { url = "https://files.pythonhosted.org/packages/3d/6b/7c4d19220b96cd61d9e2b0f0874e8f5c79a26ea473f4728a2fcc2ec908ef/cronexpr-0.30.0-cp312-cp312-macosx_10_9_x86_64.whl", hash = "sha256:b59f8991ff1e2cdfceca780104cf49411ee5706b03abc22aa7ce2133a36109dc", size = 59114 },
+    { url = "https://files.pythonhosted.org/packages/88/1b/0bab92c881b06b8c910d277cea132a3db61f0662eb8977da0428884f2bb4/cronexpr-0.30.0-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:a6cfbd0d440f9072c9af0fc1891f671ef7930c2bd033af409844fb37a8e58f9b", size = 56261 },
+    { url = "https://files.pythonhosted.org/packages/2a/65/1e12be06033577ff8b5c3f1680de59ebf39f5147f1672a5675a5b677aa74/cronexpr-0.30.0-cp312-cp312-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:0ba6cfa84429af7374f4d0fa824d16928b725de7996ec08ec69873dc9584e4df", size = 93894 },
+    { url = "https://files.pythonhosted.org/packages/38/6a/d074ca8bf64c42ae9693f4f34554794b9ecbea4d6558143c87e24b548a2a/cronexpr-0.30.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:ba3567d992504372edc3ab97b40985e40b29e0b54354c46cdb6fdb46cdb4f75f", size = 88055 },
+    { url = "https://files.pythonhosted.org/packages/74/9d/1f72e5bf4a9fcc868ffab9ac1ca52b6b1014a657545f0dd9a713dd2453cf/cronexpr-0.30.0-cp312-cp312-musllinux_1_2_i686.whl", hash = "sha256:8ac28315c1650173d6bc2aac1fd802963f8120196fd070a9ad747e458d3ea7d2", size = 1159197 },
+    { url = "https://files.pythonhosted.org/packages/bb/5b/6c432619c401bc4e582441cb88819e1607c40aaaba2c6b07f66337b01899/cronexpr-0.30.0-cp312-cp312-musllinux_1_2_x86_64.whl", hash = "sha256:ee616c723fbb129c7e7aaa0d6158c043d4dfc90df4dc7d35f1f257b7ab1c1954", size = 1062002 },
+    { url = "https://files.pythonhosted.org/packages/88/5e/15344b0763b5510658293b819f56472b2b35032149c4d09d5078312226d0/cronexpr-0.30.0-cp312-cp312-win32.whl", hash = "sha256:7b1fbdd2eee6ed709320a2a20f63283a53b3b391fdc61e5275c7299daadf7ae3", size = 60061 },
+    { url = "https://files.pythonhosted.org/packages/f4/59/210fd2810429df7964f692b349deb82fff50db2742d9d639b87e4dc9cfeb/cronexpr-0.30.0-cp312-cp312-win_amd64.whl", hash = "sha256:45fe11c95c83d800e9558a03a77a91b78af34898ce30dae895c06a31975b2a3c", size = 64438 },
+    { url = "https://files.pythonhosted.org/packages/3d/1b/a0a5ac3cc99268cda3a438ca9b55d12567180cc26d3191291b4343a8ee06/cronexpr-0.30.0-cp313-cp313-macosx_10_13_x86_64.whl", hash = "sha256:dc186d1a3b99cbaed6363c1ee79b5eeff724835cc4c12f39188b6db981681d1f", size = 59131 },
+    { url = "https://files.pythonhosted.org/packages/d8/1f/27b43b778594d86c6b419ff4cd2b015c49c0ff204796b47e9626acdf1f87/cronexpr-0.30.0-cp313-cp313-macosx_11_0_arm64.whl", hash = "sha256:da9db9656be179baa3b30f4484998faa8d7a9f491b467b4a620daba5ea29a2d0", size = 56335 },
+    { url = "https://files.pythonhosted.org/packages/6c/7b/4249bb448829498c3e7783e66d188993c085b4294c8d5f9808071e163e60/cronexpr-0.30.0-cp313-cp313-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:a7038afad7d188ddc98caca3891640d556425f6c10de97de0da64dd7a9126974", size = 93819 },
+    { url = "https://files.pythonhosted.org/packages/4b/71/1516e363a4b1386c0c35d716e0b798272415c1da215c9b2c6bdf0a99516e/cronexpr-0.30.0-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:ac76e65edc8491048c4a86d1785f12952a80f1df1bdf6662114573856a2ea921", size = 88083 },
+    { url = "https://files.pythonhosted.org/packages/05/81/8c00fbeda05eff7fb226563f5ae6beb57da122b4729d5bb8961e9c0eaae3/cronexpr-0.30.0-cp313-cp313-musllinux_1_2_i686.whl", hash = "sha256:99aefb61623915657fe29db28d0b407e2f748776d25acf31d4d45b2289947f8f", size = 1159363 },
+    { url = "https://files.pythonhosted.org/packages/ae/a6/44d54958f03a147a64169f534733f38e056bdad967e4ca38188b49f1ec97/cronexpr-0.30.0-cp313-cp313-musllinux_1_2_x86_64.whl", hash = "sha256:11ee708ff4da288a1e22757f4425e031809603efac6437fd33a4f91bff0993e9", size = 1062004 },
+    { url = "https://files.pythonhosted.org/packages/bd/fa/c6cf80efef0e15e969c6aace48fcbee8c9bdfe51c14cb9a24f3a1f7e0a8d/cronexpr-0.30.0-cp313-cp313-win32.whl", hash = "sha256:591719b48ccf6c95b3aa784f3de9e0f9e8d720ed76d4ae52a39d94f173dd0413", size = 60132 },
+    { url = "https://files.pythonhosted.org/packages/7b/74/721872a84b05e0a424ac24c2dce09571605d72c9b32947545bdaecbc43e5/cronexpr-0.30.0-cp313-cp313-win_amd64.whl", hash = "sha256:866aad7bd871bf9dec694f2b747861d3dc3681debc3bf2ef0bc78346418da574", size = 64461 },
+    { url = "https://files.pythonhosted.org/packages/7c/f3/e727a8389514088b8e4474f122da0886d97c113a68480a8244f7c730d86b/cronexpr-0.30.0-pp310-pypy310_pp73-macosx_10_15_x86_64.whl", hash = "sha256:cd5f1368730689b749e8cebb6bfa3ac0fafa65529fb7df7d05c8b59924b2d647", size = 59428 },
+    { url = "https://files.pythonhosted.org/packages/bd/45/1987d2a75ce51aff6b0565f052f429ac47d517a776f5322d57d8120d82f3/cronexpr-0.30.0-pp310-pypy310_pp73-macosx_11_0_arm64.whl", hash = "sha256:ef7ac0861c1149cb39f2768b49921e3736f38fc4f81d03a885041b64b35f6d2d", size = 56020 },
+    { url = "https://files.pythonhosted.org/packages/23/77/d06d4584f3d8d757044418eedd477030b5d4429f060d74cd837a58ad3f0c/cronexpr-0.30.0-pp310-pypy310_pp73-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:acc48680bd667abe56b3d3cccfad2153e2bb38bb02c801ae9743cac9837d37d8", size = 92924 },
+    { url = "https://files.pythonhosted.org/packages/99/aa/77046ee80228448541165e0a2ee9b491f2b5722274aa146786f32278229b/cronexpr-0.30.0-pp310-pypy310_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:f381e2f40e54df5676401e4226b3908273ea6cb195cc687204b1029933836717", size = 86940 },
+    { url = "https://files.pythonhosted.org/packages/e1/a0/5d266c0d370aec62a49003fed1648518e2c24908f9719a7563e2a689c05c/cronexpr-0.30.0-pp310-pypy310_pp73-win_amd64.whl", hash = "sha256:1e1117188c05595e2bb404601cb122d62773eb087d52dd2f905bea7f5690145f", size = 63497 },
+]
+
+[[package]]
 name = "exceptiongroup"
 version = "1.3.0"
 source = { registry = "https://pypi.org/simple" }
@@ -66,6 +111,7 @@ name = "fastapi-task-manager"
 version = "0.1.4"
 source = { editable = "." }
 dependencies = [
+    { name = "cronexpr" },
     { name = "fastapi" },
     { name = "pydantic" },
     { name = "redis" },
@@ -73,6 +119,7 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
+    { name = "cronexpr", specifier = ">=0.30.0" },
     { name = "fastapi", specifier = ">=0.115.13" },
     { name = "pydantic", specifier = ">=2.11.7" },
     { name = "redis", specifier = ">=6.2.0" },
