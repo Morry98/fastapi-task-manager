@@ -50,6 +50,15 @@ class TaskManager:
         app.router.lifespan_context = lifespan
 
     async def start(self) -> None:
+        try:
+            pong = await self._redis_client.ping()
+        except Exception as e:
+            msg = f"Redis ping failed: {e!r}"
+            raise ConnectionError(msg) from e
+        if not pong:
+            msg = "Redis ping returned falsy response"
+            raise ConnectionError(msg)
+
         logger.info("Starting TaskManager...")
         self._running = True
         # TODO
