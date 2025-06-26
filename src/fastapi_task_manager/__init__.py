@@ -1,2 +1,2 @@
-def main() -> None:
-    print("Hello from fastapi-task-manager!")  # noqa: T201  # TODO Remove after debugging
+from fastapi_task_manager.config import Config
+from fastapi_task_manager.task_manager import TaskManager
