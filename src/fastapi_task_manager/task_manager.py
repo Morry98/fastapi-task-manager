@@ -71,7 +71,7 @@ class TaskManager:
         await self._runner.stop()
         logger.info("Stopped TaskManager.")
 
-    def manager(
+    def add_task(
         self,
         expr: str,
         tags: list[str] | None = None,
