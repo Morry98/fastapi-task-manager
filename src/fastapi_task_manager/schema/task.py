@@ -1,4 +1,6 @@
+import asyncio
 from collections.abc import Callable
+from datetime import datetime
 
 from pydantic import BaseModel
 
@@ -11,3 +13,6 @@ class Task(BaseModel):
     name: str
     description: str | None = None
     tags: list[str] | None = None
+    high_priority: bool = False
+    next_run: datetime = datetime.min
+    running_thread: asyncio.Task | None = None

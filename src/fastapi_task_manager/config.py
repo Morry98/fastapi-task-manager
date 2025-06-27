@@ -6,6 +6,10 @@ class Config(BaseModel):
     level: str = "WARNING"
     # --------- End of logging config variables ---------
 
+    # --------- App config variables ---------
+    concurrent_tasks: int = 2
+    # --------- End of app config variables ---------
+
     # --------- Redis config variables ---------
     redis_host: str | None = None
     redis_port: int = 6379
