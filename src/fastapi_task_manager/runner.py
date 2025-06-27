@@ -1,7 +1,7 @@
 import asyncio
 import logging
 from collections.abc import Callable
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from uuid import uuid4
 
 from cronexpr import next_fire
@@ -59,22 +59,28 @@ class Runner:
         for t in self._tasks:
             if t.name == task.name:
                 msg = f"Task with name {task.name} already exists."
-                logger.error(msg)
-                return
+                raise RuntimeError(msg)
         self._tasks.append(task)
 
     async def _run(self):
         while True:
             await asyncio.sleep(0.1)
-            for task in self._tasks:
-                if task.running_thread is not None:
-                    if not task.running_thread.done():
-                        continue
-                    # If the task is done, remove it from the running tasks list
-                    task.running_thread = None
-                elif task.next_run <= datetime.now(UTC):
-                    task.next_run = next_fire(task.expression)
-                    task.running_thread = asyncio.create_task(self._queue_task(task), name=task.name)
+            try:
+                for task in self._tasks:
+                    if task.running_thread is not None:
+                        if not task.running_thread.done():
+                            continue
+                        # If the task is done, remove it from the running tasks list
+                        task.running_thread = None
+                    elif task.next_run <= datetime.now(timezone.utc):
+                        task.next_run = next_fire(task.expression)
+                        task.running_thread = asyncio.create_task(self._queue_task(task), name=task.name)
+            except asyncio.CancelledError:
+                logger.info("Runner task was cancelled.")
+                return
+            except Exception:
+                logger.exception("Error in Runner task loop.")
+                continue
 
     async def _queue_task(self, task: Task):
         if task.high_priority:
@@ -106,7 +112,7 @@ class Runner:
                 await asyncio.sleep(0.1)
 
             task.next_run = next_fire(task.expression)
-            ex = int((task.next_run - datetime.now(UTC)).total_seconds())
+            ex = int((task.next_run - datetime.now(timezone.utc)).total_seconds())
             if ex <= 0:
                 return
             await self._redis_client.set(
@@ -136,7 +142,10 @@ async def stop_thread(running_task: asyncio.Task) -> None:
 
 
 async def run_function(function: Callable):
-    if asyncio.iscoroutinefunction(function):
-        await function()
-    else:
-        await asyncio.to_thread(function)
+    try:
+        if asyncio.iscoroutinefunction(function):
+            await function()
+        else:
+            await asyncio.to_thread(function)
+    except Exception:
+        logger.exception("Error running function.")
