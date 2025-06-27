@@ -1,5 +1,4 @@
 import logging
-from collections.abc import Callable
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -7,7 +6,7 @@ from redis.asyncio import Redis
 
 from fastapi_task_manager.config import Config
 from fastapi_task_manager.runner import Runner
-from fastapi_task_manager.schema.task import Task
+from fastapi_task_manager.task_group import TaskGroup
 
 logger = logging.getLogger("fastapi.task-manager")
 
@@ -71,27 +70,9 @@ class TaskManager:
         await self._runner.stop()
         logger.info("Stopped TaskManager.")
 
-    def add_task(
+    def add_task_group(
         self,
-        expr: str,
-        tags: list[str] | None = None,
-        name: str | None = None,
-        description: str | None = None,
-        high_priority: bool = False,
+        task_group: TaskGroup,
     ):
-        """Decorator for creating task."""
-
-        def wrapper(func: Callable):
-            task = Task(
-                function=func,
-                expression=expr,
-                name=name or func.__name__,
-                description=description,
-                tags=tags,
-                high_priority=high_priority,
-            )
+        for task in task_group.tasks:
             self._runner.add_task(task)
-
-            return func
-
-        return wrapper
