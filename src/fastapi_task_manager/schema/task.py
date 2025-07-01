@@ -1,6 +1,4 @@
-import asyncio
 from collections.abc import Callable
-from datetime import datetime, timezone
 
 from pydantic import BaseModel
 
@@ -18,5 +16,17 @@ class Task(BaseModel):
     description: str | None = None
     tags: list[str] | None = None
     high_priority: bool = False
-    next_run: datetime = datetime.min.replace(tzinfo=timezone.utc)
-    running_thread: asyncio.Task | None = None
+
+    def __hash__(self):
+        """Hash the task based on its expression and function."""
+        return hash(
+            self.expression
+            + "_"
+            + self.name
+            + "_"
+            + str(self.high_priority)
+            + "_"
+            + str(self.tags or [])
+            + "_"
+            + self.function.__name__,
+        )

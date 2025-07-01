@@ -15,14 +15,18 @@ class TaskManager:
     def __init__(
         self,
         app: FastAPI,
-        redis_client: Redis,
         config: Config | None = None,
     ):
         self._config = config or Config()
         self._app = app
         self._running = False
         self._runner = Runner(
-            redis_client=redis_client,
+            redis_client=Redis(
+                host=self._config.redis_host,
+                port=self._config.redis_port,
+                password=self._config.redis_password,
+                db=self._config.redis_db,
+            ),
             concurrent_tasks=self._config.concurrent_tasks,
         )
 

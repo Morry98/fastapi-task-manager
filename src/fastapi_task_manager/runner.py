@@ -23,6 +23,7 @@ class Runner:
         self._redis_client = redis_client
         self._running_thread: asyncio.Task | None = None
         self._tasks: list[Task] = []
+        self._running_tasks: dict[Task, asyncio.Task] = {}
         self._semaphore = ForceAcquireSemaphore(concurrent_tasks)
 
     async def start(self) -> None:
@@ -67,14 +68,21 @@ class Runner:
             await asyncio.sleep(0.1)
             try:
                 for task in self._tasks:
-                    if task.running_thread is not None:
-                        if not task.running_thread.done():
+                    if task in self._running_tasks:
+                        if not self._running_tasks[task].done():
                             continue
+                        self._running_tasks[task].result()
                         # If the task is done, remove it from the running tasks list
-                        task.running_thread = None
-                    elif task.next_run <= datetime.now(timezone.utc):
-                        task.next_run = next_fire(task.expression)
-                        task.running_thread = asyncio.create_task(self._queue_task(task), name=task.name)
+                        self._running_tasks.pop(task, None)
+
+                    next_run = datetime(year=2000, month=1, day=1, tzinfo=timezone.utc)
+                    if await self._redis_client.exists(task.name + "_next_run"):
+                        next_run_b = await self._redis_client.get(task.name + "_next_run")
+                        if next_run_b is None:
+                            return
+                        next_run = datetime.fromtimestamp(int(next_run_b.decode("utf-8")), tz=timezone.utc)
+                    if next_run <= datetime.now(timezone.utc):
+                        self._running_tasks[task] = asyncio.create_task(self._queue_task(task), name=task.name)
             except asyncio.CancelledError:
                 logger.info("Runner task was cancelled.")
                 return
@@ -92,13 +100,18 @@ class Runner:
 
     async def _run_task(self, task: Task) -> None:
         try:
-            redis_key_exists = await self._redis_client.exists(task.name + "_valid")
-            if redis_key_exists:
-                return
+            if await self._redis_client.exists(task.name + "_next_run"):
+                redis_next_run_b = await self._redis_client.get(task.name + "_next_run")
+                if redis_next_run_b is None:
+                    return
+                redis_next_run = datetime.fromtimestamp(int(redis_next_run_b.decode("utf-8")), tz=timezone.utc)
+                if redis_next_run > datetime.now(timezone.utc):
+                    return
 
             redis_uuid_exists = await self._redis_client.exists(task.name + "_runner_uuid")
             if not redis_uuid_exists:
-                await self._redis_client.set(task.name + "_runner_uuid", self._uuid, ex=5)
+                await self._redis_client.set(task.name + "_runner_uuid", self._uuid, ex=15)
+                # Wait a bit to ensure the UUID is set and not overwritten
                 await asyncio.sleep(0.2)
             redis_uuid_b = await self._redis_client.get(task.name + "_runner_uuid")
             if redis_uuid_b is None:
@@ -106,20 +119,17 @@ class Runner:
             if redis_uuid_b.decode("utf-8") != self._uuid:
                 return
 
+            next_run = next_fire(task.expression)
+            await self._redis_client.set(
+                task.name + "_next_run",
+                next_run.timestamp(),
+                ex=max(int((next_run - datetime.now(timezone.utc)).total_seconds()) * 2, 15),
+            )
+
             thread = asyncio.create_task(run_function(task.function))
             while not thread.done():
-                await self._redis_client.set(task.name + "_runner_uuid", self._uuid, ex=1)
+                await self._redis_client.set(task.name + "_runner_uuid", self._uuid, ex=5)
                 await asyncio.sleep(0.1)
-
-            task.next_run = next_fire(task.expression)
-            ex = int((task.next_run - datetime.now(timezone.utc)).total_seconds())
-            if ex <= 0:
-                return
-            await self._redis_client.set(
-                task.name + "_valid",
-                1,
-                ex=ex,
-            )
             await self._redis_client.delete(task.name + "_runner_uuid")
 
         except asyncio.CancelledError:

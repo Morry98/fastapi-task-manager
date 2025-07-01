@@ -11,7 +11,7 @@ class Config(BaseModel):
     # --------- End of app config variables ---------
 
     # --------- Redis config variables ---------
-    redis_host: str | None = None
+    redis_host: str
     redis_port: int = 6379
     redis_password: str | None = None
     redis_db: int = 1  # Default Redis database to use
