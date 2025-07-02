@@ -49,9 +49,9 @@ class Runner:
             logger.warning(msg)
             return
         for task in self._tasks:
-            if task.running_thread:
-                await stop_thread(task.running_thread)
-                task.running_thread = None
+            if task in self._running_tasks:
+                await stop_thread(self._running_tasks[task])
+                self._running_tasks.pop(task, None)
         await stop_thread(self._running_thread)
         self._running_thread = None
         logger.info("Stopped TaskManager.")
