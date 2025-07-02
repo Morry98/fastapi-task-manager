@@ -80,7 +80,7 @@ class Runner:
                         next_run_b = await self._redis_client.get(task.name + "_next_run")
                         if next_run_b is None:
                             return
-                        next_run = datetime.fromtimestamp(int(next_run_b.decode("utf-8")), tz=timezone.utc)
+                        next_run = datetime.fromtimestamp(float(next_run_b.decode("utf-8")), tz=timezone.utc)
                     if next_run <= datetime.now(timezone.utc):
                         self._running_tasks[task] = asyncio.create_task(self._queue_task(task), name=task.name)
             except asyncio.CancelledError:
@@ -104,7 +104,7 @@ class Runner:
                 redis_next_run_b = await self._redis_client.get(task.name + "_next_run")
                 if redis_next_run_b is None:
                     return
-                redis_next_run = datetime.fromtimestamp(int(redis_next_run_b.decode("utf-8")), tz=timezone.utc)
+                redis_next_run = datetime.fromtimestamp(float(redis_next_run_b.decode("utf-8")), tz=timezone.utc)
                 if redis_next_run > datetime.now(timezone.utc):
                     return
 
