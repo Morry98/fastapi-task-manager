@@ -126,6 +126,15 @@ class Runner:
                 ex=max(int((next_run - datetime.now(timezone.utc)).total_seconds()) * 2, 15),
             )
 
+            if await self._redis_client.exists(task_group.name + "_" + task.name + "_disabled"):
+                # Set the key in order to update the ttl
+                await self._redis_client.set(
+                    task_group.name + "_" + task.name + "_disabled",
+                    "1",
+                    ex=432_000,  # 5 days
+                )
+                return
+
             start = time.monotonic_ns()
             thread = asyncio.create_task(run_function(task.function))
             while not thread.done():
