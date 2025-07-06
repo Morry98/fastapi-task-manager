@@ -116,4 +116,8 @@ class TaskManager:
         self,
         task_group: TaskGroup,
     ):
+        for tg in self._task_groups:
+            if tg.name == task_group.name:
+                msg = f"Task group {task_group.name} already exists."
+                raise RuntimeError(msg)
         self._task_groups.append(task_group)
