@@ -34,6 +34,10 @@ class TaskManager:
     def task_groups(self) -> list[TaskGroup]:
         return self._task_groups.copy()
 
+    @property
+    def config(self) -> Config:
+        return self._config
+
     def add_manager_paths_to_router(
         self,
         router: APIRouter,
