@@ -70,4 +70,4 @@ repos:
         always_run: true
         types: [ python ]
         stages:
-          - pre-commit
+          - pre-push
