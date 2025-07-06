@@ -42,10 +42,17 @@ class TaskGroup:
 
         def wrapper(func: Callable):
             _tags = self._tags or [] + (tags or [])
+            internal_name = name or func.__name__
+
+            for t in self._tasks:
+                if t.name == internal_name:
+                    msg = f"Task with name {internal_name} already exists inside group {self.name}."
+                    raise RuntimeError(msg)
+
             task = Task(
                 function=func,
                 expression=expr,
-                name=name or func.__name__,
+                name=internal_name,
                 description=description,
                 tags=_tags or None,
                 high_priority=high_priority,
