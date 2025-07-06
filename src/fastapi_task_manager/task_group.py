@@ -2,6 +2,7 @@ import logging
 from collections.abc import Callable
 
 from fastapi_task_manager.schema.task import Task
+from fastapi_task_manager.schema.task_group import TaskGroup as TaskGroupSchema
 
 logger = logging.getLogger("fastapi.task-manager")
 
@@ -9,10 +10,20 @@ logger = logging.getLogger("fastapi.task-manager")
 class TaskGroup:
     def __init__(
         self,
+        name: str,
         tags: list[str] | None = None,
     ):
+        self._name = name
         self._tags = tags
         self._tasks: list[Task] = []
+
+    @property
+    def name(self) -> str:
+        return self._name
+
+    @property
+    def tags(self):
+        return self._tags.copy() if self._tags else []
 
     @property
     def tasks(self) -> list[Task]:
@@ -44,3 +55,9 @@ class TaskGroup:
             return func
 
         return wrapper
+
+    def __repr__(self):
+        return TaskGroupSchema(
+            name=self.name,
+            tags=self.tags,
+        )
