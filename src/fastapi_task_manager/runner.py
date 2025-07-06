@@ -1,6 +1,5 @@
 import asyncio
 import logging
-import time
 from collections.abc import Callable
 from datetime import datetime, timezone
 from uuid import uuid4
@@ -96,7 +95,7 @@ class Runner:
             async with self._semaphore:
                 await self._run_task(task=task, task_group=task_group)
 
-    async def _run_task(self, task_group: TaskGroup, task: Task) -> None:  # noqa: PLR0912, C901  # TODO REduce complexity
+    async def _run_task(self, task_group: TaskGroup, task: Task) -> None:  # TODO REduce complexity
         try:
             if await self._redis_client.exists(task_group.name + "_" + task.name + "_next_run"):
                 redis_next_run_b = await self._redis_client.get(task_group.name + "_" + task.name + "_next_run")
@@ -126,10 +125,40 @@ class Runner:
                 ex=max(int((next_run - datetime.now(timezone.utc)).total_seconds()) * 2, 15),
             )
 
+            start = time.monotonic_ns()
             thread = asyncio.create_task(run_function(task.function))
             while not thread.done():
                 await self._redis_client.set(task_group.name + "_" + task.name + "_runner_uuid", self._uuid, ex=5)
                 await asyncio.sleep(0.1)
+            end = time.monotonic_ns()
+            runs = []  # TODO Evaluate redis linked lists
+            if await self._redis_client.exists(task_group.name + "_" + task.name + "_runs"):
+                runs_b = await self._redis_client.get(task_group.name + "_" + task.name + "_runs")
+                if runs_b is not None:
+                    runs = runs_b.decode("utf-8").split("\n")
+            if len(runs) == 30:  # noqa: PLR2004  # TODO Configurable
+                runs.pop(0)
+            runs.append(str(datetime.now(timezone.utc).timestamp()))
+            await self._redis_client.set(
+                task_group.name + "_" + task.name + "_runs",
+                "\n".join(runs),
+                ex=max(int((next_run - datetime.now(timezone.utc)).total_seconds()) * 2, 1800),
+            )
+            durations_second = []  # TODO Evaluate redis linked lists
+            if await self._redis_client.exists(task_group.name + "_" + task.name + "_durations_second"):
+                durations_second_b = await self._redis_client.get(
+                    task_group.name + "_" + task.name + "_durations_second",
+                )
+                if durations_second_b is not None:
+                    durations_second = durations_second_b.decode("utf-8").split("\n")
+            if len(durations_second) == 30:  # noqa: PLR2004  # TODO Configurable
+                durations_second.pop(0)
+            durations_second.append(str((end - start) / 1e9))
+            await self._redis_client.set(
+                task_group.name + "_" + task.name + "_duration_seconds",
+                "\n".join(durations_second),
+                ex=max(int((next_run - datetime.now(timezone.utc)).total_seconds()) * 2, 1800),
+            )
             await self._redis_client.delete(task_group.name + "_" + task.name + "_runner_uuid")
 
         except asyncio.CancelledError:
