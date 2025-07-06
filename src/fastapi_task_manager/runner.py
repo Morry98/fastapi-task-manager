@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import time
 from collections.abc import Callable
 from datetime import datetime, timezone
 from uuid import uuid4
@@ -95,7 +96,7 @@ class Runner:
             async with self._semaphore:
                 await self._run_task(task=task, task_group=task_group)
 
-    async def _run_task(self, task_group: TaskGroup, task: Task) -> None:  # TODO REduce complexity
+    async def _run_task(self, task_group: TaskGroup, task: Task) -> None:  # noqa: PLR0912, C901  # TODO Reduce complexity
         try:
             if await self._redis_client.exists(task_group.name + "_" + task.name + "_next_run"):
                 redis_next_run_b = await self._redis_client.get(task_group.name + "_" + task.name + "_next_run")

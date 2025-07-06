@@ -23,7 +23,7 @@ class TaskManager:
     ):
         self._config = config or Config()
         self._app = app
-        self._runner = None
+        self._runner: Runner | None = None
         self._task_groups: list[TaskGroup] = []
 
         logger.setLevel(self._config.level.upper().strip())
