@@ -3,7 +3,7 @@ from collections.abc import Callable
 from pydantic import BaseModel
 
 
-class TaskBase(BaseModel):
+class TaskBase(BaseModel):  # TODO Add task details
     expression: str
     name: str
     description: str | None = None
