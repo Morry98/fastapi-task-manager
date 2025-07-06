@@ -33,6 +33,36 @@ class TaskManager:
     @property
     def task_groups(self) -> list[TaskGroup]:
         return self._task_groups.copy()
+
+    def add_manager_paths_to_router(
+        self,
+        router: APIRouter,
+    ):
+        for func, router_path in {
+            (
+                get_task_groups,
+                router.get(
+                    "/",
+                    response_model_by_alias=True,
+                    response_model=list[TaskGroupSchema],
+                    description="Get task groups",
+                    name="Get task groups",
+                ),
+            ),
+        }:
+            partial_func = functools.partial(
+                func,
+                task_manager=self,
+            )
+
+            sig = inspect.signature(partial_func)
+            sig = sig.replace(
+                parameters=[param for param in sig.parameters.values() if param.name not in ["task_manager"]],
+            )
+            partial_func.__signature__ = sig  # type: ignore
+
+            router_path(partial_func)
+
     def append_to_app_lifecycle(self, app: FastAPI) -> None:
         """Automatically start/stop with app lifecycle."""
 
