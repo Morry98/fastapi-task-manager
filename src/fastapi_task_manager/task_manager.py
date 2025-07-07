@@ -9,7 +9,7 @@ from redis.asyncio import Redis
 
 from fastapi_task_manager.config import Config
 from fastapi_task_manager.runner import Runner
-from fastapi_task_manager.schema.task import TaskBase
+from fastapi_task_manager.schema.task import TaskDetailed
 from fastapi_task_manager.schema.task_group import TaskGroup as TaskGroupSchema
 from fastapi_task_manager.task_group import TaskGroup
 from fastapi_task_manager.task_router_services import disable_task, enable_task, get_task_groups, get_tasks
@@ -64,7 +64,7 @@ class TaskManager:
                 router.get(
                     "/tasks",
                     response_model_by_alias=True,
-                    response_model=list[TaskBase],
+                    response_model=list[TaskDetailed],
                     description="Get tasks",
                     name="Get tasks",
                 ),

@@ -40,12 +40,3 @@ class Task(TaskBase):
             + "_"
             + self.function.__name__,
         )
-
-    def __repr__(self):
-        return TaskBase(
-            expression=self.expression,
-            name=self.name,
-            description=self.description,
-            tags=self.tags,
-            high_priority=self.high_priority,
-        )
