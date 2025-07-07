@@ -2,15 +2,20 @@ import functools
 import inspect
 import logging
 from contextlib import asynccontextmanager
+from typing import TYPE_CHECKING, Any, cast
 
 from fastapi import APIRouter, FastAPI
 from redis.asyncio import Redis
 
 from fastapi_task_manager.config import Config
 from fastapi_task_manager.runner import Runner
+from fastapi_task_manager.schema.task import TaskBase
 from fastapi_task_manager.schema.task_group import TaskGroup as TaskGroupSchema
 from fastapi_task_manager.task_group import TaskGroup
-from fastapi_task_manager.task_router_services import get_task_groups
+from fastapi_task_manager.task_router_services import disable_task, get_task_groups, get_tasks
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 logger = logging.getLogger("fastapi.task-manager")
 
@@ -42,15 +47,35 @@ class TaskManager:
         self,
         router: APIRouter,
     ):
+        func: Callable
         for func, router_path in {
             (
-                get_task_groups,
+                cast("Callable[..., Any]", get_task_groups),
                 router.get(
-                    "/",
+                    "/task_groups",
                     response_model_by_alias=True,
                     response_model=list[TaskGroupSchema],
                     description="Get task groups",
                     name="Get task groups",
+                ),
+            ),
+            (
+                cast("Callable[..., Any]", get_tasks),
+                router.get(
+                    "/tasks",
+                    response_model_by_alias=True,
+                    response_model=list[TaskBase],
+                    description="Get tasks",
+                    name="Get tasks",
+                ),
+            ),
+            (
+                cast("Callable[..., Any]", disable_task),
+                router.post(
+                    "/disable_tasks",
+                    response_model_by_alias=True,
+                    description="Disable tasks",
+                    name="Disable tasks",
                 ),
             ),
         }:
@@ -63,7 +88,7 @@ class TaskManager:
             sig = sig.replace(
                 parameters=[param for param in sig.parameters.values() if param.name not in ["task_manager"]],
             )
-            partial_func.__signature__ = sig  # type: ignore
+            cast("Any", partial_func).__signature__ = sig
 
             router_path(partial_func)
 

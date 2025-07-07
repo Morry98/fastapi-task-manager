@@ -3,7 +3,7 @@ from pydantic import BaseModel
 
 class Config(BaseModel):
     # --------- Logging config variables ---------
-    level: str = "NOTSET"  # Default log level, can be overridden by log_level
+    level: str = "NOTSET"
     # --------- End of logging config variables ---------
 
     # --------- App config variables ---------
