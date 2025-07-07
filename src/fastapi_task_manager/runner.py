@@ -3,14 +3,18 @@ import logging
 import time
 from collections.abc import Callable
 from datetime import datetime, timezone
+from typing import TYPE_CHECKING
 from uuid import uuid4
 
 from cronexpr import next_fire
 from redis.asyncio import Redis
 
-from fastapi_task_manager import TaskGroup, TaskManager
+from fastapi_task_manager import TaskGroup
 from fastapi_task_manager.force_acquire_semaphore import ForceAcquireSemaphore
 from fastapi_task_manager.schema.task import Task
+
+if TYPE_CHECKING:
+    from fastapi_task_manager import TaskManager
 
 logger = logging.getLogger("fastapi.task-manager")
 
@@ -20,7 +24,7 @@ class Runner:
         self,
         redis_client: Redis,
         concurrent_tasks: int,
-        task_manager: TaskManager,
+        task_manager: "TaskManager",
     ):
         self._uuid: str = str(uuid4().int)
         self._redis_client = redis_client
