@@ -135,7 +135,7 @@ class Runner:
                 await self._redis_client.set(
                     task_group.name + "_" + task.name + "_disabled",
                     "1",
-                    ex=432_000,  # 5 days
+                    ex=self._task_manager.config.statistics_redis_expiration,
                 )
                 return
 
@@ -156,7 +156,7 @@ class Runner:
             await self._redis_client.set(
                 task_group.name + "_" + task.name + "_runs",
                 "\n".join(runs),
-                ex=max(int((next_run - datetime.now(timezone.utc)).total_seconds()) * 2, 1800),
+                ex=self._task_manager.config.statistics_redis_expiration,
             )
             durations_second = []  # TODO Evaluate redis linked lists
             if await self._redis_client.exists(task_group.name + "_" + task.name + "_durations_second"):
@@ -171,7 +171,7 @@ class Runner:
             await self._redis_client.set(
                 task_group.name + "_" + task.name + "_duration_seconds",
                 "\n".join(durations_second),
-                ex=max(int((next_run - datetime.now(timezone.utc)).total_seconds()) * 2, 1800),
+                ex=self._task_manager.config.statistics_redis_expiration,
             )
             await self._redis_client.delete(task_group.name + "_" + task.name + "_runner_uuid")
 

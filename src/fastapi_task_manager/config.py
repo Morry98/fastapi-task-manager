@@ -8,6 +8,7 @@ class Config(BaseModel):
 
     # --------- App config variables ---------
     concurrent_tasks: int = 2
+    statistics_redis_expiration: int = 432_000  # 5 days
     # --------- End of app config variables ---------
 
     # --------- Redis config variables ---------

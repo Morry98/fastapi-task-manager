@@ -69,7 +69,7 @@ def disable_task(
     redis_client.set(
         task_group.name + "_" + task.name + "_disabled",
         "1",
-        ex=432_000,  # 5 days
+        ex=task_manager.config.statistics_redis_expiration,
     )
 
 
