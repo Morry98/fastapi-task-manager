@@ -169,7 +169,7 @@ class Runner:
                 durations_second.pop(0)
             durations_second.append(str((end - start) / 1e9))
             await self._redis_client.set(
-                task_group.name + "_" + task.name + "_duration_seconds",
+                task_group.name + "_" + task.name + "_durations_second",
                 "\n".join(durations_second),
                 ex=self._task_manager.config.statistics_redis_expiration,
             )
