@@ -1,14 +1,21 @@
 from collections.abc import Callable
+from datetime import datetime
 
 from pydantic import BaseModel
 
 
-class TaskBase(BaseModel):  # TODO Add task details
+class TaskBase(BaseModel):
     expression: str
     name: str
     description: str | None = None
     tags: list[str] | None = None
     high_priority: bool = False
+
+
+class TaskDetailed(TaskBase):
+    is_active: bool = True
+    runs: list[datetime] | None = None
+    durations_second: list[float] | None = None
 
 
 class Task(TaskBase):
