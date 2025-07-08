@@ -1,5 +1,4 @@
 import functools
-import inspect
 import logging
 from contextlib import asynccontextmanager
 from typing import TYPE_CHECKING, Any, cast
@@ -43,10 +42,10 @@ class TaskManager:
     def config(self) -> Config:
         return self._config
 
-    def add_manager_paths_to_router(
+    def get_manager_router(
         self,
-        router: APIRouter,
-    ):
+    ) -> APIRouter:
+        router = APIRouter()
         func: Callable
         for func, router_path in {
             (
@@ -90,16 +89,10 @@ class TaskManager:
         }:
             partial_func = functools.partial(
                 func,
-                task_manager=self,
+                self,
             )
-
-            sig = inspect.signature(partial_func)
-            sig = sig.replace(
-                parameters=[param for param in sig.parameters.values() if param.name not in ["task_manager"]],
-            )
-            cast("Any", partial_func).__signature__ = sig
-
             router_path(partial_func)
+        return router
 
     def append_to_app_lifecycle(self, app: FastAPI) -> None:
         """Automatically start/stop with app lifecycle."""

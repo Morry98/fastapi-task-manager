@@ -5,7 +5,7 @@ from fastapi.exceptions import HTTPException
 from redis.client import Redis
 
 from fastapi_task_manager import TaskGroup
-from fastapi_task_manager.schema.task import Task, TaskDetailed
+from fastapi_task_manager.schema.task import Task, TaskDetailed, TaskRun
 
 if TYPE_CHECKING:
     from fastapi_task_manager import TaskManager
@@ -26,7 +26,7 @@ def get_task_groups(
     ]
 
 
-def get_tasks(  # TODO Add task details and disabled
+def get_tasks(
     task_manager: "TaskManager",
     task_group_name: str | None = None,
     name: str | None = None,
@@ -59,6 +59,13 @@ def get_tasks(  # TODO Add task details and disabled
                 )
                 if durations_second_b is not None:
                     durations_second = durations_second_b.decode("utf-8").split("\n")
+            assert len(runs) == len(durations_second), "Runs and durations_second must have the same length"
+
+            next_run = datetime(year=2000, month=1, day=1, tzinfo=timezone.utc)
+            if redis_client.exists(tg.name + "_" + t.name + "_next_run"):
+                next_run_b = redis_client.get(tg.name + "_" + t.name + "_next_run")
+                if next_run_b is not None:
+                    next_run = datetime.fromtimestamp(float(next_run_b.decode("utf-8")), tz=timezone.utc)
             list_to_return.append(
                 TaskDetailed(
                     name=t.name,
@@ -66,9 +73,15 @@ def get_tasks(  # TODO Add task details and disabled
                     tags=t.tags,
                     expression=t.expression,
                     high_priority=t.high_priority,
+                    next_run=next_run,
                     is_active=not redis_client.exists(tg.name + "_" + t.name + "_disabled"),
-                    runs=[datetime.fromtimestamp(float(x), timezone.utc) for x in runs] if runs else None,
-                    durations_second=durations_second if durations_second else None,
+                    runs=[
+                        TaskRun(
+                            run_date=datetime.fromtimestamp(float(runs[i]), timezone.utc),
+                            durations_second=float(durations_second[i]),
+                        )
+                        for i in range(len(runs))
+                    ],
                 ),
             )
     return list_to_return

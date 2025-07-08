@@ -12,10 +12,15 @@ class TaskBase(BaseModel):
     high_priority: bool = False
 
 
+class TaskRun(BaseModel):
+    run_date: datetime
+    durations_second: float
+
+
 class TaskDetailed(TaskBase):
-    is_active: bool = True
-    runs: list[datetime] | None = None
-    durations_second: list[float] | None = None
+    next_run: datetime
+    is_active: bool
+    runs: list[TaskRun]
 
 
 class Task(TaskBase):
