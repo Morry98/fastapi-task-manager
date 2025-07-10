@@ -55,7 +55,7 @@ class Runner:
             msg = "Runner is not running."
             logger.warning(msg)
             return
-        for _task, asyncio_task in self._running_tasks:
+        for _task, asyncio_task in self._running_tasks.items():
             await stop_thread(asyncio_task)
         self._running_tasks.clear()
         await stop_thread(self._running_thread)

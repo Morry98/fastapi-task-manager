@@ -26,12 +26,18 @@ repos:
           - pre-commit
 
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.15.0
+    rev: v1.16.1
     hooks:
       - id: mypy
-        additional_dependencies: [ "types-toml", "types-redis"]
+        additional_dependencies: [ "types-redis", "fastapi", "pydantic"]
         stages:
           - pre-commit
+
+  - repo: https://github.com/astral-sh/uv-pre-commit
+    # uv version.
+    rev: 0.7.20
+    hooks:
+      - id: uv-lock
 
   - repo: local
     hooks:

@@ -23,9 +23,9 @@ class TaskManager:
     def __init__(
         self,
         app: FastAPI,
-        config: Config | None = None,
+        config: Config,
     ):
-        self._config = config or Config()
+        self._config = config
         self._app = app
         self._runner: Runner | None = None
         self._task_groups: list[TaskGroup] = []
