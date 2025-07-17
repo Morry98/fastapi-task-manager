@@ -1,6 +1,6 @@
 [project]
 name = "fastapi-task-manager"
-version = "0.6.1"
+version = "0.7.0"
 description = "A task manager for Fastapi. Robust Scheduling, Distributed Safety"
 readme = "README.md"
 authors = [
@@ -37,12 +37,9 @@ dependencies = [
     "redis>=6.2.0",
 ]
 
-[project.scripts]
-fastapi-task-manager = "fastapi_task_manager:main"
-
 [build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+requires = ["uv_build>=0.7.20,<0.8.0"]
+build-backend = "uv_build"
 
 [[tool.uv.index]]
 name = "testpypi"

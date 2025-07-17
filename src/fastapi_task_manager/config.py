@@ -7,6 +7,7 @@ class Config(BaseModel):
     # --------- End of logging config variables ---------
 
     # --------- App config variables ---------
+    app_name: str = __name__
     concurrent_tasks: int = 2
     statistics_redis_expiration: int = 432_000  # 5 days
     # --------- End of app config variables ---------

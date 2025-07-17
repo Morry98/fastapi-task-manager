@@ -47,23 +47,23 @@ def get_tasks(
                 continue
 
             runs = []  # TODO Evaluate redis linked lists
-            if redis_client.exists(tg.name + "_" + t.name + "_runs"):
-                runs_b = redis_client.get(tg.name + "_" + t.name + "_runs")
+            if redis_client.exists(task_manager.config.app_name + "_" + tg.name + "_" + t.name + "_runs"):
+                runs_b = redis_client.get(task_manager.config.app_name + "_" + tg.name + "_" + t.name + "_runs")
                 if runs_b is not None:
                     runs = runs_b.decode("utf-8").split("\n")
 
             durations_second = []  # TODO Evaluate redis linked lists
-            if redis_client.exists(tg.name + "_" + t.name + "_durations_second"):
+            if redis_client.exists(task_manager.config.app_name + "_" + tg.name + "_" + t.name + "_durations_second"):
                 durations_second_b = redis_client.get(
-                    tg.name + "_" + t.name + "_durations_second",
+                    task_manager.config.app_name + "_" + tg.name + "_" + t.name + "_durations_second",
                 )
                 if durations_second_b is not None:
                     durations_second = durations_second_b.decode("utf-8").split("\n")
             assert len(runs) == len(durations_second), "Runs and durations_second must have the same length"
 
             next_run = datetime(year=2000, month=1, day=1, tzinfo=timezone.utc)
-            if redis_client.exists(tg.name + "_" + t.name + "_next_run"):
-                next_run_b = redis_client.get(tg.name + "_" + t.name + "_next_run")
+            if redis_client.exists(task_manager.config.app_name + "_" + tg.name + "_" + t.name + "_next_run"):
+                next_run_b = redis_client.get(task_manager.config.app_name + "_" + tg.name + "_" + t.name + "_next_run")
                 if next_run_b is not None:
                     next_run = datetime.fromtimestamp(float(next_run_b.decode("utf-8")), tz=timezone.utc)
             list_to_return.append(
@@ -74,7 +74,9 @@ def get_tasks(
                     expression=t.expression,
                     high_priority=t.high_priority,
                     next_run=next_run,
-                    is_active=not redis_client.exists(tg.name + "_" + t.name + "_disabled"),
+                    is_active=not redis_client.exists(
+                        task_manager.config.app_name + "_" + tg.name + "_" + t.name + "_disabled",
+                    ),
                     runs=[
                         TaskRun(
                             run_date=datetime.fromtimestamp(float(runs[i]), timezone.utc),
@@ -115,7 +117,7 @@ def disable_task(
         db=task_manager.config.redis_db,
     )
     redis_client.set(
-        task_group.name + "_" + task.name + "_disabled",
+        task_manager.config.app_name + "_" + task_group.name + "_" + task.name + "_disabled",
         "1",
         ex=task_manager.config.statistics_redis_expiration,
     )
@@ -148,5 +150,5 @@ def enable_task(
         password=task_manager.config.redis_password,
         db=task_manager.config.redis_db,
     )
-    if redis_client.exists(task_group.name + "_" + task.name + "_disabled"):
-        redis_client.delete(task_group.name + "_" + task.name + "_disabled")
+    if redis_client.exists(task_manager.config.app_name + "_" + task_group.name + "_" + task.name + "_disabled"):
+        redis_client.delete(task_manager.config.app_name + "_" + task_group.name + "_" + task.name + "_disabled")

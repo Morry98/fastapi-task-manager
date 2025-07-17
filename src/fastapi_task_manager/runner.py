@@ -76,8 +76,17 @@ class Runner:
                             self._running_tasks.pop(task, None)
 
                         next_run = datetime(year=2000, month=1, day=1, tzinfo=timezone.utc)
-                        if await self._redis_client.exists(task_group.name + "_" + task.name + "_next_run"):
-                            next_run_b = await self._redis_client.get(task_group.name + "_" + task.name + "_next_run")
+                        if await self._redis_client.exists(
+                            self._task_manager.config.app_name + "_" + task_group.name + "_" + task.name + "_next_run",
+                        ):
+                            next_run_b = await self._redis_client.get(
+                                self._task_manager.config.app_name
+                                + "_"
+                                + task_group.name
+                                + "_"
+                                + task.name
+                                + "_next_run",
+                            )
                             if next_run_b is not None:
                                 next_run = datetime.fromtimestamp(float(next_run_b.decode("utf-8")), tz=timezone.utc)
                         if next_run <= datetime.now(timezone.utc):
@@ -102,20 +111,32 @@ class Runner:
 
     async def _run_task(self, task_group: TaskGroup, task: Task) -> None:  # noqa: PLR0912, C901  # TODO Reduce complexity
         try:
-            if await self._redis_client.exists(task_group.name + "_" + task.name + "_next_run"):
-                redis_next_run_b = await self._redis_client.get(task_group.name + "_" + task.name + "_next_run")
+            if await self._redis_client.exists(
+                self._task_manager.config.app_name + "_" + task_group.name + "_" + task.name + "_next_run",
+            ):
+                redis_next_run_b = await self._redis_client.get(
+                    self._task_manager.config.app_name + "_" + task_group.name + "_" + task.name + "_next_run",
+                )
                 if redis_next_run_b is None:
                     return
                 redis_next_run = datetime.fromtimestamp(float(redis_next_run_b.decode("utf-8")), tz=timezone.utc)
                 if redis_next_run > datetime.now(timezone.utc):
                     return
 
-            redis_uuid_exists = await self._redis_client.exists(task_group.name + "_" + task.name + "_runner_uuid")
+            redis_uuid_exists = await self._redis_client.exists(
+                self._task_manager.config.app_name + "_" + task_group.name + "_" + task.name + "_runner_uuid",
+            )
             if not redis_uuid_exists:
-                await self._redis_client.set(task_group.name + "_" + task.name + "_runner_uuid", self._uuid, ex=15)
+                await self._redis_client.set(
+                    self._task_manager.config.app_name + "_" + task_group.name + "_" + task.name + "_runner_uuid",
+                    self._uuid,
+                    ex=15,
+                )
                 # Wait a bit to ensure the UUID is set and not overwritten
                 await asyncio.sleep(0.2)
-            redis_uuid_b = await self._redis_client.get(task_group.name + "_" + task.name + "_runner_uuid")
+            redis_uuid_b = await self._redis_client.get(
+                self._task_manager.config.app_name + "_" + task_group.name + "_" + task.name + "_runner_uuid",
+            )
             if redis_uuid_b is None:
                 return
             if redis_uuid_b.decode("utf-8") != self._uuid:
@@ -123,17 +144,19 @@ class Runner:
 
             next_run = next_fire(task.expression)
             await self._redis_client.set(
-                task_group.name + "_" + task.name + "_next_run",
+                self._task_manager.config.app_name + "_" + task_group.name + "_" + task.name + "_next_run",
                 next_run.timestamp(),
                 # using max to ensure that the expiration isn't lower than 15 seconds
                 # in this way we avoid potential issues
                 ex=max(int((next_run - datetime.now(timezone.utc)).total_seconds()) * 2, 15),
             )
 
-            if await self._redis_client.exists(task_group.name + "_" + task.name + "_disabled"):
+            if await self._redis_client.exists(
+                self._task_manager.config.app_name + "_" + task_group.name + "_" + task.name + "_disabled",
+            ):
                 # Set the key in order to update the ttl
                 await self._redis_client.set(
-                    task_group.name + "_" + task.name + "_disabled",
+                    self._task_manager.config.app_name + "_" + task_group.name + "_" + task.name + "_disabled",
                     "1",
                     ex=self._task_manager.config.statistics_redis_expiration,
                 )
@@ -142,26 +165,36 @@ class Runner:
             start = time.monotonic_ns()
             thread = asyncio.create_task(run_function(task.function))
             while not thread.done():
-                await self._redis_client.set(task_group.name + "_" + task.name + "_runner_uuid", self._uuid, ex=5)
+                await self._redis_client.set(
+                    self._task_manager.config.app_name + "_" + task_group.name + "_" + task.name + "_runner_uuid",
+                    self._uuid,
+                    ex=5,
+                )
                 await asyncio.sleep(0.1)
             end = time.monotonic_ns()
             runs = []  # TODO Evaluate redis linked lists
-            if await self._redis_client.exists(task_group.name + "_" + task.name + "_runs"):
-                runs_b = await self._redis_client.get(task_group.name + "_" + task.name + "_runs")
+            if await self._redis_client.exists(
+                self._task_manager.config.app_name + "_" + task_group.name + "_" + task.name + "_runs",
+            ):
+                runs_b = await self._redis_client.get(
+                    self._task_manager.config.app_name + "_" + task_group.name + "_" + task.name + "_runs",
+                )
                 if runs_b is not None:
                     runs = runs_b.decode("utf-8").split("\n")
             if len(runs) == 30:  # noqa: PLR2004  # TODO Configurable
                 runs.pop(0)
             runs.append(str(datetime.now(timezone.utc).timestamp()))
             await self._redis_client.set(
-                task_group.name + "_" + task.name + "_runs",
+                self._task_manager.config.app_name + "_" + task_group.name + "_" + task.name + "_runs",
                 "\n".join(runs),
                 ex=self._task_manager.config.statistics_redis_expiration,
             )
             durations_second = []  # TODO Evaluate redis linked lists
-            if await self._redis_client.exists(task_group.name + "_" + task.name + "_durations_second"):
+            if await self._redis_client.exists(
+                self._task_manager.config.app_name + "_" + task_group.name + "_" + task.name + "_durations_second",
+            ):
                 durations_second_b = await self._redis_client.get(
-                    task_group.name + "_" + task.name + "_durations_second",
+                    self._task_manager.config.app_name + "_" + task_group.name + "_" + task.name + "_durations_second",
                 )
                 if durations_second_b is not None:
                     durations_second = durations_second_b.decode("utf-8").split("\n")
@@ -169,11 +202,13 @@ class Runner:
                 durations_second.pop(0)
             durations_second.append(str((end - start) / 1e9))
             await self._redis_client.set(
-                task_group.name + "_" + task.name + "_durations_second",
+                self._task_manager.config.app_name + "_" + task_group.name + "_" + task.name + "_durations_second",
                 "\n".join(durations_second),
                 ex=self._task_manager.config.statistics_redis_expiration,
             )
-            await self._redis_client.delete(task_group.name + "_" + task.name + "_runner_uuid")
+            await self._redis_client.delete(
+                self._task_manager.config.app_name + "_" + task_group.name + "_" + task.name + "_runner_uuid",
+            )
 
         except asyncio.CancelledError:
             msg = f"Task {task.name} was cancelled."
