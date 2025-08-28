@@ -139,3 +139,8 @@ warn_unreachable = true
 pretty = true
 ignore_missing_imports = true
 plugins = []
+
+[dependency-groups]
+docs = [
+    "mkdocs>=1.6.1",
+]
