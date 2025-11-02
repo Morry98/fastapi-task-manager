@@ -1,17 +1,17 @@
-# Welcome to MkDocs
+---
+title: Fastapi task manager
+description: Documentation for Fastapi task manager
+tags:
+  - fastapi
+  - fastapi task manager
+---
+Fastapi task manager is a lightweight and efficient task management system built using FastAPI. It allows developers to create, manage, and monitor background tasks with ease.
 
-For full documentation visit [mkdocs.org](https://www.mkdocs.org).
+![PyPI - Version](https://img.shields.io/pypi/v/fastapi-task-manager?style=plastic&color=964de0)
+![PyPI - Downloads](https://img.shields.io/pypi/dm/fastapi-task-manager?style=plastic&label=pypi%20download&color=964de0)
+![PyPI - License](https://img.shields.io/pypi/l/fastapi-task-manager?style=plastic&color=964de0)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/fastapi-task-manager?style=plastic&color=964de0)
+![Pepy Total Downloads](https://img.shields.io/pepy/dt/fastapi-task-manager?style=plastic&color=964de0)
 
-## Commands
+TODO coverage https://coveralls.io/github/Morry98/fastapi-task-manager
 
-* `mkdocs new [dir-name]` - Create a new project.
-* `mkdocs serve` - Start the live-reloading docs server.
-* `mkdocs build` - Build the documentation site.
-* `mkdocs -h` - Print help message and exit.
-
-## Project layout
-
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.

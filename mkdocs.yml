@@ -9,8 +9,6 @@ strict: true                # build fail if there are any warnings
 
 theme:
   name: material
-  #favicon: assets/icon.ico
-  #logo: assets/icon.png
   language: en
   features:
     - content.code.annotate
