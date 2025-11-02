@@ -12,6 +12,7 @@ Fastapi task manager is a lightweight and efficient task management system built
 ![PyPI - License](https://img.shields.io/pypi/l/fastapi-task-manager?style=plastic&color=964de0)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/fastapi-task-manager?style=plastic&color=964de0)
 ![Pepy Total Downloads](https://img.shields.io/pepy/dt/fastapi-task-manager?style=plastic&color=964de0)
+![Coveralls](https://img.shields.io/coverallsCoverage/github/morry98/fastapi-task-manager?style=plastic&color=964de0)
 
 TODO coverage https://coveralls.io/github/Morry98/fastapi-task-manager
 
