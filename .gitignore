@@ -54,3 +54,6 @@ cover/
 # Environments
 .env
 .venv
+
+# Docs
+docs/site

@@ -1,0 +1,94 @@
+site_name: FastAPI Task Manager
+site_description: FastAPI framework ...
+repo_url: https://github.com/Morry98/fastapi-task-manager
+repo_name: Morry98/fastapi-task-manager
+docs_dir: docs/docs
+site_dir: docs/site
+use_directory_urls: false   # generate file.html instead of folders with index.html
+strict: true                # build fail if there are any warnings
+
+theme:
+  name: material
+  #favicon: assets/icon.ico
+  #logo: assets/icon.png
+  language: en
+  features:
+    - content.code.annotate
+    - content.code.copy
+    - content.footnote.tooltips
+    - content.tooltips
+    - navigation.indexes
+    - navigation.instant
+    - navigation.instant.prefetch
+    - navigation.instant.progress
+    - navigation.path
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.top
+    - navigation.tracking
+    - search.highlight
+    - search.share
+    - search.suggest
+    - toc.follow
+
+  palette:
+    - media: (prefers-color-scheme)
+      toggle:
+        icon: material/lightbulb-auto
+        name: Switch to light mode
+    - media: '(prefers-color-scheme: light)'
+      scheme: default
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/lightbulb
+        name: Switch to dark mode
+    - media: '(prefers-color-scheme: dark)'
+      scheme: slate
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/lightbulb-outline
+        name: Switch to system preference
+  icon:
+    repo: fontawesome/brands/github-alt
+
+plugins:
+  - search
+  - glightbox
+  - awesome-pages  # automatically generate navigation from folder structure
+
+markdown_extensions:
+  - abbr
+  - attr_list
+  - footnotes
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.betterem
+  - pymdownx.caret
+  - pymdownx.tilde
+  - pymdownx.mark
+  - pymdownx.keys
+  - pymdownx.highlight:
+      line_spans: __span
+  - pymdownx.inlinehilite
+  - pymdownx.blocks.tab:
+      alternate_style: true
+  - mdx_include
+  - markdown_include_variants
+  - admonition
+  - pymdownx.details
+  - pymdownx.snippets
+  - pymdownx.superfences:
+      custom_fences:
+      - name: mermaid
+        class: mermaid
+        format: !!python/name:pymdownx.superfences.fence_code_format ''
+  - pymdownx.tabbed:
+      alternate_style: true
+
+extra_css:
+  - assets/brand-colors.css
+  - assets/extra.css

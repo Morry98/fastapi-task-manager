@@ -37,12 +37,12 @@ repos:
 
   - repo: https://github.com/astral-sh/uv-pre-commit
     # uv version.
-    rev: 0.8.22
+    rev: 0.9.7
     hooks:
       - id: uv-lock
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.13.2
+    rev: v0.14.3
     hooks:
     -   id: ruff-check
         args:
@@ -51,10 +51,10 @@ repos:
     -   id: ruff-format
 
   - repo: https://github.com/netromdk/vermin
-    rev: v1.6.0
+    rev: v1.7.0
     hooks:
       - id: vermin
-        args: ['-t=3.13-', '--violations']
+        args: ['-t=3.10-', '--violations']
 
   - repo: local
     hooks:

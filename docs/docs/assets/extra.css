@@ -1,0 +1,47 @@
+/* Vertical container for badge + title */
+.page-header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: .5rem;
+  margin: 0 0 1rem 0;
+}
+
+.page-title {
+  margin: 0.1rem 0 1rem 0 !important; /* override mkdocs margin */
+  line-height: 1.2;
+}
+
+.icon-inline svg {
+  height: 1em;
+  width: 1em;
+  vertical-align: -0.125em;
+  fill: currentColor; /* Icon inherits text color */
+}
+
+
+
+/* Rende la tabella più compatta */
+table {
+  font-size: 0.9em;
+}
+
+/* Centra il contenuto delle celle */
+table td, table th {
+  text-align: center;
+  padding: 8px;
+}
+
+/* Prima colonna allineata a sinistra */
+table td:first-child, table th:first-child {
+  text-align: left;
+}
+
+.color-box {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 1px solid #ccc;
+    vertical-align: middle;
+    margin-right: 8px;
+}
