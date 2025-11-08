@@ -2,18 +2,18 @@
 
 Lightweight, efficient and fast to code scheduled task management system built on FastAPI.
 
-[![PyPI - Version](https://img.shields.io/pypi/v/fastapi-task-manager?style=plastic&color=964de0)](https://pypi.org/project/fastapi-task-manager/){ .external-link target="_blank" }
-[![PyPI - Downloads](https://img.shields.io/pypi/dm/fastapi-task-manager?style=plastic&label=pypi%20download&color=964de0)](https://pypi.org/project/fastapi-task-manager/){ .external-link target="_blank" }
-[![PyPI - License](https://img.shields.io/pypi/l/fastapi-task-manager?style=plastic&color=964de0)](https://github.com/Morry98/fastapi-task-manager/blob/main/LICENSE){ .external-link target="_blank" }
-[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/fastapi-task-manager?style=plastic&color=964de0)](https://pypi.org/project/fastapi-task-manager/){ .external-link target="_blank" }
-[![Pepy Total Downloads](https://img.shields.io/pepy/dt/fastapi-task-manager?style=plastic&color=964de0)](https://pepy.tech/project/fastapi-task-manager){ .external-link target="_blank" }
-[![Coveralls](https://img.shields.io/coverallsCoverage/github/morry98/fastapi-task-manager?style=plastic&color=964de0)](https://coveralls.io/github/Morry98/fastapi-task-manager){ .external-link target="_blank" }
+[![PyPI - Version](https://img.shields.io/pypi/v/fastapi-task-manager?style=plastic&color=964de0)](https://pypi.org/project/fastapi-task-manager/)
+[![PyPI - Downloads](https://img.shields.io/pypi/dm/fastapi-task-manager?style=plastic&label=pypi%20download&color=964de0)](https://pypi.org/project/fastapi-task-manager/)
+[![PyPI - License](https://img.shields.io/pypi/l/fastapi-task-manager?style=plastic&color=964de0)](https://github.com/Morry98/fastapi-task-manager/blob/main/LICENSE)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/fastapi-task-manager?style=plastic&color=964de0)](https://pypi.org/project/fastapi-task-manager/)
+[![Pepy Total Downloads](https://img.shields.io/pepy/dt/fastapi-task-manager?style=plastic&color=964de0)](https://pepy.tech/project/fastapi-task-manager)
+[![Coveralls](https://img.shields.io/coverallsCoverage/github/morry98/fastapi-task-manager?style=plastic&color=964de0)](https://coveralls.io/github/Morry98/fastapi-task-manager)
 
 ---
 
-**Documentation**: [https://morry98.github.io/fastapi-task-manager](https://morry98.github.io/fastapi-task-manager){ .external-link target="_blank" }
+**Documentation**: [https://morry98.github.io/fastapi-task-manager](https://morry98.github.io/fastapi-task-manager)
 
-**Source Code**: [https://github.com/Morry98/fastapi-task-manager](https://github.com/Morry98/fastapi-task-manager){ .external-link target="_blank" }
+**Source Code**: [https://github.com/Morry98/fastapi-task-manager](https://github.com/Morry98/fastapi-task-manager)
 
 ---
 
@@ -38,17 +38,16 @@ FastAPI Task Manager is a lightweight and efficient scheduled task management sy
 
 FastAPI Task Manager stands on the shoulders of giants:
 
-- [FastAPI](https://fastapi.tiangolo.com){ .external-link target="_blank" } - Modern, fast web framework for building APIs
-- [Redis](https://redis.io/){ .external-link target="_blank" } - In-memory data structure store for task storage and locking
+- [FastAPI](https://fastapi.tiangolo.com) - Modern, fast web framework for building APIs
+- [Redis](https://redis.io/) - In-memory data structure store for task storage and locking
 
 ## Installation
 
-!!! note "Prerequisites"
-    You need to have a FastAPI project set up. If you don't have one, check the [FastAPI installation tutorial](https://fastapi.tiangolo.com/#installation){ .external-link target="_blank" }.
+You need to have a FastAPI project set up. If you don't have one, check the [FastAPI installation tutorial](https://fastapi.tiangolo.com/#installation).
 
 Install FastAPI Task Manager using pip:
 ```console
-$ pip install fastapi-task-manager
+pip install fastapi-task-manager
 ```
 
 ## Quick Example
@@ -123,4 +122,4 @@ async def my_scheduled_task():
 
 ## License
 
-This project is licensed under the terms of the [MIT license](https://github.com/Morry98/fastapi-task-manager/blob/main/LICENSE){ .external-link target="_blank" }.
+This project is licensed under the terms of the [MIT license](https://github.com/Morry98/fastapi-task-manager/blob/main/LICENSE).
