@@ -47,6 +47,8 @@
     
       <link rel="stylesheet" href="assets/extra.css">
     
+      <link rel="stylesheet" href="termynal.css">
+    
     <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -81,6 +83,11 @@
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
+      
+        
+        <a href="#requirements" class="md-skip">
+          Skip to content
+        </a>
       
     </div>
     <div data-md-component="announce">
@@ -335,6 +342,19 @@
       
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Fastapi task manager
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="index.html" class="md-nav__link md-nav__link--active">
         
   
@@ -346,6 +366,50 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      Requirements
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#installation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Installation
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#license" class="md-nav__link">
+    <span class="md-ellipsis">
+      License
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -391,6 +455,41 @@
   
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      Requirements
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#installation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Installation
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#license" class="md-nav__link">
+    <span class="md-ellipsis">
+      License
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -410,7 +509,7 @@
 
   <h1>Fastapi task manager</h1>
 
-<p>Fastapi task manager is a lightweight and efficient task management system built using FastAPI. It allows developers to create, manage, and monitor background tasks with ease.</p>
+<p>Lightweight, efficient and fast to code scheduled task management system built on FastAPI.</p>
 <p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="https://img.shields.io/pypi/v/fastapi-task-manager?style=plastic&amp;color=964de0" data-desc-position="bottom"><img alt="PyPI - Version" src="https://img.shields.io/pypi/v/fastapi-task-manager?style=plastic&amp;color=964de0"></a>
 <a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="https://img.shields.io/pypi/dm/fastapi-task-manager?style=plastic&amp;label=pypi%20download&amp;color=964de0" data-desc-position="bottom"><img alt="PyPI - Downloads" src="https://img.shields.io/pypi/dm/fastapi-task-manager?style=plastic&amp;label=pypi%20download&amp;color=964de0"></a>
 <a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="https://img.shields.io/pypi/l/fastapi-task-manager?style=plastic&amp;color=964de0" data-desc-position="bottom"><img alt="PyPI - License" src="https://img.shields.io/pypi/l/fastapi-task-manager?style=plastic&amp;color=964de0"></a>
@@ -418,6 +517,36 @@
 <a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="https://img.shields.io/pepy/dt/fastapi-task-manager?style=plastic&amp;color=964de0" data-desc-position="bottom"><img alt="Pepy Total Downloads" src="https://img.shields.io/pepy/dt/fastapi-task-manager?style=plastic&amp;color=964de0"></a>
 <a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="https://img.shields.io/coverallsCoverage/github/morry98/fastapi-task-manager?style=plastic&amp;color=964de0" data-desc-position="bottom"><img alt="Coveralls" src="https://img.shields.io/coverallsCoverage/github/morry98/fastapi-task-manager?style=plastic&amp;color=964de0"></a></p>
 <p>TODO coverage https://coveralls.io/github/Morry98/fastapi-task-manager</p>
+<hr>
+<p><strong>Documentation</strong>: <a href="https://morry98.github.io/fastapi-task-manager" target="_blank">https://morry98.github.io/fastapi-task-manager</a></p>
+<p><strong>Source Code</strong>: <a href="https://github.com/Morry98/fastapi-task-manager" target="_blank">https://github.com/Morry98/fastapi-task-manager</a></p>
+<hr>
+<p>FastAPI task manager is a lightweight and efficient scheduled task management system built on top of FastAPI and Redis. It is designed to help developers easily create, manage, and execute scheduled tasks within their FastAPI applications.</p>
+<p>The key features are:</p>
+<ul>
+<li><strong>FastAPI extension</strong>: Built as an extension to FastAPI, making it easy to integrate into existing FastAPI applications and leverage its features.</li>
+<li><strong>Redis-based</strong>: Uses Redis as the backend for storing task information, ensuring high performance and single-instance execution.</li>
+<li><strong>Fast to code</strong>: Increase the speed to develop scheduled tasks by about 400% to 500%, only a wrapper function is needed. *</li>
+<li><strong>Fewer bugs</strong>: Reduce about 60% of human (developer) induced errors managing lock, Redis keys and task execution. *</li>
+<li><strong>Scheduled tasks</strong>: Provides a simple and intuitive API for defining and scheduling tasks to run at specific intervals or times.</li>
+<li><strong>Task management</strong>: Includes FastAPI router to manage tasks, such as pausing, resuming, and monitoring execution information.</li>
+<li><strong>Easy</strong>: Designed to be easy to use and learn. Less time reading docs.</li>
+<li><strong>Robust</strong>: Get production-ready code. With automatic interactive documentation.</li>
+</ul>
+<p><small>* estimation based on real production task migrated to FastAPI task manager from custom "cron job" solution.</small></p>
+<h2 id="requirements">Requirements<a class="headerlink" href="#requirements" title="Permanent link">¶</a></h2>
+<p>FastAPI task manager stands on the shoulders of giants:</p>
+<ul>
+<li><a href="https://fastapi.tiangolo.com" class="external-link" target="_blank">FastAPI</a> for the web framework.</li>
+<li><a href="https://redis.io/" class="external-link" target="_blank">Redis</a> for task storage and locking.</li>
+</ul>
+<h2 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">¶</a></h2>
+<p>You need to have a FastAPI project set up. If you don't have one, you can create it by following the <a href="https://fastapi.tiangolo.com/#installation" class="external-link" target="_blank">FastAPI installation tutorial</a>.<br>
+Then install FastAPI task manager:</p>
+<div class="termy" data-termynal data-ty-macos data-ty-title="bash"><span data-ty="input" data-ty-prompt="$">pip install fastapi-task-manager</span><span data-ty></span><span data-ty="progress"></span><span data-ty>Installed<br></span></div>
+
+<h2 id="license">License<a class="headerlink" href="#license" title="Permanent link">¶</a></h2>
+<p>This project is licensed under the terms of the MIT license.</p>
 
 
 
@@ -481,6 +610,8 @@
     
     
       <script src="assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+        <script src="termynal.js"></script>
       
     
   
