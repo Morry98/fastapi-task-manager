@@ -55,6 +55,7 @@ plugins:
   - search
   - glightbox
   - awesome-pages  # automatically generate navigation from folder structure
+  - termynal
 
 markdown_extensions:
   - abbr

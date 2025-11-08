@@ -52,6 +52,7 @@ docs = [
     "mkdocs-material>=9.6.20",
     "pymdown-extensions>=10.16.1",
     "click<=8.2.1",
+    "termynal>=0.13.1",
 ]
 
 [build-system]
