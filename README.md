@@ -45,16 +45,9 @@ FastAPI task manager stands on the shoulders of giants:
 You need to have a FastAPI project set up. If you don't have one, you can create it by following the <a href="https://fastapi.tiangolo.com/#installation" class="external-link" target="_blank">FastAPI installation tutorial</a>.  
 Then install FastAPI task manager:
 
-````
-<!-- termynal -->
-
 ```
 $ pip install fastapi-task-manager
-
----> 100%
-Installed
 ```
-````
 
 ## License
 
