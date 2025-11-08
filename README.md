@@ -33,14 +33,14 @@ The key features are:
 
 <small>* estimation based on real production task migrated to FastAPI task manager from custom "cron job" solution.</small>
 
-## Requirements { #requirements }
+## Requirements
 
 FastAPI task manager stands on the shoulders of giants:
 
 * <a href="https://fastapi.tiangolo.com" class="external-link" target="_blank">FastAPI</a> for the web framework.
 * <a href="https://redis.io/" class="external-link" target="_blank">Redis</a> for task storage and locking.
 
-## Installation { #installation }
+## Installation
 
 You need to have a FastAPI project set up. If you don't have one, you can create it by following the <a href="https://fastapi.tiangolo.com/#installation" class="external-link" target="_blank">FastAPI installation tutorial</a>.  
 Then install FastAPI task manager:
