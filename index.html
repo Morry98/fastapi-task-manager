@@ -3,7 +3,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Documentation for Fastapi task manager">
+        <meta name="description" content="Lightweight, efficient and fast to code scheduled task management system built on FastAPI">
       
       
       
@@ -17,7 +17,7 @@
     
     
       
-        <title>Fastapi task manager - FastAPI Task Manager</title>
+        <title>FastAPI Task Manager - FastAPI Task Manager</title>
       
     
     
@@ -85,7 +85,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#requirements" class="md-skip">
+        <a href="#overview" class="md-skip">
           Skip to content
         </a>
       
@@ -121,7 +121,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Fastapi task manager
+              FastAPI Task Manager
             
           </span>
         </div>
@@ -251,7 +251,7 @@
   
     
   
-  Fastapi task manager
+  FastAPI Task Manager
 
       </a>
     </li>
@@ -347,7 +347,7 @@
   
   
   <span class="md-ellipsis">
-    Fastapi task manager
+    FastAPI Task Manager
     
   </span>
   
@@ -360,7 +360,7 @@
   
   
   <span class="md-ellipsis">
-    Fastapi task manager
+    FastAPI Task Manager
     
   </span>
   
@@ -381,6 +381,24 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Overview
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#key-features" class="md-nav__link">
+    <span class="md-ellipsis">
+      Key Features
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#requirements" class="md-nav__link">
     <span class="md-ellipsis">
       Requirements
@@ -393,6 +411,15 @@
   <a href="#installation" class="md-nav__link">
     <span class="md-ellipsis">
       Installation
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Quick Example
     </span>
   </a>
   
@@ -462,6 +489,24 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Overview
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#key-features" class="md-nav__link">
+    <span class="md-ellipsis">
+      Key Features
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#requirements" class="md-nav__link">
     <span class="md-ellipsis">
       Requirements
@@ -474,6 +519,15 @@
   <a href="#installation" class="md-nav__link">
     <span class="md-ellipsis">
       Installation
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Quick Example
     </span>
   </a>
   
@@ -507,46 +561,116 @@
   
 
 
-  <h1>Fastapi task manager</h1>
+  <h1>FastAPI Task Manager</h1>
 
 <p>Lightweight, efficient and fast to code scheduled task management system built on FastAPI.</p>
-<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="https://img.shields.io/pypi/v/fastapi-task-manager?style=plastic&amp;color=964de0" data-desc-position="bottom"><img alt="PyPI - Version" src="https://img.shields.io/pypi/v/fastapi-task-manager?style=plastic&amp;color=964de0"></a>
-<a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="https://img.shields.io/pypi/dm/fastapi-task-manager?style=plastic&amp;label=pypi%20download&amp;color=964de0" data-desc-position="bottom"><img alt="PyPI - Downloads" src="https://img.shields.io/pypi/dm/fastapi-task-manager?style=plastic&amp;label=pypi%20download&amp;color=964de0"></a>
-<a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="https://img.shields.io/pypi/l/fastapi-task-manager?style=plastic&amp;color=964de0" data-desc-position="bottom"><img alt="PyPI - License" src="https://img.shields.io/pypi/l/fastapi-task-manager?style=plastic&amp;color=964de0"></a>
-<a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="https://img.shields.io/pypi/pyversions/fastapi-task-manager?style=plastic&amp;color=964de0" data-desc-position="bottom"><img alt="PyPI - Python Version" src="https://img.shields.io/pypi/pyversions/fastapi-task-manager?style=plastic&amp;color=964de0"></a>
-<a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="https://img.shields.io/pepy/dt/fastapi-task-manager?style=plastic&amp;color=964de0" data-desc-position="bottom"><img alt="Pepy Total Downloads" src="https://img.shields.io/pepy/dt/fastapi-task-manager?style=plastic&amp;color=964de0"></a>
-<a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="https://img.shields.io/coverallsCoverage/github/morry98/fastapi-task-manager?style=plastic&amp;color=964de0" data-desc-position="bottom"><img alt="Coveralls" src="https://img.shields.io/coverallsCoverage/github/morry98/fastapi-task-manager?style=plastic&amp;color=964de0"></a></p>
-<p>TODO coverage https://coveralls.io/github/Morry98/fastapi-task-manager</p>
+<p><a class="external-link" href="https://pypi.org/project/fastapi-task-manager/" target="_blank"><img alt="PyPI - Version" src="https://img.shields.io/pypi/v/fastapi-task-manager?style=plastic&amp;color=964de0"></a>
+<a class="external-link" href="https://pypi.org/project/fastapi-task-manager/" target="_blank"><img alt="PyPI - Downloads" src="https://img.shields.io/pypi/dm/fastapi-task-manager?style=plastic&amp;label=pypi%20download&amp;color=964de0"></a>
+<a class="external-link" href="https://github.com/Morry98/fastapi-task-manager/blob/main/LICENSE" target="_blank"><img alt="PyPI - License" src="https://img.shields.io/pypi/l/fastapi-task-manager?style=plastic&amp;color=964de0"></a>
+<a class="external-link" href="https://pypi.org/project/fastapi-task-manager/" target="_blank"><img alt="PyPI - Python Version" src="https://img.shields.io/pypi/pyversions/fastapi-task-manager?style=plastic&amp;color=964de0"></a>
+<a class="external-link" href="https://pepy.tech/project/fastapi-task-manager" target="_blank"><img alt="Pepy Total Downloads" src="https://img.shields.io/pepy/dt/fastapi-task-manager?style=plastic&amp;color=964de0"></a>
+<a class="external-link" href="https://coveralls.io/github/Morry98/fastapi-task-manager" target="_blank"><img alt="Coveralls" src="https://img.shields.io/coverallsCoverage/github/morry98/fastapi-task-manager?style=plastic&amp;color=964de0"></a></p>
 <hr>
-<p><strong>Documentation</strong>: <a href="https://morry98.github.io/fastapi-task-manager" target="_blank">https://morry98.github.io/fastapi-task-manager</a></p>
-<p><strong>Source Code</strong>: <a href="https://github.com/Morry98/fastapi-task-manager" target="_blank">https://github.com/Morry98/fastapi-task-manager</a></p>
+<p><strong>Documentation</strong>: <a class="external-link" href="https://morry98.github.io/fastapi-task-manager" target="_blank">https://morry98.github.io/fastapi-task-manager</a></p>
+<p><strong>Source Code</strong>: <a class="external-link" href="https://github.com/Morry98/fastapi-task-manager" target="_blank">https://github.com/Morry98/fastapi-task-manager</a></p>
 <hr>
-<p>FastAPI task manager is a lightweight and efficient scheduled task management system built on top of FastAPI and Redis. It is designed to help developers easily create, manage, and execute scheduled tasks within their FastAPI applications.</p>
-<p>The key features are:</p>
+<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">¶</a></h2>
+<p>FastAPI Task Manager is a lightweight and efficient scheduled task management system built on top of FastAPI and Redis. It is designed to help developers easily create, manage, and execute scheduled tasks within their FastAPI applications.</p>
+<h2 id="key-features">Key Features<a class="headerlink" href="#key-features" title="Permanent link">¶</a></h2>
 <ul>
-<li><strong>FastAPI extension</strong>: Built as an extension to FastAPI, making it easy to integrate into existing FastAPI applications and leverage its features.</li>
-<li><strong>Redis-based</strong>: Uses Redis as the backend for storing task information, ensuring high performance and single-instance execution.</li>
-<li><strong>Fast to code</strong>: Increase the speed to develop scheduled tasks by about 400% to 500%, only a wrapper function is needed. *</li>
-<li><strong>Fewer bugs</strong>: Reduce about 60% of human (developer) induced errors managing lock, Redis keys and task execution. *</li>
-<li><strong>Scheduled tasks</strong>: Provides a simple and intuitive API for defining and scheduling tasks to run at specific intervals or times.</li>
-<li><strong>Task management</strong>: Includes FastAPI router to manage tasks, such as pausing, resuming, and monitoring execution information.</li>
-<li><strong>Easy</strong>: Designed to be easy to use and learn. Less time reading docs.</li>
-<li><strong>Robust</strong>: Get production-ready code. With automatic interactive documentation.</li>
+<li><strong>FastAPI Extension</strong> - Built as an extension to FastAPI, making it easy to integrate into existing FastAPI applications and leverage its features</li>
+<li><strong>Redis-Based</strong> - Uses Redis as the backend for storing task information, ensuring high performance and single-instance execution</li>
+<li><strong>Fast to Code</strong> - Increase the speed to develop scheduled tasks by about 400% to 500%, only a wrapper function is needed*</li>
+<li><strong>Fewer Bugs</strong> - Reduce about 60% of human (developer) induced errors managing lock, Redis keys and task execution*</li>
+<li><strong>Scheduled Tasks</strong> - Provides a simple and intuitive API for defining and scheduling tasks to run at specific intervals or times</li>
+<li><strong>Task Management</strong> - Includes FastAPI router to manage tasks, such as pausing, resuming, and monitoring execution information</li>
+<li><strong>Easy to Use</strong> - Designed to be easy to use and learn. Less time reading docs</li>
+<li><strong>Robust</strong> - Get production-ready code</li>
 </ul>
 <p><small>* estimation based on real production task migrated to FastAPI task manager from custom "cron job" solution.</small></p>
 <h2 id="requirements">Requirements<a class="headerlink" href="#requirements" title="Permanent link">¶</a></h2>
-<p>FastAPI task manager stands on the shoulders of giants:</p>
+<p>FastAPI Task Manager stands on the shoulders of giants:</p>
 <ul>
-<li><a href="https://fastapi.tiangolo.com" class="external-link" target="_blank">FastAPI</a> for the web framework.</li>
-<li><a href="https://redis.io/" class="external-link" target="_blank">Redis</a> for task storage and locking.</li>
+<li><a class="external-link" href="https://fastapi.tiangolo.com" target="_blank">FastAPI</a> - Modern, fast web framework for building APIs</li>
+<li><a class="external-link" href="https://redis.io/" target="_blank">Redis</a> - In-memory data structure store for task storage and locking</li>
 </ul>
 <h2 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">¶</a></h2>
-<p>You need to have a FastAPI project set up. If you don't have one, you can create it by following the <a href="https://fastapi.tiangolo.com/#installation" class="external-link" target="_blank">FastAPI installation tutorial</a>.<br>
-Then install FastAPI task manager:</p>
-<div class="termy" data-termynal data-ty-macos data-ty-title="bash"><span data-ty="input" data-ty-prompt="$">pip install fastapi-task-manager</span><span data-ty></span><span data-ty="progress"></span><span data-ty>Installed<br></span></div>
+<div class="admonition note">
+<p class="admonition-title">Prerequisites</p>
+<p>You need to have a FastAPI project set up. If you don't have one, check the <a class="external-link" href="https://fastapi.tiangolo.com/#installation" target="_blank">FastAPI installation tutorial</a>.</p>
+</div>
+<p>Install FastAPI Task Manager using pip:</p>
+<div class="termy" data-termynal data-ty-macos data-ty-title="bash"><span data-ty="input" data-ty-prompt="$">pip install fastapi-task-manager</span><span data-ty></span><span data-ty="progress"></span><span data-ty>Successfully installed fastapi-task-manager<br></span></div>
 
+<h2 id="quick-example">Quick Example<a class="headerlink" href="#quick-example" title="Permanent link">¶</a></h2>
+<p>Here's a simple example to get you started:
+</p><div class="highlight"><pre><span></span><code><span id="__span-0-1"><span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">FastAPI</span>
+</span><span id="__span-0-2"><span class="kn">from</span><span class="w"> </span><span class="nn">fastapi_task_manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">TaskManager</span><span class="p">,</span> <span class="n">task</span><span class="p">,</span> <span class="n">TaskGroup</span>
+</span><span id="__span-0-3"><span class="kn">from</span><span class="w"> </span><span class="nn">fastapi_task_manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">Config</span> <span class="k">as</span> <span class="n">ManagerConfig</span>
+</span><span id="__span-0-4"><span class="kn">from</span><span class="w"> </span><span class="nn">pydantic_settings</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseSettings</span><span class="p">,</span> <span class="n">SettingsConfigDict</span>
+</span><span id="__span-0-5">
+</span><span id="__span-0-6">
+</span><span id="__span-0-7"><span class="k">class</span><span class="w"> </span><span class="nc">Config</span><span class="p">(</span><span class="n">BaseSettings</span><span class="p">):</span>
+</span><span id="__span-0-8">    <span class="n">model_config</span> <span class="o">=</span> <span class="n">SettingsConfigDict</span><span class="p">(</span>
+</span><span id="__span-0-9">        <span class="c1"># `.env.prod` takes priority over `.env`</span>
+</span><span id="__span-0-10">        <span class="n">env_file</span><span class="o">=</span><span class="p">(</span><span class="s2">".env"</span><span class="p">,</span> <span class="s2">".env.prod"</span><span class="p">),</span>
+</span><span id="__span-0-11">        <span class="n">extra</span><span class="o">=</span><span class="s2">"forbid"</span><span class="p">,</span>
+</span><span id="__span-0-12">    <span class="p">)</span>
+</span><span id="__span-0-13">
+</span><span id="__span-0-14">    <span class="c1"># --------- Redis config variables ---------</span>
+</span><span id="__span-0-15">    <span class="n">redis_host</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="__span-0-16">    <span class="n">redis_port</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">6379</span>
+</span><span id="__span-0-17">    <span class="n">redis_password</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="__span-0-18">    <span class="n">redis_db</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span id="__span-0-19">    <span class="c1"># --------- End of redis config variables ---------</span>
+</span><span id="__span-0-20">
+</span><span id="__span-0-21">    <span class="c1"># --------- App config variables ---------</span>
+</span><span id="__span-0-22">    <span class="n">app_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"my_fastapi_app"</span>
+</span><span id="__span-0-23">    <span class="n">concurrent_tasks</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span>
+</span><span id="__span-0-24">    <span class="c1"># --------- End of app config variables ---------</span>
+</span><span id="__span-0-25">
+</span><span id="__span-0-26"><span class="n">CONFIG</span> <span class="o">=</span> <span class="n">Config</span><span class="p">()</span>
+</span><span id="__span-0-27">
+</span><span id="__span-0-28"><span class="n">app</span> <span class="o">=</span> <span class="n">FastAPI</span><span class="p">()</span>
+</span><span id="__span-0-29"><span class="n">router</span> <span class="o">=</span> <span class="n">APIRouter</span><span class="p">()</span>
+</span><span id="__span-0-30">
+</span><span id="__span-0-31"><span class="hll"><span class="n">task_manager</span> <span class="o">=</span> <span class="n">TaskManager</span><span class="p">(</span>
+</span></span><span id="__span-0-32"><span class="hll">    <span class="n">config</span><span class="o">=</span><span class="n">ManagerConfig</span><span class="p">(</span>
+</span></span><span id="__span-0-33"><span class="hll">        <span class="n">redis_host</span><span class="o">=</span><span class="n">CONFIG</span><span class="o">.</span><span class="n">redis_host</span><span class="p">,</span>
+</span></span><span id="__span-0-34"><span class="hll">        <span class="n">redis_port</span><span class="o">=</span><span class="n">CONFIG</span><span class="o">.</span><span class="n">redis_port</span><span class="p">,</span>
+</span></span><span id="__span-0-35"><span class="hll">        <span class="n">redis_password</span><span class="o">=</span><span class="n">CONFIG</span><span class="o">.</span><span class="n">redis_password</span><span class="p">,</span>
+</span></span><span id="__span-0-36"><span class="hll">        <span class="n">redis_db</span><span class="o">=</span><span class="n">CONFIG</span><span class="o">.</span><span class="n">redis_db</span><span class="p">,</span>
+</span></span><span id="__span-0-37"><span class="hll">        <span class="n">concurrent_tasks</span><span class="o">=</span><span class="n">CONFIG</span><span class="o">.</span><span class="n">concurrent_tasks</span><span class="p">,</span>
+</span></span><span id="__span-0-38"><span class="hll">        <span class="n">app_name</span><span class="o">=</span><span class="n">CONFIG</span><span class="o">.</span><span class="n">app_name</span><span class="p">,</span>
+</span></span><span id="__span-0-39"><span class="hll">    <span class="p">),</span>
+</span></span><span id="__span-0-40"><span class="hll">    <span class="n">app</span><span class="o">=</span><span class="n">app</span><span class="p">,</span>
+</span></span><span id="__span-0-41"><span class="hll"><span class="p">)</span>
+</span></span><span id="__span-0-42"><span class="hll"><span class="n">my_example_task_group</span> <span class="o">=</span> <span class="n">TaskGroup</span><span class="p">(</span>
+</span></span><span id="__span-0-43"><span class="hll">  <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s2">"example"</span><span class="p">],</span>
+</span></span><span id="__span-0-44"><span class="hll">  <span class="n">name</span><span class="o">=</span><span class="s2">"My Example Task Group"</span><span class="p">,</span>
+</span></span><span id="__span-0-45"><span class="hll"><span class="p">)</span>
+</span></span><span id="__span-0-46"><span class="hll"><span class="n">task_manager</span><span class="o">.</span><span class="n">add_task_group</span><span class="p">(</span><span class="n">my_example_task_group</span><span class="p">)</span>
+</span></span><span id="__span-0-47"><span class="hll">
+</span></span><span id="__span-0-48"><span class="hll"><span class="n">manager_router</span> <span class="o">=</span> <span class="n">task_manager</span><span class="o">.</span><span class="n">get_manager_router</span><span class="p">()</span>
+</span></span><span id="__span-0-49"><span class="hll"><span class="n">router</span><span class="o">.</span><span class="n">include_router</span><span class="p">(</span>
+</span></span><span id="__span-0-50"><span class="hll">  <span class="n">manager_router</span><span class="p">,</span>
+</span></span><span id="__span-0-51"><span class="hll">  <span class="n">prefix</span><span class="o">=</span><span class="s2">"/task-manager"</span><span class="p">,</span>
+</span></span><span id="__span-0-52"><span class="hll">  <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s2">"task-manager"</span><span class="p">],</span>
+</span></span><span id="__span-0-53"><span class="hll"><span class="p">)</span>
+</span></span><span id="__span-0-54">
+</span><span id="__span-0-55"><span class="n">app</span><span class="o">.</span><span class="n">include_router</span><span class="p">(</span><span class="n">router</span><span class="p">)</span>
+</span><span id="__span-0-56">
+</span><span id="__span-0-57"><span class="hll"><span class="nd">@my_example_task_group</span><span class="o">.</span><span class="n">add_task</span><span class="p">(</span>
+</span></span><span id="__span-0-58"><span class="hll">  <span class="s2">"*/5 * * * *"</span><span class="p">,</span>  <span class="c1"># Run every 5 minutes</span>
+</span></span><span id="__span-0-59"><span class="hll">  <span class="n">name</span><span class="o">=</span><span class="s2">"my_scheduled_task"</span><span class="p">,</span>
+</span></span><span id="__span-0-60"><span class="hll">  <span class="n">description</span><span class="o">=</span><span class="s2">"This is my scheduled task"</span>
+</span></span><span id="__span-0-61"><span class="hll"><span class="p">)</span>
+</span></span><span id="__span-0-62"><span class="hll"><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">my_scheduled_task</span><span class="p">():</span>
+</span></span><span id="__span-0-63"><span class="hll">    <span class="nb">print</span><span class="p">(</span><span class="s2">"Task executed!"</span><span class="p">)</span>
+</span></span><span id="__span-0-64"><span class="hll">    <span class="c1"># Your task logic here</span>
+</span></span></code></pre></div><p></p>
 <h2 id="license">License<a class="headerlink" href="#license" title="Permanent link">¶</a></h2>
-<p>This project is licensed under the terms of the MIT license.</p>
+<p>This project is licensed under the terms of the <a class="external-link" href="https://github.com/Morry98/fastapi-task-manager/blob/main/LICENSE" target="_blank">MIT license</a>.</p>
 
 
 
