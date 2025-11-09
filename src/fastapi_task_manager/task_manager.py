@@ -51,7 +51,7 @@ class TaskManager:
             (
                 cast("Callable[..., Any]", get_task_groups),
                 router.get(
-                    "/task_groups",
+                    "/task-groups",
                     response_model_by_alias=True,
                     response_model=list[TaskGroupSchema],
                     description="Get task groups",
@@ -71,7 +71,7 @@ class TaskManager:
             (
                 cast("Callable[..., Any]", disable_task),
                 router.post(
-                    "/disable_tasks",
+                    "/disable-tasks",
                     response_model_by_alias=True,
                     description="Disable tasks",
                     name="Disable tasks",
@@ -80,7 +80,7 @@ class TaskManager:
             (
                 cast("Callable[..., Any]", enable_task),
                 router.post(
-                    "/enable_tasks",
+                    "/enable-tasks",
                     response_model_by_alias=True,
                     description="Enable tasks",
                     name="Enable tasks",

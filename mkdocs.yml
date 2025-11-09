@@ -54,7 +54,6 @@ theme:
 plugins:
   - search
   - glightbox
-  - awesome-pages  # automatically generate navigation from folder structure
   - termynal
 
 markdown_extensions:
@@ -67,6 +66,9 @@ markdown_extensions:
       permalink: true
   - pymdownx.betterem
   - pymdownx.caret
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
   - pymdownx.tilde
   - pymdownx.mark
   - pymdownx.keys
@@ -91,3 +93,10 @@ markdown_extensions:
 extra_css:
   - assets/brand-colors.css
   - assets/extra.css
+
+nav:
+  - FastAPI Task Manager: index.md
+  - features.md
+  - Learn:
+    - learn/getting-started.md
+    - learn/api-reference.md
