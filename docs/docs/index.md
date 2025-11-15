@@ -8,7 +8,16 @@ tags:
   - redis
 ---
 
-Lightweight, efficient and fast to code scheduled task management system built on FastAPI.
+<style>
+.md-content .md-typeset h1 { display: none; }
+</style>
+
+<p align="center">
+  <a href="https://morry98.github.io/fastapi-task-manager/"><img src="assets/images/logo-text-purple.svg" alt="FastAPI Task Manager"></a>
+</p>
+<p align="center">
+    <em>Lightweight, efficient and fast to code scheduled task management system built on FastAPI</em>
+</p>
 
 [![PyPI - Version](https://img.shields.io/pypi/v/fastapi-task-manager?style=plastic&color=964de0)](https://pypi.org/project/fastapi-task-manager/){ .external-link target="_blank" }
 [![PyPI - Downloads](https://img.shields.io/pypi/dm/fastapi-task-manager?style=plastic&label=pypi%20download&color=964de0)](https://pypi.org/project/fastapi-task-manager/){ .external-link target="_blank" }

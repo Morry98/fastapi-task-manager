@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 90" width="620" height="90">
+  <defs>
+    <linearGradient id="gradPurpleLarge" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#AB47BC;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#7B1FA2;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="gradWhiteLarge" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#F5F5F5;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Purple circle background -->
+  <circle cx="45" cy="45" r="38" fill="url(#gradPurpleLarge)"/>
+
+  <!-- Logo inside circle -->
+  <g transform="translate(13, 21)">
+    <!-- T shape in white -->
+    <rect x="28" y="4" width="8" height="36" rx="4" fill="url(#gradWhiteLarge)"/>
+    <rect x="14" y="4" width="36" height="8" rx="4" fill="#FFFFFF"/>
+
+    <!-- Background clock circle -->
+    <circle cx="32" cy="32" r="16" fill="none" stroke="#FFFFFF" stroke-width="3" opacity="0.2"/>
+
+    <!-- Progress arc -->
+    <circle cx="32" cy="32" r="16" fill="none" stroke="url(#gradWhiteLarge)" stroke-width="3.5"
+            stroke-dasharray="75 100" stroke-linecap="round"
+            transform="rotate(-90 32 32)"/>
+
+    <!-- Hour markers -->
+    <line x1="32" y1="17" x2="32" y2="21" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="47" y1="32" x2="43" y2="32" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="32" y1="47" x2="32" y2="43" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="17" y1="32" x2="21" y2="32" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round"/>
+
+    <!-- Clock hands -->
+    <line x1="32" y1="32" x2="32" y2="24" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round"/>
+    <line x1="32" y1="32" x2="38" y2="32" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round"/>
+
+    <!-- Center dot -->
+    <circle cx="32" cy="32" r="2.5" fill="#FFFFFF"/>
+
+    <!-- Task sequence dots -->
+    <circle cx="22" cy="46" r="2.5" fill="#FFFFFF" opacity="0.6"/>
+    <circle cx="32" cy="46" r="2.5" fill="#FFFFFF" opacity="0.8"/>
+    <circle cx="42" cy="46" r="2.5" fill="#FFFFFF"/>
+  </g>
+
+  <!-- Text: FastAPI Task Manager - text height matches circle -->
+  <text x="110" y="68" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="52" font-weight="700" fill="#9C27B0" letter-spacing="-1.5">
+    FastAPI Task Manager
+  </text>
+</svg>

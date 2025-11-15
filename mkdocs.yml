@@ -50,6 +50,8 @@ theme:
         name: Switch to system preference
   icon:
     repo: fontawesome/brands/github-alt
+  logo: assets/images/logo-white.svg
+  favicon: assets/images/logo-circle-purple.svg
 
 plugins:
   - search
