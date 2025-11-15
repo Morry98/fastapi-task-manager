@@ -1,8 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 90" width="620" height="90">
   <defs>
     <linearGradient id="gradPurpleLarge" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#AB47BC;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#7B1FA2;stop-opacity:1" />
+      <stop offset="0%" style="stop-color:#A76BE6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8640D8;stop-opacity:1" />
     </linearGradient>
     <linearGradient id="gradWhiteLarge" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:1" />
@@ -47,7 +47,7 @@
   </g>
 
   <!-- Text: FastAPI Task Manager - text height matches circle -->
-  <text x="110" y="68" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="52" font-weight="700" fill="#9C27B0" letter-spacing="-1.5">
+  <text x="110" y="68" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="52" font-weight="700" fill="#964de0" letter-spacing="-1.5">
     FastAPI Task Manager
   </text>
 </svg>
