@@ -45,7 +45,7 @@ async def my_scheduled_task():
     print("Task executed!")
     # Your task logic here
 ```
-<small>Check out the [Getting Started Guide](learn/getting-started.md) for a complete tutorial.</small>
+<small>Check out the [Getting Started Guide](learn/getting_started/index.md) for a complete tutorial.</small>
 
 No complex configuration files. No boilerplate. Just clean, readable code.
 

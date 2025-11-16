@@ -15,3 +15,7 @@
 
 6. evaluate possibility to add a custom exception handler
 
+7. docs:
+   - Learn
+   - About (check also people)
+   - Release Notes
