@@ -63,14 +63,41 @@ FastAPI Task Manager stands on the shoulders of giants:
 !!! note "Prerequisites"
     You need to have a FastAPI project set up. If you don't have one, check the [FastAPI installation tutorial](https://fastapi.tiangolo.com/#installation){ .external-link target="_blank" }.
 
-Install FastAPI Task Manager using pip:
-<!-- termynal -->
-```console
-$ pip install fastapi-task-manager
+Install FastAPI Task Manager:
 
----> 100%
-Successfully installed fastapi-task-manager
-```
+=== "uv"
+    <!-- termynal -->
+    ```
+    $ uv add fastapi-task-manager
+
+    ---> 100%
+    Resolved XX packages in XXms
+    Installed 1 package in XXms
+      + fastapi-task-manager==x.x.x
+    ```
+
+=== "pip"
+    <!-- termynal -->
+    ```
+    $ pip install fastapi-task-manager
+
+    ---> 100%
+    Successfully installed fastapi-task-manager
+    ```
+
+=== "poetry"
+    <!-- termynal -->
+    ```
+    $ poetry add fastapi-task-manager
+
+    ---> 100%
+    Using version ^x.x.x for fastapi-task-manager
+
+    Updating dependencies
+    Resolving dependencies... (0.1s)
+
+    Package operations: 1 install, 0 updates, 0 removals
+    ```
 
 ## Quick Example
 

@@ -19,3 +19,5 @@
    - Learn
    - About (check also people)
    - Release Notes
+
+8. review docs initial paragraph (the one between ---) and review file names style choice between - and _

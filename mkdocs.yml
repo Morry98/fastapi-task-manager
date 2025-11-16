@@ -15,6 +15,7 @@ theme:
     - content.code.annotate
     - content.code.copy
     - content.footnote.tooltips
+    - content.tabs.link
     - content.tooltips
     - navigation.indexes
     - navigation.instant
@@ -117,6 +118,7 @@ nav:
     - Getting Started:
       - learn/getting_started/index.md
       - learn/getting_started/installation.md
+      - learn/getting_started/first-step.md
     - learn/api-reference.md
   - About: about/index.md
   - Release Notes: release_notes/index.md
