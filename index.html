@@ -594,6 +594,8 @@
       
         
       
+        
+      
     
     
     
@@ -650,6 +652,29 @@
   
   <span class="md-ellipsis">
     Installation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="learn/getting_started/first-step.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    First Step
     
   </span>
   
@@ -887,9 +912,20 @@
 <p class="admonition-title">Prerequisites</p>
 <p>You need to have a FastAPI project set up. If you don't have one, check the <a class="external-link" href="https://fastapi.tiangolo.com/#installation" target="_blank">FastAPI installation tutorial</a>.</p>
 </div>
-<p>Install FastAPI Task Manager using pip:</p>
-<div class="termy" data-termynal data-ty-macos data-ty-title="bash"><span data-ty="input" data-ty-prompt="$">pip install fastapi-task-manager</span><span data-ty></span><span data-ty="progress"></span><span data-ty>Successfully installed fastapi-task-manager<br></span></div>
-
+<p>Install FastAPI Task Manager:</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:3"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio"><input id="__tabbed_1_2" name="__tabbed_1" type="radio"><input id="__tabbed_1_3" name="__tabbed_1" type="radio"><div class="tabbed-labels"><label for="__tabbed_1_1">uv</label><label for="__tabbed_1_2">pip</label><label for="__tabbed_1_3">poetry</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p></p><div class="termy" data-termynal data-ty-macos data-ty-title="bash"><span data-ty="input" data-ty-prompt="$">uv add fastapi-task-manager</span><span data-ty></span><span data-ty="progress"></span><span data-ty>Resolved XX packages in XXms<br>Installed 1 package in XXms<br>  + fastapi-task-manager==x.x.x<br></span></div><p></p>
+</div>
+<div class="tabbed-block">
+<p></p><div class="termy" data-termynal data-ty-macos data-ty-title="bash"><span data-ty="input" data-ty-prompt="$">pip install fastapi-task-manager</span><span data-ty></span><span data-ty="progress"></span><span data-ty>Successfully installed fastapi-task-manager<br></span></div><p></p>
+</div>
+<div class="tabbed-block">
+<p></p><div class="termy" data-termynal data-ty-macos data-ty-title="bash"><span data-ty="input" data-ty-prompt="$">poetry add fastapi-task-manager</span><span data-ty></span><span data-ty="progress"></span><span data-ty>Using version ^x.x.x for fastapi-task-manager<br><br>Updating dependencies<br>Resolving dependencies... (0.1s)<br><br>Package operations: 1 install, 0 updates, 0 removals<br></span></div><p></p>
+</div>
+</div>
+</div>
 <h2 id="quick-example">Quick Example<a class="headerlink" href="#quick-example" title="Permanent link">¶</a></h2>
 <p>Here's a simple example to get you started:
 </p><div class="highlight"><pre><span></span><code><span id="__span-0-1"><span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">FastAPI</span>
@@ -979,6 +1015,8 @@
             </div>
           
           
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
 <script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
         </div>
         
@@ -1058,7 +1096,7 @@
     
     
       
-      <script id="__config" type="application/json">{"base": ".", "features": ["content.code.annotate", "content.code.copy", "content.footnote.tooltips", "content.tooltips", "navigation.indexes", "navigation.instant", "navigation.instant.prefetch", "navigation.instant.progress", "navigation.path", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "navigation.tracking", "navigation.footer", "search.highlight", "search.share", "search.suggest", "toc.follow"], "search": "assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"base": ".", "features": ["content.code.annotate", "content.code.copy", "content.footnote.tooltips", "content.tabs.link", "content.tooltips", "navigation.indexes", "navigation.instant", "navigation.instant.prefetch", "navigation.instant.progress", "navigation.path", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "navigation.tracking", "navigation.footer", "search.highlight", "search.share", "search.suggest", "toc.follow"], "search": "assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
       <script src="assets/javascripts/bundle.f55a23d4.min.js"></script>
