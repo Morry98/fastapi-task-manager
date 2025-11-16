@@ -9,3 +9,7 @@
 .md-header__button.md-logo {
   padding: 0.2rem;
 }
+
+.md-social__link svg{
+  max-height: 8rem;
+}
