@@ -7,6 +7,8 @@ tags:
   - scheduling
   - redis
   - features
+hide:
+  - navigation
 ---
 
 # Key Features

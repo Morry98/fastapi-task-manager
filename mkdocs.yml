@@ -66,38 +66,57 @@ plugins:
         - "$"
 
 markdown_extensions:
-  - abbr
-  - attr_list
-  - footnotes
-  - md_in_html
-  - tables
-  - toc:
-      permalink: true
-  - pymdownx.betterem
-  - pymdownx.caret
-  - pymdownx.emoji:
+  # Python Markdown
+  abbr:
+  attr_list:
+  footnotes:
+  md_in_html:
+  tables:
+  toc:
+    permalink: true
+
+  # Python Markdown Extensions
+  pymdownx.betterem:
+    smart_enable: all
+  pymdownx.caret:
+  pymdownx.highlight:
+    line_spans: __span
+  pymdownx.inlinehilite:
+  pymdownx.keys:
+  pymdownx.mark:
+  pymdownx.superfences:
+    custom_fences:
+    - name: mermaid
+      class: mermaid
+      format: !!python/name:pymdownx.superfences.fence_code_format
+  pymdownx.tilde:
+
+  # pymdownx blocks
+  pymdownx.blocks.admonition:
+    types:
+    - note
+    - attention
+    - caution
+    - danger
+    - error
+    - tip
+    - hint
+    - warning
+    # Custom types
+    - info
+  pymdownx.blocks.details:
+  pymdownx.blocks.tab:
+      alternate_style: true
+
+  # Emoji support
+  pymdownx.emoji:
       emoji_index: !!python/name:material.extensions.emoji.twemoji
       emoji_generator: !!python/name:material.extensions.emoji.to_svg
-  - pymdownx.tilde
-  - pymdownx.mark
-  - pymdownx.keys
-  - pymdownx.highlight:
-      line_spans: __span
-  - pymdownx.inlinehilite
-  - pymdownx.blocks.tab:
-      alternate_style: true
-  - mdx_include
-  - markdown_include_variants
-  - admonition
-  - pymdownx.details
-  - pymdownx.snippets
-  - pymdownx.superfences:
-      custom_fences:
-      - name: mermaid
-        class: mermaid
-        format: !!python/name:pymdownx.superfences.fence_code_format ''
-  - pymdownx.tabbed:
-      alternate_style: true
+
+  # Other extensions
+  mdx_include:
+  markdown_include_variants:
+
 
 extra_css:
   - assets/brand-colors.css
@@ -105,6 +124,10 @@ extra_css:
 
 extra:
   social:
+    - icon: fontawesome/brands/github-alt
+      link: https://github.com/Morry98/fastapi-task-manager
+    - icon: fontawesome/brands/linkedin
+      link: https://www.linkedin.com/in/morandomatteo
     - icon: custom/ciuf-white
       name: CIUF
 
@@ -118,7 +141,7 @@ nav:
     - Getting Started:
       - learn/getting_started/index.md
       - learn/getting_started/installation.md
-      - learn/getting_started/first-step.md
+      - learn/getting_started/configurations.md
     - learn/api-reference.md
   - About: about/index.md
   - Release Notes: release_notes/index.md
