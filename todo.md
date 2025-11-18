@@ -7,17 +7,15 @@
 
 2. add more documentations inside code where necessary
 
-3. rename setting `app_name` with `redis_key_prefix` throughout the codebase and documentations
+3. evaluate adding on_startup and on_shutdown hooks for task manager inside FastAPI app
 
-4. evaluate adding on_startup and on_shutdown hooks for task manager inside FastAPI app
+4. evaluate something like run first or if missing, in order to run a task immediately on startup if it hasn't run yet today
 
-5. evaluate something like run first or if missing, in order to run a task immediately on startup if it hasn't run yet today
+5. evaluate possibility to add a custom exception handler
 
-6. evaluate possibility to add a custom exception handler
-
-7. docs:
+6. docs:
    - Learn
    - About (check also people)
    - Release Notes
 
-8. review docs initial paragraph (the one between ---) and review file names style choice between - and _
+7. review docs initial paragraph (the one between ---) and review file names style choice between - and _

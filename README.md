@@ -98,7 +98,7 @@ task_manager = TaskManager(
         redis_password=CONFIG.redis_password,
         redis_db=CONFIG.redis_db,
         concurrent_tasks=CONFIG.concurrent_tasks,
-        app_name=CONFIG.app_name,
+        redis_key_prefix=CONFIG.app_name,
     ),
     app=app,
 )
