@@ -1,1 +1,6 @@
-TBC
+---
+hide:
+  - navigation
+---
+
+{!CHANGELOG.md!}
