@@ -632,6 +632,24 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configurations
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="configurations.html" class="md-nav__link md-nav__link--active">
         
   
@@ -648,6 +666,113 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#log-level" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Log Level
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#redis-key-prefix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis Key Prefix
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#concurrent-tasks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Concurrent Tasks
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#statistics-redis-expiration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Statistics Redis Expiration
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#redis-host" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis Host
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#redis-port" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis Port
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#redis-password" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis Password
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#redis-db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis DB
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -771,6 +896,102 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#log-level" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Log Level
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#redis-key-prefix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis Key Prefix
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#concurrent-tasks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Concurrent Tasks
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#statistics-redis-expiration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Statistics Redis Expiration
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#redis-host" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis Host
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#redis-port" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis Port
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#redis-password" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis Password
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#redis-db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis DB
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -864,47 +1085,320 @@
 
 
 <h1 id="configurations">Configurations<a class="headerlink" href="#configurations" title="Permanent link">¶</a></h1>
-<p>TODOOOOOOOOOOO</p>
+<p>This is the entire code example for the configurations tutorial.</p>
+<p>We will see each config in detail with his own section in the next parts of this tutorial.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="1:1"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio"><div class="tabbed-labels"><label for="__tabbed_1_1">Python 3.10+</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><span id="__span-0-1"><span class="c1"># Code above omitted 👆</span>
+<div class="highlight"><pre><span></span><code><span id="__span-0-1"><span class="kn">from</span><span class="w"> </span><span class="nn">fastapi_task_manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">Config</span>
 </span><span id="__span-0-2">
 </span><span id="__span-0-3"><span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span>
-</span><span id="__span-0-4">    <span class="n">level</span><span class="o">=</span><span class="s2">"NOTSET"</span><span class="p">,</span>
+</span><span id="__span-0-4">    <span class="n">log_level</span><span class="o">=</span><span class="s2">"NOTSET"</span><span class="p">,</span>
 </span><span id="__span-0-5">    <span class="n">redis_key_prefix</span><span class="o">=</span><span class="vm">__name__</span><span class="p">,</span>
-</span><span id="__span-0-6">
-</span><span id="__span-0-7"><span class="c1"># Code below omitted 👇</span>
+</span><span id="__span-0-6">    <span class="n">concurrent_tasks</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+</span><span id="__span-0-7">    <span class="n">statistics_redis_expiration</span><span class="o">=</span><span class="mi">432_000</span><span class="p">,</span>
+</span><span id="__span-0-8">    <span class="n">redis_host</span><span class="o">=</span><span class="s2">"localhost"</span><span class="p">,</span>
+</span><span id="__span-0-9">    <span class="n">redis_port</span><span class="o">=</span><span class="mi">6379</span><span class="p">,</span>
+</span><span id="__span-0-10">    <span class="n">redis_password</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span><span id="__span-0-11">    <span class="n">redis_db</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+</span><span id="__span-0-12"><span class="p">)</span>
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<h2 id="log-level">Log Level<a class="headerlink" href="#log-level" title="Permanent link">¶</a></h2>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:1"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio"><div class="tabbed-labels"><label for="__tabbed_2_1">Python 3.10+</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span id="__span-1-1"><span class="c1"># Code above omitted 👆</span>
+</span><span id="__span-1-2">
+</span><span id="__span-1-3">    <span class="n">log_level</span><span class="o">=</span><span class="s2">"NOTSET"</span><span class="p">,</span>
+</span><span id="__span-1-4">
+</span><span id="__span-1-5"><span class="c1"># Code below omitted 👇</span>
 </span></code></pre></div>
 </div>
 </div>
 </div>
 <details>
 <summary>👀 Full file preview</summary>
-<div class="tabbed-set tabbed-alternate" data-tabs="2:1"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio"><div class="tabbed-labels"><label for="__tabbed_2_1">Python 3.10+</label></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="3:1"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio"><div class="tabbed-labels"><label for="__tabbed_3_1">Python 3.10+</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><span id="__span-1-1"><span class="kn">from</span><span class="w"> </span><span class="nn">fastapi_task_manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">Config</span>
-</span><span id="__span-1-2">
-</span><span id="__span-1-3"><span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span>
-</span><span id="__span-1-4">    <span class="n">level</span><span class="o">=</span><span class="s2">"NOTSET"</span><span class="p">,</span>
-</span><span id="__span-1-5">    <span class="n">redis_key_prefix</span><span class="o">=</span><span class="vm">__name__</span><span class="p">,</span>
-</span><span id="__span-1-6">    <span class="n">concurrent_tasks</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-</span><span id="__span-1-7">    <span class="n">statistics_redis_expiration</span><span class="o">=</span><span class="mi">432_000</span><span class="p">,</span>
-</span><span id="__span-1-8">    <span class="n">redis_host</span><span class="o">=</span><span class="s2">"localhost"</span><span class="p">,</span>
-</span><span id="__span-1-9">    <span class="n">redis_port</span><span class="o">=</span><span class="mi">6379</span><span class="p">,</span>
-</span><span id="__span-1-10">    <span class="n">redis_password</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-</span><span id="__span-1-11">    <span class="n">redis_db</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-</span><span id="__span-1-12"><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span id="__span-2-1"><span class="kn">from</span><span class="w"> </span><span class="nn">fastapi_task_manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">Config</span>
+</span><span id="__span-2-2">
+</span><span id="__span-2-3"><span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span>
+</span><span id="__span-2-4">    <span class="n">log_level</span><span class="o">=</span><span class="s2">"NOTSET"</span><span class="p">,</span>
+</span><span id="__span-2-5">    <span class="n">redis_key_prefix</span><span class="o">=</span><span class="vm">__name__</span><span class="p">,</span>
+</span><span id="__span-2-6">    <span class="n">concurrent_tasks</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+</span><span id="__span-2-7">    <span class="n">statistics_redis_expiration</span><span class="o">=</span><span class="mi">432_000</span><span class="p">,</span>
+</span><span id="__span-2-8">    <span class="n">redis_host</span><span class="o">=</span><span class="s2">"localhost"</span><span class="p">,</span>
+</span><span id="__span-2-9">    <span class="n">redis_port</span><span class="o">=</span><span class="mi">6379</span><span class="p">,</span>
+</span><span id="__span-2-10">    <span class="n">redis_password</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span><span id="__span-2-11">    <span class="n">redis_db</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+</span><span id="__span-2-12"><span class="p">)</span>
 </span></code></pre></div>
 </div>
 </div>
 </div>
 </details>
-<p>aaa</p>
-<p>=== "aaaaa"
-    from fastapi import FastAPI</p>
-<p>bbb</p>
+<div class="admonition note">
+<p class="admonition-title">Logger name</p>
+<p>The package uses the standard logging library from python and the logger is named <code>fastapi.task-manager</code></p>
+</div>
+<p>This configuration is used to set the <code>log_level</code> used by the package logger.
+The default value is set to <code>NOTSET</code> and the suggestion is to keep the default value and manage the logging level, handler and formatters in your application logging configuration.</p>
+<h2 id="redis-key-prefix">Redis Key Prefix<a class="headerlink" href="#redis-key-prefix" title="Permanent link">¶</a></h2>
+<div class="tabbed-set tabbed-alternate" data-tabs="4:1"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio"><div class="tabbed-labels"><label for="__tabbed_4_1">Python 3.10+</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span id="__span-3-1"><span class="c1"># Code above omitted 👆</span>
+</span><span id="__span-3-2">
+</span><span id="__span-3-3">    <span class="n">redis_key_prefix</span><span class="o">=</span><span class="vm">__name__</span><span class="p">,</span>
+</span><span id="__span-3-4">
+</span><span id="__span-3-5"><span class="c1"># Code below omitted 👇</span>
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<details>
+<summary>👀 Full file preview</summary>
+<div class="tabbed-set tabbed-alternate" data-tabs="5:1"><input checked="checked" id="__tabbed_5_1" name="__tabbed_5" type="radio"><div class="tabbed-labels"><label for="__tabbed_5_1">Python 3.10+</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span id="__span-4-1"><span class="kn">from</span><span class="w"> </span><span class="nn">fastapi_task_manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">Config</span>
+</span><span id="__span-4-2">
+</span><span id="__span-4-3"><span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span>
+</span><span id="__span-4-4">    <span class="n">log_level</span><span class="o">=</span><span class="s2">"NOTSET"</span><span class="p">,</span>
+</span><span id="__span-4-5">    <span class="n">redis_key_prefix</span><span class="o">=</span><span class="vm">__name__</span><span class="p">,</span>
+</span><span id="__span-4-6">    <span class="n">concurrent_tasks</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+</span><span id="__span-4-7">    <span class="n">statistics_redis_expiration</span><span class="o">=</span><span class="mi">432_000</span><span class="p">,</span>
+</span><span id="__span-4-8">    <span class="n">redis_host</span><span class="o">=</span><span class="s2">"localhost"</span><span class="p">,</span>
+</span><span id="__span-4-9">    <span class="n">redis_port</span><span class="o">=</span><span class="mi">6379</span><span class="p">,</span>
+</span><span id="__span-4-10">    <span class="n">redis_password</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span><span id="__span-4-11">    <span class="n">redis_db</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+</span><span id="__span-4-12"><span class="p">)</span>
+</span></code></pre></div>
+</div>
+</div>
+</div>
+</details>
+<p>TODO</p>
+<h2 id="concurrent-tasks">Concurrent Tasks<a class="headerlink" href="#concurrent-tasks" title="Permanent link">¶</a></h2>
+<div class="tabbed-set tabbed-alternate" data-tabs="6:1"><input checked="checked" id="__tabbed_6_1" name="__tabbed_6" type="radio"><div class="tabbed-labels"><label for="__tabbed_6_1">Python 3.10+</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span id="__span-5-1"><span class="c1"># Code above omitted 👆</span>
+</span><span id="__span-5-2">
+</span><span id="__span-5-3">    <span class="n">concurrent_tasks</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+</span><span id="__span-5-4">
+</span><span id="__span-5-5"><span class="c1"># Code below omitted 👇</span>
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<details>
+<summary>👀 Full file preview</summary>
+<div class="tabbed-set tabbed-alternate" data-tabs="7:1"><input checked="checked" id="__tabbed_7_1" name="__tabbed_7" type="radio"><div class="tabbed-labels"><label for="__tabbed_7_1">Python 3.10+</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span id="__span-6-1"><span class="kn">from</span><span class="w"> </span><span class="nn">fastapi_task_manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">Config</span>
+</span><span id="__span-6-2">
+</span><span id="__span-6-3"><span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span>
+</span><span id="__span-6-4">    <span class="n">log_level</span><span class="o">=</span><span class="s2">"NOTSET"</span><span class="p">,</span>
+</span><span id="__span-6-5">    <span class="n">redis_key_prefix</span><span class="o">=</span><span class="vm">__name__</span><span class="p">,</span>
+</span><span id="__span-6-6">    <span class="n">concurrent_tasks</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+</span><span id="__span-6-7">    <span class="n">statistics_redis_expiration</span><span class="o">=</span><span class="mi">432_000</span><span class="p">,</span>
+</span><span id="__span-6-8">    <span class="n">redis_host</span><span class="o">=</span><span class="s2">"localhost"</span><span class="p">,</span>
+</span><span id="__span-6-9">    <span class="n">redis_port</span><span class="o">=</span><span class="mi">6379</span><span class="p">,</span>
+</span><span id="__span-6-10">    <span class="n">redis_password</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span><span id="__span-6-11">    <span class="n">redis_db</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+</span><span id="__span-6-12"><span class="p">)</span>
+</span></code></pre></div>
+</div>
+</div>
+</div>
+</details>
+<p>TODO</p>
+<h2 id="statistics-redis-expiration">Statistics Redis Expiration<a class="headerlink" href="#statistics-redis-expiration" title="Permanent link">¶</a></h2>
+<div class="tabbed-set tabbed-alternate" data-tabs="8:1"><input checked="checked" id="__tabbed_8_1" name="__tabbed_8" type="radio"><div class="tabbed-labels"><label for="__tabbed_8_1">Python 3.10+</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span id="__span-7-1"><span class="c1"># Code above omitted 👆</span>
+</span><span id="__span-7-2">
+</span><span id="__span-7-3">    <span class="n">statistics_redis_expiration</span><span class="o">=</span><span class="mi">432_000</span><span class="p">,</span>
+</span><span id="__span-7-4">
+</span><span id="__span-7-5"><span class="c1"># Code below omitted 👇</span>
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<details>
+<summary>👀 Full file preview</summary>
+<div class="tabbed-set tabbed-alternate" data-tabs="9:1"><input checked="checked" id="__tabbed_9_1" name="__tabbed_9" type="radio"><div class="tabbed-labels"><label for="__tabbed_9_1">Python 3.10+</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span id="__span-8-1"><span class="kn">from</span><span class="w"> </span><span class="nn">fastapi_task_manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">Config</span>
+</span><span id="__span-8-2">
+</span><span id="__span-8-3"><span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span>
+</span><span id="__span-8-4">    <span class="n">log_level</span><span class="o">=</span><span class="s2">"NOTSET"</span><span class="p">,</span>
+</span><span id="__span-8-5">    <span class="n">redis_key_prefix</span><span class="o">=</span><span class="vm">__name__</span><span class="p">,</span>
+</span><span id="__span-8-6">    <span class="n">concurrent_tasks</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+</span><span id="__span-8-7">    <span class="n">statistics_redis_expiration</span><span class="o">=</span><span class="mi">432_000</span><span class="p">,</span>
+</span><span id="__span-8-8">    <span class="n">redis_host</span><span class="o">=</span><span class="s2">"localhost"</span><span class="p">,</span>
+</span><span id="__span-8-9">    <span class="n">redis_port</span><span class="o">=</span><span class="mi">6379</span><span class="p">,</span>
+</span><span id="__span-8-10">    <span class="n">redis_password</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span><span id="__span-8-11">    <span class="n">redis_db</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+</span><span id="__span-8-12"><span class="p">)</span>
+</span></code></pre></div>
+</div>
+</div>
+</div>
+</details>
+<p>TODO</p>
+<h2 id="redis-host">Redis Host<a class="headerlink" href="#redis-host" title="Permanent link">¶</a></h2>
+<div class="tabbed-set tabbed-alternate" data-tabs="10:1"><input checked="checked" id="__tabbed_10_1" name="__tabbed_10" type="radio"><div class="tabbed-labels"><label for="__tabbed_10_1">Python 3.10+</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span id="__span-9-1"><span class="c1"># Code above omitted 👆</span>
+</span><span id="__span-9-2">
+</span><span id="__span-9-3">    <span class="n">redis_host</span><span class="o">=</span><span class="s2">"localhost"</span><span class="p">,</span>
+</span><span id="__span-9-4">
+</span><span id="__span-9-5"><span class="c1"># Code below omitted 👇</span>
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<details>
+<summary>👀 Full file preview</summary>
+<div class="tabbed-set tabbed-alternate" data-tabs="11:1"><input checked="checked" id="__tabbed_11_1" name="__tabbed_11" type="radio"><div class="tabbed-labels"><label for="__tabbed_11_1">Python 3.10+</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span id="__span-10-1"><span class="kn">from</span><span class="w"> </span><span class="nn">fastapi_task_manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">Config</span>
+</span><span id="__span-10-2">
+</span><span id="__span-10-3"><span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span>
+</span><span id="__span-10-4">    <span class="n">log_level</span><span class="o">=</span><span class="s2">"NOTSET"</span><span class="p">,</span>
+</span><span id="__span-10-5">    <span class="n">redis_key_prefix</span><span class="o">=</span><span class="vm">__name__</span><span class="p">,</span>
+</span><span id="__span-10-6">    <span class="n">concurrent_tasks</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+</span><span id="__span-10-7">    <span class="n">statistics_redis_expiration</span><span class="o">=</span><span class="mi">432_000</span><span class="p">,</span>
+</span><span id="__span-10-8">    <span class="n">redis_host</span><span class="o">=</span><span class="s2">"localhost"</span><span class="p">,</span>
+</span><span id="__span-10-9">    <span class="n">redis_port</span><span class="o">=</span><span class="mi">6379</span><span class="p">,</span>
+</span><span id="__span-10-10">    <span class="n">redis_password</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span><span id="__span-10-11">    <span class="n">redis_db</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+</span><span id="__span-10-12"><span class="p">)</span>
+</span></code></pre></div>
+</div>
+</div>
+</div>
+</details>
+<p>TODO</p>
+<h2 id="redis-port">Redis Port<a class="headerlink" href="#redis-port" title="Permanent link">¶</a></h2>
+<div class="tabbed-set tabbed-alternate" data-tabs="12:1"><input checked="checked" id="__tabbed_12_1" name="__tabbed_12" type="radio"><div class="tabbed-labels"><label for="__tabbed_12_1">Python 3.10+</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span id="__span-11-1"><span class="c1"># Code above omitted 👆</span>
+</span><span id="__span-11-2">
+</span><span id="__span-11-3">    <span class="n">redis_port</span><span class="o">=</span><span class="mi">6379</span><span class="p">,</span>
+</span><span id="__span-11-4">
+</span><span id="__span-11-5"><span class="c1"># Code below omitted 👇</span>
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<details>
+<summary>👀 Full file preview</summary>
+<div class="tabbed-set tabbed-alternate" data-tabs="13:1"><input checked="checked" id="__tabbed_13_1" name="__tabbed_13" type="radio"><div class="tabbed-labels"><label for="__tabbed_13_1">Python 3.10+</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span id="__span-12-1"><span class="kn">from</span><span class="w"> </span><span class="nn">fastapi_task_manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">Config</span>
+</span><span id="__span-12-2">
+</span><span id="__span-12-3"><span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span>
+</span><span id="__span-12-4">    <span class="n">log_level</span><span class="o">=</span><span class="s2">"NOTSET"</span><span class="p">,</span>
+</span><span id="__span-12-5">    <span class="n">redis_key_prefix</span><span class="o">=</span><span class="vm">__name__</span><span class="p">,</span>
+</span><span id="__span-12-6">    <span class="n">concurrent_tasks</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+</span><span id="__span-12-7">    <span class="n">statistics_redis_expiration</span><span class="o">=</span><span class="mi">432_000</span><span class="p">,</span>
+</span><span id="__span-12-8">    <span class="n">redis_host</span><span class="o">=</span><span class="s2">"localhost"</span><span class="p">,</span>
+</span><span id="__span-12-9">    <span class="n">redis_port</span><span class="o">=</span><span class="mi">6379</span><span class="p">,</span>
+</span><span id="__span-12-10">    <span class="n">redis_password</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span><span id="__span-12-11">    <span class="n">redis_db</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+</span><span id="__span-12-12"><span class="p">)</span>
+</span></code></pre></div>
+</div>
+</div>
+</div>
+</details>
+<p>TODO</p>
+<h2 id="redis-password">Redis Password<a class="headerlink" href="#redis-password" title="Permanent link">¶</a></h2>
+<div class="tabbed-set tabbed-alternate" data-tabs="14:1"><input checked="checked" id="__tabbed_14_1" name="__tabbed_14" type="radio"><div class="tabbed-labels"><label for="__tabbed_14_1">Python 3.10+</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span id="__span-13-1"><span class="c1"># Code above omitted 👆</span>
+</span><span id="__span-13-2">
+</span><span id="__span-13-3">    <span class="n">redis_password</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span><span id="__span-13-4">
+</span><span id="__span-13-5"><span class="c1"># Code below omitted 👇</span>
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<details>
+<summary>👀 Full file preview</summary>
+<div class="tabbed-set tabbed-alternate" data-tabs="15:1"><input checked="checked" id="__tabbed_15_1" name="__tabbed_15" type="radio"><div class="tabbed-labels"><label for="__tabbed_15_1">Python 3.10+</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span id="__span-14-1"><span class="kn">from</span><span class="w"> </span><span class="nn">fastapi_task_manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">Config</span>
+</span><span id="__span-14-2">
+</span><span id="__span-14-3"><span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span>
+</span><span id="__span-14-4">    <span class="n">log_level</span><span class="o">=</span><span class="s2">"NOTSET"</span><span class="p">,</span>
+</span><span id="__span-14-5">    <span class="n">redis_key_prefix</span><span class="o">=</span><span class="vm">__name__</span><span class="p">,</span>
+</span><span id="__span-14-6">    <span class="n">concurrent_tasks</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+</span><span id="__span-14-7">    <span class="n">statistics_redis_expiration</span><span class="o">=</span><span class="mi">432_000</span><span class="p">,</span>
+</span><span id="__span-14-8">    <span class="n">redis_host</span><span class="o">=</span><span class="s2">"localhost"</span><span class="p">,</span>
+</span><span id="__span-14-9">    <span class="n">redis_port</span><span class="o">=</span><span class="mi">6379</span><span class="p">,</span>
+</span><span id="__span-14-10">    <span class="n">redis_password</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span><span id="__span-14-11">    <span class="n">redis_db</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+</span><span id="__span-14-12"><span class="p">)</span>
+</span></code></pre></div>
+</div>
+</div>
+</div>
+</details>
+<p>TODO</p>
+<h2 id="redis-db">Redis DB<a class="headerlink" href="#redis-db" title="Permanent link">¶</a></h2>
+<div class="tabbed-set tabbed-alternate" data-tabs="16:1"><input checked="checked" id="__tabbed_16_1" name="__tabbed_16" type="radio"><div class="tabbed-labels"><label for="__tabbed_16_1">Python 3.10+</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span id="__span-15-1"><span class="c1"># Code above omitted 👆</span>
+</span><span id="__span-15-2">
+</span><span id="__span-15-3">    <span class="n">redis_db</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+</span><span id="__span-15-4">
+</span><span id="__span-15-5"><span class="c1"># Code below omitted 👇</span>
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<details>
+<summary>👀 Full file preview</summary>
+<div class="tabbed-set tabbed-alternate" data-tabs="17:1"><input checked="checked" id="__tabbed_17_1" name="__tabbed_17" type="radio"><div class="tabbed-labels"><label for="__tabbed_17_1">Python 3.10+</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span id="__span-16-1"><span class="kn">from</span><span class="w"> </span><span class="nn">fastapi_task_manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">Config</span>
+</span><span id="__span-16-2">
+</span><span id="__span-16-3"><span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span>
+</span><span id="__span-16-4">    <span class="n">log_level</span><span class="o">=</span><span class="s2">"NOTSET"</span><span class="p">,</span>
+</span><span id="__span-16-5">    <span class="n">redis_key_prefix</span><span class="o">=</span><span class="vm">__name__</span><span class="p">,</span>
+</span><span id="__span-16-6">    <span class="n">concurrent_tasks</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+</span><span id="__span-16-7">    <span class="n">statistics_redis_expiration</span><span class="o">=</span><span class="mi">432_000</span><span class="p">,</span>
+</span><span id="__span-16-8">    <span class="n">redis_host</span><span class="o">=</span><span class="s2">"localhost"</span><span class="p">,</span>
+</span><span id="__span-16-9">    <span class="n">redis_port</span><span class="o">=</span><span class="mi">6379</span><span class="p">,</span>
+</span><span id="__span-16-10">    <span class="n">redis_password</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span><span id="__span-16-11">    <span class="n">redis_db</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+</span><span id="__span-16-12"><span class="p">)</span>
+</span></code></pre></div>
+</div>
+</div>
+</div>
+</details>
+<p>TODO</p>
 
 
 
