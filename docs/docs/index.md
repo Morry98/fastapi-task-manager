@@ -108,11 +108,28 @@ Package operations: 1 install, 0 updates, 0 removals
 
 ## Quick Example
 
-Here's a simple example to get you started:
+Here's a one file simple example to get you started.
 
-{* ./docs_src/tutorial/base_example_py310.py ln[2:3] *}
+In this example, we create a FastAPI application with FastAPI Task Manager integrated.  
+We define a scheduled task that runs every five minutes and we include the optional task management router to manage our tasks.
 
-TODOOOOOOOOOOOOO
+//// note | Non production example
+This is a simple example contained in a single file for demonstration purposes only. In a real-world application, you would typically organize your code into multiple files and modules for better maintainability and scalability.  
+In learn section of the docs, you can find a more complete explanation of how to set up FastAPI Task Manager in a more structured way.
+////
+
+
+### Imports
+{* ./docs_src/tutorial/base_example_py310.py ln[4:5] *}
+
+### FastAPI Task Manager setup
+{* ./docs_src/tutorial/base_example_py310.py ln[33:48] *}
+
+### Add task management router
+{* ./docs_src/tutorial/base_example_py310.py ln[50:55] *}
+
+### Define a scheduled task
+{* ./docs_src/tutorial/base_example_py310.py ln[60:68] *}
 
 ## License
 

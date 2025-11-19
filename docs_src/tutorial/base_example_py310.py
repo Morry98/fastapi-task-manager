@@ -1,7 +1,7 @@
 from fastapi import APIRouter, FastAPI
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-from fastapi_task_manager import Config as ManagerConfig
+from fastapi_task_manager import Config as ManagerConfig  # renamed to avoid conflict with our app Config class
 from fastapi_task_manager import TaskGroup, TaskManager
 
 
