@@ -19,3 +19,7 @@
    - Release Notes
 
 7. review docs initial paragraph (the one between ---) and review file names style choice between - and _
+
+8. Possibility to manage tasks from api
+
+9. Possibility to set different args for different tasks on the same function, from api and wrapper
