@@ -19,12 +19,14 @@ The default value is set to `NOTSET` and the suggestion is to keep the default v
 ## Redis Key Prefix
 {* ./docs_src/tutorial/configurations_py310.py ln[5] *}
 
-TODO
+This configuration is used as custom prefix for all the keys used by the package in redis. Pay attention to make it unique if you are using the same redis instance for multiple applications on the same redis db.  
+Default value is `__name__`.
 
 ## Concurrent Tasks
 {* ./docs_src/tutorial/configurations_py310.py ln[6] *}
 
-TODO
+This configuration is used to set the maximum number of concurrent tasks that can be executed by each worker.  
+Default value is `2`.
 
 ## Statistics Redis Expiration
 {* ./docs_src/tutorial/configurations_py310.py ln[7] *}
