@@ -173,7 +173,12 @@ class Runner:
                 return
 
             start = time.monotonic_ns()
-            thread = asyncio.create_task(run_function(task.function))
+            thread = asyncio.create_task(
+                run_function(
+                    function=task.function,
+                    kwargs=task.kwargs,
+                ),
+            )
             while not thread.done():
                 await self._redis_client.set(
                     self._task_manager.config.redis_key_prefix
@@ -259,11 +264,14 @@ async def stop_thread(running_task: asyncio.Task) -> None:
             logger.exception(msg)
 
 
-async def run_function(function: Callable):
+async def run_function(
+    function: Callable,
+    kwargs: dict | None = None,
+):
     try:
         if asyncio.iscoroutinefunction(function):
-            await function()
+            await function(**(kwargs or {}))
         else:
-            await asyncio.to_thread(function)
+            await asyncio.to_thread(function, **(kwargs or {}))
     except Exception:
         logger.exception("Error running function.")

@@ -31,6 +31,7 @@ class Task(TaskBase):
     }
 
     function: Callable
+    kwargs: dict | None = None
 
     def __hash__(self):
         """Hash the task based on its expression and function."""
