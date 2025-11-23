@@ -10,6 +10,7 @@ class Config(BaseModel):
     redis_key_prefix: str = __name__
     concurrent_tasks: int = 2
     statistics_redis_expiration: int = 432_000  # 5 days
+    statistics_history_runs: int = 30
     # --------- End of app config variables ---------
 
     # --------- Redis config variables ---------

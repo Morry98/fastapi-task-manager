@@ -23,3 +23,5 @@
 8. Possibility to manage tasks from api
 
 9. Possibility to set different args for different tasks on the same function, from api and wrapper
+
+10. Evaluate redis linked lists

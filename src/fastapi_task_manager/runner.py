@@ -201,7 +201,7 @@ class Runner:
                 )
                 if runs_b is not None:
                     runs = runs_b.decode("utf-8").split("\n")
-            if len(runs) == 30:  # noqa: PLR2004  # TODO Configurable
+            if len(runs) == self._task_manager.config.statistics_history_runs:
                 runs.pop(0)
             runs.append(str(datetime.now(timezone.utc).timestamp()))
             await self._redis_client.set(
@@ -228,7 +228,7 @@ class Runner:
                 )
                 if durations_second_b is not None:
                     durations_second = durations_second_b.decode("utf-8").split("\n")
-            if len(durations_second) == 30:  # noqa: PLR2004  # TODO Configurable
+            if len(durations_second) == self._task_manager.config.statistics_history_runs:
                 durations_second.pop(0)
             durations_second.append(str((end - start) / 1e9))
             await self._redis_client.set(
