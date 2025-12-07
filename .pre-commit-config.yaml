@@ -29,20 +29,20 @@ repos:
       - id: remove-tabs
 
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.18.2
+    rev: v1.19.0
     hooks:
       - id: mypy
-        additional_dependencies: [ "types-redis", "fastapi", "pydantic"]
+        additional_dependencies: [ "types-redis", "fastapi", "pydantic", "types-croniter"]
         args: ["--scripts-are-modules"]
 
   - repo: https://github.com/astral-sh/uv-pre-commit
     # uv version.
-    rev: 0.9.10
+    rev: 0.9.16
     hooks:
       - id: uv-lock
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.14.5
+    rev: v0.14.8
     hooks:
     -   id: ruff-check
         args:
@@ -51,7 +51,7 @@ repos:
     -   id: ruff-format
 
   - repo: https://github.com/netromdk/vermin
-    rev: v1.7.0
+    rev: v1.8.0
     hooks:
       - id: vermin
         args: ['-t=3.10-', '--violations']
