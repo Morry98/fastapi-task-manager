@@ -18,7 +18,7 @@
       
       
       <link rel="icon" href="../../assets/images/logo-circle-purple.svg">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
     
     
       
@@ -26,7 +26,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.618322db.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -727,6 +727,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#statistics-history-runs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Statistics History Runs
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#redis-host" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -947,6 +958,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#statistics-history-runs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Statistics History Runs
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#redis-host" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1097,11 +1119,12 @@
 </span><span id="__span-0-5">    <span class="n">redis_key_prefix</span><span class="o">=</span><span class="vm">__name__</span><span class="p">,</span>
 </span><span id="__span-0-6">    <span class="n">concurrent_tasks</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
 </span><span id="__span-0-7">    <span class="n">statistics_redis_expiration</span><span class="o">=</span><span class="mi">432_000</span><span class="p">,</span>
-</span><span id="__span-0-8">    <span class="n">redis_host</span><span class="o">=</span><span class="s2">"localhost"</span><span class="p">,</span>
-</span><span id="__span-0-9">    <span class="n">redis_port</span><span class="o">=</span><span class="mi">6379</span><span class="p">,</span>
-</span><span id="__span-0-10">    <span class="n">redis_password</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-</span><span id="__span-0-11">    <span class="n">redis_db</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-</span><span id="__span-0-12"><span class="p">)</span>
+</span><span id="__span-0-8">    <span class="n">statistics_history_runs</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+</span><span id="__span-0-9">    <span class="n">redis_host</span><span class="o">=</span><span class="s2">"localhost"</span><span class="p">,</span>
+</span><span id="__span-0-10">    <span class="n">redis_port</span><span class="o">=</span><span class="mi">6379</span><span class="p">,</span>
+</span><span id="__span-0-11">    <span class="n">redis_password</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span><span id="__span-0-12">    <span class="n">redis_db</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+</span><span id="__span-0-13"><span class="p">)</span>
 </span></code></pre></div>
 </div>
 </div>
@@ -1131,11 +1154,12 @@
 </span><span id="__span-2-5">    <span class="n">redis_key_prefix</span><span class="o">=</span><span class="vm">__name__</span><span class="p">,</span>
 </span><span id="__span-2-6">    <span class="n">concurrent_tasks</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
 </span><span id="__span-2-7">    <span class="n">statistics_redis_expiration</span><span class="o">=</span><span class="mi">432_000</span><span class="p">,</span>
-</span><span id="__span-2-8">    <span class="n">redis_host</span><span class="o">=</span><span class="s2">"localhost"</span><span class="p">,</span>
-</span><span id="__span-2-9">    <span class="n">redis_port</span><span class="o">=</span><span class="mi">6379</span><span class="p">,</span>
-</span><span id="__span-2-10">    <span class="n">redis_password</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-</span><span id="__span-2-11">    <span class="n">redis_db</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-</span><span id="__span-2-12"><span class="p">)</span>
+</span><span id="__span-2-8">    <span class="n">statistics_history_runs</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+</span><span id="__span-2-9">    <span class="n">redis_host</span><span class="o">=</span><span class="s2">"localhost"</span><span class="p">,</span>
+</span><span id="__span-2-10">    <span class="n">redis_port</span><span class="o">=</span><span class="mi">6379</span><span class="p">,</span>
+</span><span id="__span-2-11">    <span class="n">redis_password</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span><span id="__span-2-12">    <span class="n">redis_db</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+</span><span id="__span-2-13"><span class="p">)</span>
 </span></code></pre></div>
 </div>
 </div>
@@ -1172,11 +1196,12 @@ The default value is set to <code>NOTSET</code> and the suggestion is to keep th
 </span><span id="__span-4-5">    <span class="n">redis_key_prefix</span><span class="o">=</span><span class="vm">__name__</span><span class="p">,</span>
 </span><span id="__span-4-6">    <span class="n">concurrent_tasks</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
 </span><span id="__span-4-7">    <span class="n">statistics_redis_expiration</span><span class="o">=</span><span class="mi">432_000</span><span class="p">,</span>
-</span><span id="__span-4-8">    <span class="n">redis_host</span><span class="o">=</span><span class="s2">"localhost"</span><span class="p">,</span>
-</span><span id="__span-4-9">    <span class="n">redis_port</span><span class="o">=</span><span class="mi">6379</span><span class="p">,</span>
-</span><span id="__span-4-10">    <span class="n">redis_password</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-</span><span id="__span-4-11">    <span class="n">redis_db</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-</span><span id="__span-4-12"><span class="p">)</span>
+</span><span id="__span-4-8">    <span class="n">statistics_history_runs</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+</span><span id="__span-4-9">    <span class="n">redis_host</span><span class="o">=</span><span class="s2">"localhost"</span><span class="p">,</span>
+</span><span id="__span-4-10">    <span class="n">redis_port</span><span class="o">=</span><span class="mi">6379</span><span class="p">,</span>
+</span><span id="__span-4-11">    <span class="n">redis_password</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span><span id="__span-4-12">    <span class="n">redis_db</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+</span><span id="__span-4-13"><span class="p">)</span>
 </span></code></pre></div>
 </div>
 </div>
@@ -1209,11 +1234,12 @@ Default value is <code>__name__</code>.</p>
 </span><span id="__span-6-5">    <span class="n">redis_key_prefix</span><span class="o">=</span><span class="vm">__name__</span><span class="p">,</span>
 </span><span id="__span-6-6">    <span class="n">concurrent_tasks</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
 </span><span id="__span-6-7">    <span class="n">statistics_redis_expiration</span><span class="o">=</span><span class="mi">432_000</span><span class="p">,</span>
-</span><span id="__span-6-8">    <span class="n">redis_host</span><span class="o">=</span><span class="s2">"localhost"</span><span class="p">,</span>
-</span><span id="__span-6-9">    <span class="n">redis_port</span><span class="o">=</span><span class="mi">6379</span><span class="p">,</span>
-</span><span id="__span-6-10">    <span class="n">redis_password</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-</span><span id="__span-6-11">    <span class="n">redis_db</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-</span><span id="__span-6-12"><span class="p">)</span>
+</span><span id="__span-6-8">    <span class="n">statistics_history_runs</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+</span><span id="__span-6-9">    <span class="n">redis_host</span><span class="o">=</span><span class="s2">"localhost"</span><span class="p">,</span>
+</span><span id="__span-6-10">    <span class="n">redis_port</span><span class="o">=</span><span class="mi">6379</span><span class="p">,</span>
+</span><span id="__span-6-11">    <span class="n">redis_password</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span><span id="__span-6-12">    <span class="n">redis_db</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+</span><span id="__span-6-13"><span class="p">)</span>
 </span></code></pre></div>
 </div>
 </div>
@@ -1246,24 +1272,25 @@ Default value is <code>2</code>.</p>
 </span><span id="__span-8-5">    <span class="n">redis_key_prefix</span><span class="o">=</span><span class="vm">__name__</span><span class="p">,</span>
 </span><span id="__span-8-6">    <span class="n">concurrent_tasks</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
 </span><span id="__span-8-7">    <span class="n">statistics_redis_expiration</span><span class="o">=</span><span class="mi">432_000</span><span class="p">,</span>
-</span><span id="__span-8-8">    <span class="n">redis_host</span><span class="o">=</span><span class="s2">"localhost"</span><span class="p">,</span>
-</span><span id="__span-8-9">    <span class="n">redis_port</span><span class="o">=</span><span class="mi">6379</span><span class="p">,</span>
-</span><span id="__span-8-10">    <span class="n">redis_password</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-</span><span id="__span-8-11">    <span class="n">redis_db</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-</span><span id="__span-8-12"><span class="p">)</span>
+</span><span id="__span-8-8">    <span class="n">statistics_history_runs</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+</span><span id="__span-8-9">    <span class="n">redis_host</span><span class="o">=</span><span class="s2">"localhost"</span><span class="p">,</span>
+</span><span id="__span-8-10">    <span class="n">redis_port</span><span class="o">=</span><span class="mi">6379</span><span class="p">,</span>
+</span><span id="__span-8-11">    <span class="n">redis_password</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span><span id="__span-8-12">    <span class="n">redis_db</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+</span><span id="__span-8-13"><span class="p">)</span>
 </span></code></pre></div>
 </div>
 </div>
 </div>
 </details>
 <p>TODO</p>
-<h2 id="redis-host">Redis Host<a class="headerlink" href="#redis-host" title="Permanent link">¶</a></h2>
+<h2 id="statistics-history-runs">Statistics History Runs<a class="headerlink" href="#statistics-history-runs" title="Permanent link">¶</a></h2>
 <div class="tabbed-set tabbed-alternate" data-tabs="10:1"><input checked="checked" id="__tabbed_10_1" name="__tabbed_10" type="radio"><div class="tabbed-labels"><label for="__tabbed_10_1">Python 3.10+</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
 <div class="highlight"><pre><span></span><code><span id="__span-9-1"><span class="c1"># Code above omitted 👆</span>
 </span><span id="__span-9-2">
-</span><span id="__span-9-3">    <span class="n">redis_host</span><span class="o">=</span><span class="s2">"localhost"</span><span class="p">,</span>
+</span><span id="__span-9-3">    <span class="n">statistics_history_runs</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
 </span><span id="__span-9-4">
 </span><span id="__span-9-5"><span class="c1"># Code below omitted 👇</span>
 </span></code></pre></div>
@@ -1282,24 +1309,25 @@ Default value is <code>2</code>.</p>
 </span><span id="__span-10-5">    <span class="n">redis_key_prefix</span><span class="o">=</span><span class="vm">__name__</span><span class="p">,</span>
 </span><span id="__span-10-6">    <span class="n">concurrent_tasks</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
 </span><span id="__span-10-7">    <span class="n">statistics_redis_expiration</span><span class="o">=</span><span class="mi">432_000</span><span class="p">,</span>
-</span><span id="__span-10-8">    <span class="n">redis_host</span><span class="o">=</span><span class="s2">"localhost"</span><span class="p">,</span>
-</span><span id="__span-10-9">    <span class="n">redis_port</span><span class="o">=</span><span class="mi">6379</span><span class="p">,</span>
-</span><span id="__span-10-10">    <span class="n">redis_password</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-</span><span id="__span-10-11">    <span class="n">redis_db</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-</span><span id="__span-10-12"><span class="p">)</span>
+</span><span id="__span-10-8">    <span class="n">statistics_history_runs</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+</span><span id="__span-10-9">    <span class="n">redis_host</span><span class="o">=</span><span class="s2">"localhost"</span><span class="p">,</span>
+</span><span id="__span-10-10">    <span class="n">redis_port</span><span class="o">=</span><span class="mi">6379</span><span class="p">,</span>
+</span><span id="__span-10-11">    <span class="n">redis_password</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span><span id="__span-10-12">    <span class="n">redis_db</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+</span><span id="__span-10-13"><span class="p">)</span>
 </span></code></pre></div>
 </div>
 </div>
 </div>
 </details>
 <p>TODO</p>
-<h2 id="redis-port">Redis Port<a class="headerlink" href="#redis-port" title="Permanent link">¶</a></h2>
+<h2 id="redis-host">Redis Host<a class="headerlink" href="#redis-host" title="Permanent link">¶</a></h2>
 <div class="tabbed-set tabbed-alternate" data-tabs="12:1"><input checked="checked" id="__tabbed_12_1" name="__tabbed_12" type="radio"><div class="tabbed-labels"><label for="__tabbed_12_1">Python 3.10+</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
 <div class="highlight"><pre><span></span><code><span id="__span-11-1"><span class="c1"># Code above omitted 👆</span>
 </span><span id="__span-11-2">
-</span><span id="__span-11-3">    <span class="n">redis_port</span><span class="o">=</span><span class="mi">6379</span><span class="p">,</span>
+</span><span id="__span-11-3">    <span class="n">redis_host</span><span class="o">=</span><span class="s2">"localhost"</span><span class="p">,</span>
 </span><span id="__span-11-4">
 </span><span id="__span-11-5"><span class="c1"># Code below omitted 👇</span>
 </span></code></pre></div>
@@ -1318,24 +1346,25 @@ Default value is <code>2</code>.</p>
 </span><span id="__span-12-5">    <span class="n">redis_key_prefix</span><span class="o">=</span><span class="vm">__name__</span><span class="p">,</span>
 </span><span id="__span-12-6">    <span class="n">concurrent_tasks</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
 </span><span id="__span-12-7">    <span class="n">statistics_redis_expiration</span><span class="o">=</span><span class="mi">432_000</span><span class="p">,</span>
-</span><span id="__span-12-8">    <span class="n">redis_host</span><span class="o">=</span><span class="s2">"localhost"</span><span class="p">,</span>
-</span><span id="__span-12-9">    <span class="n">redis_port</span><span class="o">=</span><span class="mi">6379</span><span class="p">,</span>
-</span><span id="__span-12-10">    <span class="n">redis_password</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-</span><span id="__span-12-11">    <span class="n">redis_db</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-</span><span id="__span-12-12"><span class="p">)</span>
+</span><span id="__span-12-8">    <span class="n">statistics_history_runs</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+</span><span id="__span-12-9">    <span class="n">redis_host</span><span class="o">=</span><span class="s2">"localhost"</span><span class="p">,</span>
+</span><span id="__span-12-10">    <span class="n">redis_port</span><span class="o">=</span><span class="mi">6379</span><span class="p">,</span>
+</span><span id="__span-12-11">    <span class="n">redis_password</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span><span id="__span-12-12">    <span class="n">redis_db</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+</span><span id="__span-12-13"><span class="p">)</span>
 </span></code></pre></div>
 </div>
 </div>
 </div>
 </details>
 <p>TODO</p>
-<h2 id="redis-password">Redis Password<a class="headerlink" href="#redis-password" title="Permanent link">¶</a></h2>
+<h2 id="redis-port">Redis Port<a class="headerlink" href="#redis-port" title="Permanent link">¶</a></h2>
 <div class="tabbed-set tabbed-alternate" data-tabs="14:1"><input checked="checked" id="__tabbed_14_1" name="__tabbed_14" type="radio"><div class="tabbed-labels"><label for="__tabbed_14_1">Python 3.10+</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
 <div class="highlight"><pre><span></span><code><span id="__span-13-1"><span class="c1"># Code above omitted 👆</span>
 </span><span id="__span-13-2">
-</span><span id="__span-13-3">    <span class="n">redis_password</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span><span id="__span-13-3">    <span class="n">redis_port</span><span class="o">=</span><span class="mi">6379</span><span class="p">,</span>
 </span><span id="__span-13-4">
 </span><span id="__span-13-5"><span class="c1"># Code below omitted 👇</span>
 </span></code></pre></div>
@@ -1354,24 +1383,25 @@ Default value is <code>2</code>.</p>
 </span><span id="__span-14-5">    <span class="n">redis_key_prefix</span><span class="o">=</span><span class="vm">__name__</span><span class="p">,</span>
 </span><span id="__span-14-6">    <span class="n">concurrent_tasks</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
 </span><span id="__span-14-7">    <span class="n">statistics_redis_expiration</span><span class="o">=</span><span class="mi">432_000</span><span class="p">,</span>
-</span><span id="__span-14-8">    <span class="n">redis_host</span><span class="o">=</span><span class="s2">"localhost"</span><span class="p">,</span>
-</span><span id="__span-14-9">    <span class="n">redis_port</span><span class="o">=</span><span class="mi">6379</span><span class="p">,</span>
-</span><span id="__span-14-10">    <span class="n">redis_password</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-</span><span id="__span-14-11">    <span class="n">redis_db</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-</span><span id="__span-14-12"><span class="p">)</span>
+</span><span id="__span-14-8">    <span class="n">statistics_history_runs</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+</span><span id="__span-14-9">    <span class="n">redis_host</span><span class="o">=</span><span class="s2">"localhost"</span><span class="p">,</span>
+</span><span id="__span-14-10">    <span class="n">redis_port</span><span class="o">=</span><span class="mi">6379</span><span class="p">,</span>
+</span><span id="__span-14-11">    <span class="n">redis_password</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span><span id="__span-14-12">    <span class="n">redis_db</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+</span><span id="__span-14-13"><span class="p">)</span>
 </span></code></pre></div>
 </div>
 </div>
 </div>
 </details>
 <p>TODO</p>
-<h2 id="redis-db">Redis DB<a class="headerlink" href="#redis-db" title="Permanent link">¶</a></h2>
+<h2 id="redis-password">Redis Password<a class="headerlink" href="#redis-password" title="Permanent link">¶</a></h2>
 <div class="tabbed-set tabbed-alternate" data-tabs="16:1"><input checked="checked" id="__tabbed_16_1" name="__tabbed_16" type="radio"><div class="tabbed-labels"><label for="__tabbed_16_1">Python 3.10+</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
 <div class="highlight"><pre><span></span><code><span id="__span-15-1"><span class="c1"># Code above omitted 👆</span>
 </span><span id="__span-15-2">
-</span><span id="__span-15-3">    <span class="n">redis_db</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+</span><span id="__span-15-3">    <span class="n">redis_password</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 </span><span id="__span-15-4">
 </span><span id="__span-15-5"><span class="c1"># Code below omitted 👇</span>
 </span></code></pre></div>
@@ -1390,11 +1420,49 @@ Default value is <code>2</code>.</p>
 </span><span id="__span-16-5">    <span class="n">redis_key_prefix</span><span class="o">=</span><span class="vm">__name__</span><span class="p">,</span>
 </span><span id="__span-16-6">    <span class="n">concurrent_tasks</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
 </span><span id="__span-16-7">    <span class="n">statistics_redis_expiration</span><span class="o">=</span><span class="mi">432_000</span><span class="p">,</span>
-</span><span id="__span-16-8">    <span class="n">redis_host</span><span class="o">=</span><span class="s2">"localhost"</span><span class="p">,</span>
-</span><span id="__span-16-9">    <span class="n">redis_port</span><span class="o">=</span><span class="mi">6379</span><span class="p">,</span>
-</span><span id="__span-16-10">    <span class="n">redis_password</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-</span><span id="__span-16-11">    <span class="n">redis_db</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-</span><span id="__span-16-12"><span class="p">)</span>
+</span><span id="__span-16-8">    <span class="n">statistics_history_runs</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+</span><span id="__span-16-9">    <span class="n">redis_host</span><span class="o">=</span><span class="s2">"localhost"</span><span class="p">,</span>
+</span><span id="__span-16-10">    <span class="n">redis_port</span><span class="o">=</span><span class="mi">6379</span><span class="p">,</span>
+</span><span id="__span-16-11">    <span class="n">redis_password</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span><span id="__span-16-12">    <span class="n">redis_db</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+</span><span id="__span-16-13"><span class="p">)</span>
+</span></code></pre></div>
+</div>
+</div>
+</div>
+</details>
+<p>TODO</p>
+<h2 id="redis-db">Redis DB<a class="headerlink" href="#redis-db" title="Permanent link">¶</a></h2>
+<div class="tabbed-set tabbed-alternate" data-tabs="18:1"><input checked="checked" id="__tabbed_18_1" name="__tabbed_18" type="radio"><div class="tabbed-labels"><label for="__tabbed_18_1">Python 3.10+</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span id="__span-17-1"><span class="c1"># Code above omitted 👆</span>
+</span><span id="__span-17-2">
+</span><span id="__span-17-3">    <span class="n">redis_db</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+</span><span id="__span-17-4">
+</span><span id="__span-17-5"><span class="c1"># Code below omitted 👇</span>
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<details>
+<summary>👀 Full file preview</summary>
+<div class="tabbed-set tabbed-alternate" data-tabs="19:1"><input checked="checked" id="__tabbed_19_1" name="__tabbed_19" type="radio"><div class="tabbed-labels"><label for="__tabbed_19_1">Python 3.10+</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span id="__span-18-1"><span class="kn">from</span><span class="w"> </span><span class="nn">fastapi_task_manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">Config</span>
+</span><span id="__span-18-2">
+</span><span id="__span-18-3"><span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span>
+</span><span id="__span-18-4">    <span class="n">log_level</span><span class="o">=</span><span class="s2">"NOTSET"</span><span class="p">,</span>
+</span><span id="__span-18-5">    <span class="n">redis_key_prefix</span><span class="o">=</span><span class="vm">__name__</span><span class="p">,</span>
+</span><span id="__span-18-6">    <span class="n">concurrent_tasks</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+</span><span id="__span-18-7">    <span class="n">statistics_redis_expiration</span><span class="o">=</span><span class="mi">432_000</span><span class="p">,</span>
+</span><span id="__span-18-8">    <span class="n">statistics_history_runs</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+</span><span id="__span-18-9">    <span class="n">redis_host</span><span class="o">=</span><span class="s2">"localhost"</span><span class="p">,</span>
+</span><span id="__span-18-10">    <span class="n">redis_port</span><span class="o">=</span><span class="mi">6379</span><span class="p">,</span>
+</span><span id="__span-18-11">    <span class="n">redis_password</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span><span id="__span-18-12">    <span class="n">redis_db</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+</span><span id="__span-18-13"><span class="p">)</span>
 </span></code></pre></div>
 </div>
 </div>
@@ -1538,10 +1606,10 @@ Default value is <code>2</code>.</p>
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.code.annotate", "content.code.copy", "content.footnote.tooltips", "content.tabs.link", "content.tooltips", "navigation.indexes", "navigation.instant", "navigation.instant.prefetch", "navigation.instant.progress", "navigation.path", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "navigation.tracking", "navigation.footer", "search.highlight", "search.share", "search.suggest", "toc.follow"], "search": "../../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.code.annotate", "content.code.copy", "content.footnote.tooltips", "content.tabs.link", "content.tooltips", "navigation.indexes", "navigation.instant", "navigation.instant.prefetch", "navigation.instant.progress", "navigation.path", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "navigation.tracking", "navigation.footer", "search.highlight", "search.share", "search.suggest", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.e71a0d61.min.js"></script>
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
       
         <script src="../../assets/javascripts/termynal-reload.js"></script>
       

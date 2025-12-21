@@ -16,7 +16,7 @@
       
       
       <link rel="icon" href="../assets/images/logo-circle-purple.svg">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
     
     
       
@@ -24,7 +24,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.618322db.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
       
         
         <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -969,20 +969,30 @@
 </ul>
 <h3 id="docs">Docs<a class="headerlink" href="#docs" title="Permanent link">¶</a></h3>
 <ul>
-<li>📝 Add first implementation of docs available at <a href="https://morry98.github.io/fastapi-task-manager/">https://morry98.github.io/fastapi-task-manager/</a></li>
+<li>📝 Add first implementation of docs available at <a href="https://fastapi-task-manager.morando.uk">https://fastapi-task-manager.morando.uk</a></li>
 </ul>
 <h3 id="internals">Internals<a class="headerlink" href="#internals" title="Permanent link">¶</a></h3>
 <ul>
-<li>⬆️ Pre-commit bump uv-pre-commit from 0.9.7 to 0.9.10.</li>
-<li>⬆️ Pre-commit bump ruff-pre-commit from 0.14.3 to 0.14.5.</li>
-<li>⬆️ Bump dependencies in uv.lock file, for dev purposes:<ul>
-<li>coverage from 7.11.1 to 7.11.3</li>
-<li>fastapi from 0.121.0 to 0.121.2</li>
+<li>♻️ Move pre-commit checks from mypy+vermin to <a href="https://docs.astral.sh/ty/">ty from astral</a></li>
+<li>♻️ Change pypi package 'cronexpr'  with 'croniter' due to maintenance issues.
+     No side effects in package usage.</li>
+<li>⬆️ Pre-commit bump uv-pre-commit from 0.9.7 to 0.9.18.</li>
+<li>⬆️ Pre-commit bump ruff-pre-commit from 0.14.3 to 0.14.10.</li>
+<li>⬆️ Bump dependencies in uv.lock file, for dev purposes:</li>
+<li>anyio from 4.11.0 to 4.12.0</li>
+<li>coverage from 7.11.1 to 7.13.0</li>
+<li>fastapi from 0.121.0 to 0.126.0</li>
+<li>markdown-include-variants from 0.0.5 to 0.0.8</li>
 <li>mkdocs-macros-plugin from 1.4.1 to 1.5.0</li>
-<li>mkdocs-material from 9.6.23 to 9.7.0</li>
-<li>pymdown-extensions from 10.16.1 to 10.17.1</li>
-</ul>
-</li>
+<li>mkdocs-material from 9.6.23 to 9.7.1</li>
+<li>platformdirs from 4.5.0 to 4.5.1</li>
+<li>pydantic from 2.12.4 to 2.12.5</li>
+<li>pymdown-extensions from 10.16.1 to 10.19.1</li>
+<li>pytest from 9.0.1 to 9.0.2</li>
+<li>redis from 7.0.1 to 7.1.0</li>
+<li>selectolax from 0.4.3 to 0.4.6</li>
+<li>starlette from 0.49.3 to 0.50.0</li>
+<li>urllib3 from 2.5.0 to 2.6.2</li>
 </ul>
 <h2 id="070-2025-xx-xx">0.7.0 - 2025-xx-xx<a class="headerlink" href="#070-2025-xx-xx" title="Permanent link">¶</a></h2>
 <p>TBC</p>
@@ -1114,10 +1124,10 @@
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["content.code.annotate", "content.code.copy", "content.footnote.tooltips", "content.tabs.link", "content.tooltips", "navigation.indexes", "navigation.instant", "navigation.instant.prefetch", "navigation.instant.progress", "navigation.path", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "navigation.tracking", "navigation.footer", "search.highlight", "search.share", "search.suggest", "toc.follow"], "search": "../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["content.code.annotate", "content.code.copy", "content.footnote.tooltips", "content.tabs.link", "content.tooltips", "navigation.indexes", "navigation.instant", "navigation.instant.prefetch", "navigation.instant.progress", "navigation.path", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "navigation.tracking", "navigation.footer", "search.highlight", "search.share", "search.suggest", "toc.follow"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.e71a0d61.min.js"></script>
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
       
         <script src="../assets/javascripts/termynal-reload.js"></script>
       
