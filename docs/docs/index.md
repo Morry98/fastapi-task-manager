@@ -16,7 +16,7 @@ hide:
 </style>
 
 <p align="center">
-  <a href="https://morry98.github.io/fastapi-task-manager/"><img src="assets/images/logo-text-purple.svg" alt="FastAPI Task Manager"></a>
+  <a href="https://fastapi-task-manager.morando.uk"><img src="assets/images/logo-text-purple.svg" alt="FastAPI Task Manager"></a>
 </p>
 <p align="center">
     <em>Lightweight, efficient and fast to code scheduled task management system built on FastAPI</em>

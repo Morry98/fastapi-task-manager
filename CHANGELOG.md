@@ -8,7 +8,7 @@
 
 ### Docs
 
-* 📝 Add first implementation of docs available at [https://morry98.github.io/fastapi-task-manager/](https://morry98.github.io/fastapi-task-manager/)
+* 📝 Add first implementation of docs available at [https://fastapi-task-manager.morando.uk](https://fastapi-task-manager.morando.uk)
 
 ### Internals
 
