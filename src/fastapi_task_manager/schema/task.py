@@ -44,5 +44,5 @@ class Task(TaskBase):
             + "_"
             + str(self.tags or [])
             + "_"
-            + self.function.__name__,
+            + self.function.__name__,  # ty: ignore[unresolved-attribute]
         )

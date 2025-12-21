@@ -40,8 +40,11 @@ dependencies = [
 [dependency-groups]
 dev = [
     "coverage>=7.8.0",
+    "pydantic-settings>=2.12.0",
     "pytest>=8.3.5",
+    "ruff>=0.14.10",
     "setuptools>=80.8.0",  # Added to fix pycharm test discovery
+    "ty>=0.0.5",
 ]
 docs = [
     "markdown-include-variants>=0.0.4",
@@ -146,14 +149,3 @@ max-complexity = 12
 
 [tool.ruff.lint.pylint]
 max-args = 8
-
-[tool.mypy]
-no_implicit_optional = true
-check_untyped_defs = true
-warn_redundant_casts = true
-warn_unused_ignores = true
-warn_no_return = true
-warn_unreachable = true
-pretty = true
-ignore_missing_imports = true
-plugins = []

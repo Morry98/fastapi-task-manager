@@ -25,7 +25,7 @@ class Config(BaseSettings):
     # --------- End of app config variables ---------
 
 
-CONFIG = Config()
+CONFIG = Config()  # ty: ignore[missing-argument]
 
 app = FastAPI()
 router = APIRouter()

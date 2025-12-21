@@ -57,7 +57,7 @@ class TaskGroup:
                 # add hash of kwargs to expression to make it unique
                 # pay attention that python hash is not a stable hash across different runs
                 # so we use sha256 from hashlib
-                internal_name = name or func.__name__
+                internal_name = name or func.__name__  # ty: ignore[unresolved-attribute]
                 hash_suffix = ""
                 if kwargs_list[i]:
                     hash_input = str(sorted(kwargs_list[i].items())).encode()

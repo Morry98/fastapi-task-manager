@@ -50,7 +50,7 @@ def get_tasks(
             if redis_client.exists(task_manager.config.redis_key_prefix + "_" + tg.name + "_" + t.name + "_runs"):
                 runs_b = redis_client.get(task_manager.config.redis_key_prefix + "_" + tg.name + "_" + t.name + "_runs")
                 if runs_b is not None:
-                    runs = runs_b.decode("utf-8").split("\n")
+                    runs = runs_b.decode("utf-8").split("\n")  # ty: ignore[possibly-missing-attribute]
 
             durations_second = []  # TODO Evaluate redis linked lists
             if redis_client.exists(
@@ -60,7 +60,7 @@ def get_tasks(
                     task_manager.config.redis_key_prefix + "_" + tg.name + "_" + t.name + "_durations_second",
                 )
                 if durations_second_b is not None:
-                    durations_second = durations_second_b.decode("utf-8").split("\n")
+                    durations_second = durations_second_b.decode("utf-8").split("\n")  # ty: ignore[possibly-missing-attribute]
             assert len(runs) == len(durations_second), "Runs and durations_second must have the same length"
 
             next_run = datetime(year=2000, month=1, day=1, tzinfo=timezone.utc)
@@ -69,7 +69,7 @@ def get_tasks(
                     task_manager.config.redis_key_prefix + "_" + tg.name + "_" + t.name + "_next_run",
                 )
                 if next_run_b is not None:
-                    next_run = datetime.fromtimestamp(float(next_run_b.decode("utf-8")), tz=timezone.utc)
+                    next_run = datetime.fromtimestamp(float(next_run_b.decode("utf-8")), tz=timezone.utc)  # ty: ignore[possibly-missing-attribute]
             list_to_return.append(
                 TaskDetailed(
                     name=t.name,

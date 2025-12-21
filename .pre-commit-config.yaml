@@ -28,21 +28,14 @@ repos:
     hooks:
       - id: remove-tabs
 
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.19.0
-    hooks:
-      - id: mypy
-        additional_dependencies: [ "types-redis", "fastapi", "pydantic", "types-croniter"]
-        args: ["--scripts-are-modules"]
-
   - repo: https://github.com/astral-sh/uv-pre-commit
     # uv version.
-    rev: 0.9.16
+    rev: 0.9.18
     hooks:
       - id: uv-lock
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.14.8
+    rev: v0.14.10
     hooks:
     -   id: ruff-check
         args:
@@ -50,16 +43,18 @@ repos:
         - --unsafe-fixes
     -   id: ruff-format
 
-  - repo: https://github.com/netromdk/vermin
-    rev: v1.8.0
-    hooks:
-      - id: vermin
-        args: ['-t=3.10-', '--violations']
-
   - repo: local
     hooks:
-      - id: prune-stale-tags
-        name: Prune local tags deleted on remote
-        language: system
-        entry: git fetch origin --prune --prune-tags --tags
-        pass_filenames: false
+      #- id: prune-stale-tags
+      #  name: Prune local tags deleted on remote
+      #  language: system
+      #  entry: git fetch origin --prune --prune-tags --tags
+      #  pass_filenames: false
+
+      - id: ty
+        name: ty check
+        entry: ty check .
+        language: python
+        types: [python]
+        pass_filenames: true
+        additional_dependencies: [ "ty", "redis", "fastapi", "croniter", "pydantic_settings" ]
