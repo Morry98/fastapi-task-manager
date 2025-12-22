@@ -45,16 +45,22 @@ repos:
 
   - repo: local
     hooks:
-      #- id: prune-stale-tags
-      #  name: Prune local tags deleted on remote
-      #  language: system
-      #  entry: git fetch origin --prune --prune-tags --tags
-      #  pass_filenames: false
+      - id: prune-stale-tags
+        name: Prune local tags deleted on remote
+        language: system
+        entry: git fetch origin --prune --prune-tags --tags
+        pass_filenames: false
+        stages: [ manual ]
 
       - id: ty
         name: ty check
         entry: ty check .
         language: python
-        types: [python]
-        pass_filenames: true
-        additional_dependencies: [ "ty", "redis", "fastapi", "croniter", "pydantic_settings" ]
+        pass_filenames: false
+        additional_dependencies: [
+          "ty",
+          "redis",
+          "fastapi",
+          "croniter",
+          "pydantic_settings"
+        ]
