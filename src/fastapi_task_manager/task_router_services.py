@@ -61,7 +61,10 @@ def get_tasks(
                 )
                 if durations_second_b is not None:
                     durations_second = durations_second_b.decode("utf-8").split("\n")  # ty: ignore[possibly-missing-attribute]
-            assert len(runs) == len(durations_second), "Runs and durations_second must have the same length"
+            # Verify data consistency between runs and durations
+            if len(runs) != len(durations_second):
+                msg = "Runs and durations_second must have the same length"
+                raise ValueError(msg)
 
             next_run = datetime(year=2000, month=1, day=1, tzinfo=timezone.utc)
             if redis_client.exists(task_manager.config.redis_key_prefix + "_" + tg.name + "_" + t.name + "_next_run"):

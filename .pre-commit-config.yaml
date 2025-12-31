@@ -43,6 +43,11 @@ repos:
         - --unsafe-fixes
     -   id: ruff-format
 
+  - repo: https://github.com/PyCQA/bandit
+    rev: 1.9.2
+    hooks:
+    - id: bandit
+
   - repo: local
     hooks:
       - id: prune-stale-tags
