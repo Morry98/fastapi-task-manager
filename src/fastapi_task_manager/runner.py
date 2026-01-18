@@ -4,14 +4,16 @@ import time
 from collections.abc import Callable
 from datetime import datetime, timezone
 from typing import TYPE_CHECKING
-from uuid import uuid4
 
 from croniter import croniter
 from redis.asyncio import Redis
 
 from fastapi_task_manager import TaskGroup
 from fastapi_task_manager.force_acquire_semaphore import ForceAcquireSemaphore
+from fastapi_task_manager.redis_keys import RedisKeyBuilder
 from fastapi_task_manager.schema.task import Task
+from fastapi_task_manager.schema.worker_identity import WorkerIdentity
+from fastapi_task_manager.statistics import StatisticsStorage
 
 if TYPE_CHECKING:
     from fastapi_task_manager import TaskManager
@@ -26,12 +28,22 @@ class Runner:
         concurrent_tasks: int,
         task_manager: "TaskManager",
     ):
-        self._uuid: str = str(uuid4().int)
+        # Use WorkerIdentity for traceable worker identification
+        self._worker = WorkerIdentity(task_manager.config.worker_service_name)
+        self._uuid = self._worker.redis_safe_id
+        # Initialize the key builder for centralized key construction
+        self._key_builder = RedisKeyBuilder(task_manager.config.redis_key_prefix)
         self._redis_client = redis_client
         self._running_thread: asyncio.Task | None = None
         self._running_tasks: dict[Task, asyncio.Task] = {}
         self._semaphore = ForceAcquireSemaphore(concurrent_tasks)
         self._task_manager = task_manager
+        # Initialize statistics storage with Redis Lists for atomic operations
+        self._statistics = StatisticsStorage(
+            redis_client=redis_client,
+            max_entries=task_manager.config.statistics_history_runs,
+            ttl_seconds=task_manager.config.statistics_redis_expiration,
+        )
 
     async def start(self) -> None:
         if self._running_thread:
@@ -48,7 +60,8 @@ class Runner:
             raise ConnectionError(msg)
 
         self._running_thread = asyncio.create_task(self._run(), name="Runner")
-        logger.info("Runner started successfully.")
+        # Log the runner startup with worker identity for traceability
+        logger.info("Runner started successfully. Worker: %s", self._worker)
 
     async def stop(self) -> None:
         if not self._running_thread:
@@ -64,7 +77,7 @@ class Runner:
 
     async def _run(self):
         while True:
-            await asyncio.sleep(0.1)
+            await asyncio.sleep(self._task_manager.config.poll_interval)
             try:
                 for task_group in self._task_manager.task_groups:
                     for task in task_group.tasks:
@@ -75,25 +88,12 @@ class Runner:
                             # If the task is done, remove it from the running tasks list
                             self._running_tasks.pop(task, None)
 
+                        # Use RedisKeyBuilder for centralized key construction
+                        keys = self._key_builder.get_task_keys(task_group.name, task.name)
                         next_run = datetime(year=2000, month=1, day=1, tzinfo=timezone.utc)
-                        if await self._redis_client.exists(
-                            self._task_manager.config.redis_key_prefix
-                            + "_"
-                            + task_group.name
-                            + "_"
-                            + task.name
-                            + "_next_run",
-                        ):
-                            next_run_b = await self._redis_client.get(
-                                self._task_manager.config.redis_key_prefix
-                                + "_"
-                                + task_group.name
-                                + "_"
-                                + task.name
-                                + "_next_run",
-                            )
-                            if next_run_b is not None:
-                                next_run = datetime.fromtimestamp(float(next_run_b.decode("utf-8")), tz=timezone.utc)
+                        next_run_b = await self._redis_client.get(keys.next_run)
+                        if next_run_b is not None:
+                            next_run = datetime.fromtimestamp(float(next_run_b.decode("utf-8")), tz=timezone.utc)
                         if next_run <= datetime.now(timezone.utc):
                             self._running_tasks[task] = asyncio.create_task(
                                 self._queue_task(task=task, task_group=task_group),
@@ -114,60 +114,41 @@ class Runner:
             async with self._semaphore:
                 await self._run_task(task=task, task_group=task_group)
 
-    async def _run_task(self, task_group: TaskGroup, task: Task) -> None:  # noqa: PLR0912, C901  # TODO Reduce complexity
+    async def _run_task(self, task_group: TaskGroup, task: Task) -> None:
         try:
-            if await self._redis_client.exists(
-                self._task_manager.config.redis_key_prefix + "_" + task_group.name + "_" + task.name + "_next_run",
-            ):
-                redis_next_run_b = await self._redis_client.get(
-                    self._task_manager.config.redis_key_prefix + "_" + task_group.name + "_" + task.name + "_next_run",
-                )
-                if redis_next_run_b is None:
-                    return
+            keys = self._key_builder.get_task_keys(task_group.name, task.name)
+
+            redis_next_run_b = await self._redis_client.get(keys.next_run)
+            if redis_next_run_b is not None:
                 redis_next_run = datetime.fromtimestamp(float(redis_next_run_b.decode("utf-8")), tz=timezone.utc)
                 if redis_next_run > datetime.now(timezone.utc):
                     return
 
-            redis_uuid_exists = await self._redis_client.exists(
-                self._task_manager.config.redis_key_prefix + "_" + task_group.name + "_" + task.name + "_runner_uuid",
+            lock_acquired = await self._redis_client.set(
+                keys.runner_uuid,
+                self._uuid,
+                nx=True,
+                ex=self._task_manager.config.initial_lock_ttl,
             )
-            if not redis_uuid_exists:
-                await self._redis_client.set(
-                    self._task_manager.config.redis_key_prefix
-                    + "_"
-                    + task_group.name
-                    + "_"
-                    + task.name
-                    + "_runner_uuid",
-                    self._uuid,
-                    ex=15,
-                )
-                # Wait a bit to ensure the UUID is set and not overwritten
-                await asyncio.sleep(0.2)
-            redis_uuid_b = await self._redis_client.get(
-                self._task_manager.config.redis_key_prefix + "_" + task_group.name + "_" + task.name + "_runner_uuid",
-            )
-            if redis_uuid_b is None:
-                return
-            if redis_uuid_b.decode("utf-8") != self._uuid:
-                return
+            if not lock_acquired:
+                # Lock already exists, check if we are the owner
+                redis_uuid_b = await self._redis_client.get(keys.runner_uuid)
+                if redis_uuid_b is None or redis_uuid_b.decode("utf-8") != self._uuid:
+                    # Another runner owns the lock, exit gracefully
+                    return
 
             local_date = datetime.now(timezone.utc)
             next_run = croniter(task.expression, local_date).get_next(datetime)
-            await self._redis_client.set(
-                self._task_manager.config.redis_key_prefix + "_" + task_group.name + "_" + task.name + "_next_run",
-                next_run.timestamp(),
-                # using max to ensure that the expiration isn't lower than 15 seconds
-                # in this way we avoid potential issues
-                ex=max(int((next_run - datetime.now(timezone.utc)).total_seconds()) * 2, 15),
-            )
+            # Calculate expiration time, ensuring it's at least initial_lock_ttl seconds
+            next_run_ttl = int((next_run - datetime.now(timezone.utc)).total_seconds()) * 2
+            expiration = max(next_run_ttl, self._task_manager.config.initial_lock_ttl)
+            await self._redis_client.set(keys.next_run, next_run.timestamp(), ex=expiration)
 
-            if await self._redis_client.exists(
-                self._task_manager.config.redis_key_prefix + "_" + task_group.name + "_" + task.name + "_disabled",
-            ):
-                # Set the key in order to update the ttl
+            disabled_b = await self._redis_client.get(keys.disabled)
+            if disabled_b is not None:
+                # Task is disabled, update TTL and exit
                 await self._redis_client.set(
-                    self._task_manager.config.redis_key_prefix + "_" + task_group.name + "_" + task.name + "_disabled",
+                    keys.disabled,
                     "1",
                     ex=self._task_manager.config.statistics_redis_expiration,
                 )
@@ -180,71 +161,29 @@ class Runner:
                     kwargs=task.kwargs,
                 ),
             )
+
+            last_renewal_time = time.monotonic()
             while not thread.done():
-                await self._redis_client.set(
-                    self._task_manager.config.redis_key_prefix
-                    + "_"
-                    + task_group.name
-                    + "_"
-                    + task.name
-                    + "_runner_uuid",
-                    self._uuid,
-                    ex=5,
-                )
-                await asyncio.sleep(0.1)
+                current_time = time.monotonic()
+                if current_time - last_renewal_time >= self._task_manager.config.lock_renewal_interval:
+                    await self._redis_client.set(
+                        keys.runner_uuid,
+                        self._uuid,
+                        ex=self._task_manager.config.running_lock_ttl,
+                    )
+                    last_renewal_time = current_time
+                await asyncio.sleep(self._task_manager.config.poll_interval)
             end = time.monotonic_ns()
-            runs = []  # TODO Evaluate redis linked lists
-            if await self._redis_client.exists(
-                self._task_manager.config.redis_key_prefix + "_" + task_group.name + "_" + task.name + "_runs",
-            ):
-                runs_b = await self._redis_client.get(
-                    self._task_manager.config.redis_key_prefix + "_" + task_group.name + "_" + task.name + "_runs",
-                )
-                if runs_b is not None:
-                    runs = runs_b.decode("utf-8").split("\n")
-            if len(runs) == self._task_manager.config.statistics_history_runs:
-                runs.pop(0)
-            runs.append(str(datetime.now(timezone.utc).timestamp()))
-            await self._redis_client.set(
-                self._task_manager.config.redis_key_prefix + "_" + task_group.name + "_" + task.name + "_runs",
-                "\n".join(runs),
-                ex=self._task_manager.config.statistics_redis_expiration,
+
+            # Record execution statistics using Redis Lists with atomic pipeline operations
+            await self._statistics.record_execution(
+                runs_key=keys.runs,
+                durations_key=keys.durations_second,
+                timestamp=datetime.now(timezone.utc).timestamp(),
+                duration_seconds=(end - start) / 1e9,
             )
-            durations_second = []  # TODO Evaluate redis linked lists
-            if await self._redis_client.exists(
-                self._task_manager.config.redis_key_prefix
-                + "_"
-                + task_group.name
-                + "_"
-                + task.name
-                + "_durations_second",
-            ):
-                durations_second_b = await self._redis_client.get(
-                    self._task_manager.config.redis_key_prefix
-                    + "_"
-                    + task_group.name
-                    + "_"
-                    + task.name
-                    + "_durations_second",
-                )
-                if durations_second_b is not None:
-                    durations_second = durations_second_b.decode("utf-8").split("\n")
-            if len(durations_second) == self._task_manager.config.statistics_history_runs:
-                durations_second.pop(0)
-            durations_second.append(str((end - start) / 1e9))
-            await self._redis_client.set(
-                self._task_manager.config.redis_key_prefix
-                + "_"
-                + task_group.name
-                + "_"
-                + task.name
-                + "_durations_second",
-                "\n".join(durations_second),
-                ex=self._task_manager.config.statistics_redis_expiration,
-            )
-            await self._redis_client.delete(
-                self._task_manager.config.redis_key_prefix + "_" + task_group.name + "_" + task.name + "_runner_uuid",
-            )
+            # Delete the lock key after task completion
+            await self._redis_client.delete(keys.runner_uuid)
 
         except asyncio.CancelledError:
             msg = f"Task {task.name} was cancelled."
