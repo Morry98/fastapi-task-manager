@@ -57,3 +57,6 @@ cover/
 
 # Docs
 docs/site
+
+# AI
+.claude
