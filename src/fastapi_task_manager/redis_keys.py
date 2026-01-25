@@ -18,6 +18,30 @@ from dataclasses import dataclass
 
 
 @dataclass(frozen=True)
+class StreamKeys:
+    """Container for Redis Stream related keys.
+
+    This immutable dataclass holds all the Redis keys needed for Redis Streams
+    operation, including the dual task streams (high/low priority), consumer group,
+    and leader election.
+
+    The dual-queue design ensures high priority tasks are always processed first,
+    while low priority tasks are only consumed when workers have available capacity.
+
+    Attributes:
+        task_stream_high: Key for the high priority Redis Stream.
+        task_stream_low: Key for the low priority Redis Stream.
+        consumer_group: Name of the consumer group for task workers.
+        leader_lock: Key used for leader election distributed lock.
+    """
+
+    task_stream_high: str
+    task_stream_low: str
+    consumer_group: str
+    leader_lock: str
+
+
+@dataclass(frozen=True)
 class TaskKeys:
     """Container for all Redis keys related to a specific task.
 
@@ -217,3 +241,79 @@ class RedisKeyBuilder:
             The Redis key for the durations history list.
         """
         return self._build_key(group, task, "durations_second")
+
+    # =========================================================================
+    # Stream-related keys
+    # These methods provide keys for Redis Streams operation mode, including
+    # the task stream, consumer group, and leader election.
+    # =========================================================================
+
+    def get_stream_keys(self) -> StreamKeys:
+        """Get all keys related to Redis Streams operation.
+
+        Returns a StreamKeys object containing the dual task stream keys
+        (high/low priority), consumer group name, and leader lock key.
+        Use this when operating in stream mode to get all necessary keys at once.
+
+        Returns:
+            A StreamKeys dataclass containing all stream-related keys.
+
+        Example:
+            >>> builder = RedisKeyBuilder("myapp")
+            >>> stream_keys = builder.get_stream_keys()
+            >>> print(stream_keys.task_stream_high)
+            myapp_task_stream_high
+        """
+        return StreamKeys(
+            task_stream_high=f"{self._prefix}_task_stream_high",
+            task_stream_low=f"{self._prefix}_task_stream_low",
+            consumer_group=f"{self._prefix}_workers",
+            leader_lock=f"{self._prefix}_leader_lock",
+        )
+
+    def leader_lock_key(self) -> str:
+        """Build the key for leader election lock.
+
+        This key is used for distributed leader election. Only one worker
+        can hold this lock at a time, and the lock holder becomes the leader
+        responsible for scheduling tasks to the stream.
+
+        Returns:
+            The Redis key for the leader election lock.
+        """
+        return f"{self._prefix}_leader_lock"
+
+    def task_stream_high_key(self) -> str:
+        """Build the key for the high priority task stream.
+
+        This key identifies the Redis Stream where high priority tasks are
+        published by the leader. High priority tasks are always consumed first.
+
+        Returns:
+            The Redis key for the high priority task stream.
+        """
+        return f"{self._prefix}_task_stream_high"
+
+    def task_stream_low_key(self) -> str:
+        """Build the key for the low priority task stream.
+
+        This key identifies the Redis Stream where low priority tasks are
+        published by the leader. Low priority tasks are only consumed when
+        workers have available capacity (semaphore slots).
+
+        Returns:
+            The Redis key for the low priority task stream.
+        """
+        return f"{self._prefix}_task_stream_low"
+
+    def consumer_group_name(self) -> str:
+        """Get the consumer group name for task workers.
+
+        This is the name used when creating and joining the consumer group
+        for the task stream. All workers in the same deployment should use
+        the same consumer group name.
+
+        Returns:
+            The consumer group name.
+        """
+        return f"{self._prefix}_workers"
