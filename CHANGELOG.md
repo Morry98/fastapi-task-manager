@@ -13,8 +13,6 @@
 ### Internals
 
 * ♻️ Move pre-commit checks from mypy+vermin to [ty from astral](https://docs.astral.sh/ty/)
-* ♻️ Change pypi package 'cronexpr'  with 'croniter' due to maintenance issues.
-     No side effects in package usage.
 * ⬆️ Pre-commit bump uv-pre-commit from 0.9.7 to 0.9.18.
 * ⬆️ Pre-commit bump ruff-pre-commit from 0.14.3 to 0.14.10.
 * ⬆️ Bump dependencies in uv.lock file, for dev purposes:
@@ -32,6 +30,13 @@
    - selectolax from 0.4.3 to 0.4.6
    - starlette from 0.49.3 to 0.50.0
    - urllib3 from 2.5.0 to 2.6.2
+
+## 0.8.0 - 2026-02-11
+
+### Internals
+
+* ♻️ Change pypi package 'cronexpr'  with 'croniter' due to maintenance issues.
+     No side effects in package usage.
 
 ## 0.7.0 - 2025-xx-xx
 
