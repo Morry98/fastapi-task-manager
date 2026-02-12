@@ -32,7 +32,7 @@ repos:
     rev: v1.18.2
     hooks:
       - id: mypy
-        additional_dependencies: [ "types-redis", "fastapi", "pydantic", "types-croniter"]
+        additional_dependencies: [ "types-redis", "fastapi", "pydantic", "cronsim"]
         args: ["--scripts-are-modules"]
 
   - repo: https://github.com/astral-sh/uv-pre-commit
