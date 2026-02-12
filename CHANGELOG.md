@@ -31,11 +31,11 @@
    - starlette from 0.49.3 to 0.50.0
    - urllib3 from 2.5.0 to 2.6.2
 
-## 0.8.0 - 2026-02-11
+## 0.8.0 - 2026-02-12
 
 ### Internals
 
-* ♻️ Change pypi package 'cronexpr'  with 'croniter' due to maintenance issues.
+* ♻️ Change pypi package 'cronexpr'  with 'cronsim' due to maintenance issues.
      No side effects in package usage.
 
 ## 0.7.0 - 2025-xx-xx
