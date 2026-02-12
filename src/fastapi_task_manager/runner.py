@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 from typing import TYPE_CHECKING
 from uuid import uuid4
 
-from croniter import croniter
+from cronsim import CronSim
 from redis.asyncio import Redis
 
 from fastapi_task_manager import TaskGroup
@@ -143,7 +143,7 @@ class Runner:
                 return
 
             local_date = datetime.now(timezone.utc)
-            next_run = croniter(task.expression, local_date).get_next(datetime)
+            next_run = next(CronSim(task.expression, local_date))
 
             await self._redis_client.set(
                 self._task_manager.config.app_name + "_" + task_group.name + "_" + task.name + "_next_run",
