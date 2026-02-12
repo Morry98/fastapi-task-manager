@@ -66,6 +66,6 @@ repos:
           "ty",
           "redis",
           "fastapi",
-          "croniter",
+          "cronsim",
           "pydantic_settings"
         ]

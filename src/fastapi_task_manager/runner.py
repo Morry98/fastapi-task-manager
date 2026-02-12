@@ -6,7 +6,7 @@ from collections.abc import Callable
 from datetime import datetime, timezone
 from typing import TYPE_CHECKING
 
-from croniter import croniter
+from cronsim import CronSim
 from redis.asyncio import Redis
 
 from fastapi_task_manager import TaskGroup
@@ -257,7 +257,8 @@ class Runner:
                     return
 
             local_date = datetime.now(timezone.utc)
-            next_run = croniter(task.expression, local_date).get_next(datetime)
+            next_run = next(CronSim(task.expression, local_date))
+
             # Calculate expiration time, ensuring it's at least initial_lock_ttl seconds
             next_run_ttl = int((next_run - datetime.now(timezone.utc)).total_seconds()) * 2
             expiration = max(next_run_ttl, self._task_manager.config.initial_lock_ttl)

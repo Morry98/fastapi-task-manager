@@ -15,7 +15,7 @@ import logging
 from datetime import datetime, timezone
 from typing import TYPE_CHECKING
 
-from croniter import croniter
+from cronsim import CronSim
 from redis.asyncio import Redis
 
 from fastapi_task_manager.leader_election import LeaderElector
@@ -229,10 +229,7 @@ class Coordinator:
             task: The Task to update.
         """
         keys = self._keys.get_task_keys(task_group.name, task.name)
-        next_run = croniter(
-            task.expression,
-            datetime.now(timezone.utc),
-        ).get_next(datetime)
+        next_run = next(CronSim(task.expression, datetime.now(timezone.utc)))
 
         # Calculate TTL: at least initial_lock_ttl, or 2x the time until next run
         time_until_next = (next_run - datetime.now(timezone.utc)).total_seconds()
