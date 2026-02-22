@@ -128,8 +128,9 @@ extra:
       link: https://github.com/Morry98/fastapi-task-manager
     - icon: fontawesome/brands/linkedin
       link: https://www.linkedin.com/in/morandomatteo
-    - icon: custom/ciuf-white
+    - icon: custom/ciuf
       name: CIUF
+      link: https://ciuf.io
 
 extra_javascript:
   - assets/javascripts/termynal-reload.js

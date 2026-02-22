@@ -10,6 +10,7 @@
   padding: 0.2rem;
 }
 
-.md-social__link svg{
-  max-height: 8rem;
+/* Footer social icons size */
+.md-social__link svg {
+  max-height: 1.5rem;
 }
