@@ -8,8 +8,10 @@
       
       
       
-        <link rel="prev" href="../about/people.html">
+        <link rel="prev" href="architecture.html">
       
+      
+        <link rel="next" href="../about/index.html">
       
       
         
@@ -20,7 +22,7 @@
     
     
       
-        <title>Release Notes - FastAPI Task Manager</title>
+        <title>Deployment Guide - FastAPI Task Manager</title>
       
     
     
@@ -87,7 +89,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#release-notes" class="md-skip">
+        <a href="#deployment-guide" class="md-skip">
           Skip to content
         </a>
       
@@ -122,7 +124,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Release Notes
+              Deployment Guide
             
           </span>
         </div>
@@ -280,6 +282,8 @@
   
   
   
+    
+  
   
     
     
@@ -287,11 +291,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../learn/getting_started/index.html" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="getting_started/index.html" class="md-tabs__link">
           
   
   
@@ -350,11 +356,9 @@
   
   
   
-    
   
-  
-    <li class="md-tabs__item md-tabs__item--active">
-      <a href="index.html" class="md-tabs__link">
+    <li class="md-tabs__item">
+      <a href="../release_notes/index.html" class="md-tabs__link">
         
   
   
@@ -384,9 +388,7 @@
           
             
               
-                
-              
-              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" hidden="">
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
@@ -477,8 +479,10 @@
       
   
   
+    
   
   
+  
     
     
       
@@ -496,17 +500,20 @@
     
     
       
+        
+        
+      
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3">
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked="">
         
           
-          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
             
   
   
@@ -524,7 +531,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -567,7 +574,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../learn/getting_started/index.html" class="md-nav__link ">
+            <a href="getting_started/index.html" class="md-nav__link ">
               
   
   
@@ -611,7 +618,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../learn/getting_started/installation.html" class="md-nav__link">
+      <a href="getting_started/installation.html" class="md-nav__link">
         
   
   
@@ -639,7 +646,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../learn/getting_started/configurations.html" class="md-nav__link">
+      <a href="getting_started/configurations.html" class="md-nav__link">
         
   
   
@@ -675,7 +682,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../learn/api-reference.html" class="md-nav__link">
+      <a href="api-reference.html" class="md-nav__link">
         
   
   
@@ -703,7 +710,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../learn/dynamic-tasks.html" class="md-nav__link">
+      <a href="dynamic-tasks.html" class="md-nav__link">
         
   
   
@@ -731,7 +738,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../learn/architecture.html" class="md-nav__link">
+      <a href="architecture.html" class="md-nav__link">
         
   
   
@@ -756,10 +763,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../learn/deployment.html" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deployment Guide
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="deployment.html" class="md-nav__link md-nav__link--active">
         
   
   
@@ -775,6 +809,181 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+      
+        <li class="md-nav__item">
+  <a href="#single-instance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Single Instance
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#multi-instance-distributed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multi-Instance (Distributed)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#redis-requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis Requirements
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Redis Requirements">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#minimum-version" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Minimum Version
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#persistence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Persistence
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#memory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Memory
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration-for-production" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration for Production
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#health-checks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Health Checks
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#logging" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Logging
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Logging">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sub-loggers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sub-loggers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#key-log-events-to-monitor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key log events to monitor
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#graceful-shutdown" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Graceful Shutdown
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#multiple-applications-on-the-same-redis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multiple Applications on the Same Redis
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -845,37 +1054,10 @@
       
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Release Notes
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="index.html" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../release_notes/index.html" class="md-nav__link">
         
   
   
@@ -891,126 +1073,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
-      
-        <li class="md-nav__item">
-  <a href="#latest-changes" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Latest Changes
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Latest Changes">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#features" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Features
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#reworks" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Reworks
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#docs" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Docs
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#internals" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Internals
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#080-2026-02-12" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        0.8.0 - 2026-02-12
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="0.8.0 - 2026-02-12">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#internals_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Internals
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#070-2025-xx-xx" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        0.7.0 - 2025-xx-xx
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1022,8 +1084,6 @@
               </div>
             
             
-              
-                
               
               <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc">
                 <div class="md-sidebar__scrollwrap">
@@ -1044,22 +1104,44 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
       
         <li class="md-nav__item">
-  <a href="#latest-changes" class="md-nav__link">
+  <a href="#single-instance" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Latest Changes
+        Single Instance
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Latest Changes">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#multi-instance-distributed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multi-Instance (Distributed)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#redis-requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis Requirements
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Redis Requirements">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#features" class="md-nav__link">
+  <a href="#minimum-version" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Features
+        Minimum Version
       
     </span>
   </a>
@@ -1067,10 +1149,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#reworks" class="md-nav__link">
+  <a href="#persistence" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Reworks
+        Persistence
       
     </span>
   </a>
@@ -1078,21 +1160,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#docs" class="md-nav__link">
+  <a href="#memory" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Docs
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#internals" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Internals
+        Memory
       
     </span>
   </a>
@@ -1105,22 +1176,55 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#080-2026-02-12" class="md-nav__link">
+  <a href="#configuration-for-production" class="md-nav__link">
     <span class="md-ellipsis">
       
-        0.8.0 - 2026-02-12
+        Configuration for Production
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="0.8.0 - 2026-02-12">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#health-checks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Health Checks
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#logging" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Logging
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Logging">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#internals_1" class="md-nav__link">
+  <a href="#sub-loggers" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Internals
+        Sub-loggers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#key-log-events-to-monitor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key log events to monitor
       
     </span>
   </a>
@@ -1133,10 +1237,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#070-2025-xx-xx" class="md-nav__link">
+  <a href="#graceful-shutdown" class="md-nav__link">
     <span class="md-ellipsis">
       
-        0.7.0 - 2025-xx-xx
+        Graceful Shutdown
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#multiple-applications-on-the-same-redis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multiple Applications on the Same Redis
       
     </span>
   </a>
@@ -1156,112 +1271,320 @@
               
                 
 
+
+
   
 
 
+  <nav class="md-path" aria-label="Navigation">
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../index.html" class="md-path__link">
+        
+  <span class="md-ellipsis">
+    FastAPI Task Manager
+  </span>
 
+      </a>
+    </li>
   
 
+      
+      
+        
+  
+  
+    
+    
+      
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="getting_started/index.html" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Learn
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+    </ol>
+  </nav>
 
               
               <article class="md-content__inner md-typeset">
                 
                   
-  
-
-
-
-  
-  
-
-
-<h1 id="release-notes">Release Notes<a class="headerlink" href="#release-notes" title="Permanent link">¶</a></h1>
-<h2 id="latest-changes">Latest Changes<a class="headerlink" href="#latest-changes" title="Permanent link">¶</a></h2>
-<h3 id="features">Features<a class="headerlink" href="#features" title="Permanent link">¶</a></h3>
-<ul>
-<li>🚀 <strong>Redis Streams execution engine</strong>: Replace polling-based task execution with Redis Streams and leader election as the sole execution strategy. Includes <code>LeaderElector</code> for distributed leader election via Redis <code>SET NX</code>, <code>Coordinator</code> for evaluating cron expressions and publishing tasks to streams, and <code>StreamConsumer</code> for consuming and executing tasks from dual-priority streams.</li>
-<li>🚀 <strong>Exponential backoff retry</strong>: Add configurable retry with exponential backoff for failed tasks. On success the backoff state resets automatically. Includes per-task override support and a <code>/reset-retry</code> API endpoint.</li>
-<li>🚀️ <strong>Reconciler and task heartbeat</strong>: Leader-only reconciliation loop that detects missed or stuck tasks and republishes them to the Redis stream. Tasks maintain a heartbeat via a running key to distinguish between actively-running and stalled executions.</li>
-<li>🚀 <strong>Statistics storage with Redis Streams</strong>: Migrate statistics from Redis Lists to a single Redis Stream per task. Each entry contains both <code>ts</code> and <code>dur</code> fields, ensuring data correlation. Uses <code>XADD</code> with approximate <code>MAXLEN</code> for bounded storage.</li>
-<li>🚀 <strong>Dynamic task CRUD API</strong>: Runtime task management allowing tasks to be created and deleted via the management API. Functions are registered in a <code>TaskGroup</code> registry and definitions are persisted in a Redis Hash to survive restarts.</li>
-<li>🚀 <strong>Worker identity</strong>: Introduce <code>WorkerIdentity</code> for traceable worker identification with hostname, PID, and short UUID. Add <code>RedisKeyBuilder</code> to centralize all Redis key construction.</li>
-</ul>
-<h3 id="reworks">Reworks<a class="headerlink" href="#reworks" title="Permanent link">¶</a></h3>
-<ul>
-<li>♻️ <strong>Revamp management API</strong>: Rewrite task router services to use the shared async Redis client. Convert 
-  single-task actions to bulk operations. 
-  Add new endpoints: <code>GET /health</code>, <code>GET /config</code>, <code>POST /tasks/trigger</code>, <code>DELETE /tasks/statistics</code>.</li>
-<li>♻️ Switch all modules to per-component loggers.</li>
-<li>♻️ Rename config <code>app_name</code> to <code>redis_key_prefix</code> to better reflect its purpose.</li>
-</ul>
-<h3 id="docs">Docs<a class="headerlink" href="#docs" title="Permanent link">¶</a></h3>
-<ul>
-<li>📝 Add first implementation of docs available at <a href="https://fastapi-task-manager.morando.uk">https://fastapi-task-manager.morando.uk</a></li>
-</ul>
-<h3 id="internals">Internals<a class="headerlink" href="#internals" title="Permanent link">¶</a></h3>
-<ul>
-<li>🔒 Add bandit pre-commit hook for security linting.</li>
-<li>✅ Add <code>pytest-asyncio</code> with async test coverage for dynamic tasks, statistics, config, schemas, and more.</li>
-<li>♻️ Extract <code>interruptible_sleep</code> into a shared <code>async_utils</code> module.</li>
-<li>♻️ Fix race condition in distributed lock by using <code>SET NX</code> instead of <code>EXISTS + SET</code> pattern.</li>
-<li>♻️ Move pre-commit checks from mypy+vermin to <a href="https://docs.astral.sh/ty/">ty from astral</a></li>
-<li>⬆️ Pre-commit bump uv-pre-commit from 0.9.7 to 0.9.18.</li>
-<li>⬆️ Pre-commit bump ruff-pre-commit from 0.14.3 to 0.14.10.</li>
-<li>⬆️ Bump dependencies in uv.lock file, for dev purposes:</li>
-<li>
-<ul>
-<li>annotated-doc added 0.0.4</li>
-<li>anyio from 4.11.0 to 4.12.1</li>
-<li>backrefs from 6.1 to 6.2</li>
-<li>certifi from 2026.1.4 to 2026.2.25</li>
-<li>charset-normalizer from 3.4.4 to 3.4.5</li>
-<li>coverage from 7.11.1 to 7.13.0</li>
-<li>exceptiongroup from 1.3.0 to 1.3.1</li>
-<li>fastapi from 0.121.0 to 0.135.1</li>
-<li>idna from 3.10 to 3.11</li>
-<li>markdown-include-variants from 0.0.5 to 0.0.8</li>
-<li>mkdocs-macros-plugin from 1.4.1 to 1.5.0</li>
-<li>mkdocs-material from 9.6.23 to 9.7.4</li>
-<li>platformdirs from 4.5.0 to 4.9.4</li>
-<li>pydantic from 2.12.4 to 2.12.5</li>
-<li>pydantic-core from 2.33.2 to 2.41.5</li>
-<li>pydantic-settings from 2.12.0 to 2.13.1</li>
-<li>pymdown-extensions from 10.16.1 to 10.21</li>
-<li>pytest from 9.0.1 to 9.0.2</li>
-<li>python-dotenv from 1.2.1 to 1.2.2</li>
-<li>redis from 7.0.1 to 7.3.0</li>
-<li>ruff from 0.15.0 to 0.15.5</li>
-<li>selectolax from 0.4.3 to 0.4.7</li>
-<li>sniffio removed</li>
-<li>starlette from 0.49.3 to 0.52.1</li>
-<li>ty from 0.0.16 to 0.0.21</li>
-<li>typing-inspection from 0.4.1 to 0.4.2</li>
-<li>urllib3 from 2.5.0 to 2.6.2</li>
-</ul>
-</li>
-</ul>
-<h2 id="080-2026-02-12">0.8.0 - 2026-02-12<a class="headerlink" href="#080-2026-02-12" title="Permanent link">¶</a></h2>
-<h3 id="internals_1">Internals<a class="headerlink" href="#internals_1" title="Permanent link">¶</a></h3>
-<ul>
-<li>♻️ Change pypi package 'cronexpr'  with 'cronsim' due to maintenance issues.
-     No side effects in package usage.</li>
-</ul>
-<h2 id="070-2025-xx-xx">0.7.0 - 2025-xx-xx<a class="headerlink" href="#070-2025-xx-xx" title="Permanent link">¶</a></h2>
-<p>TBC</p>
-
-
-
-
-
 
 
   
   
 
 
+<h1 id="deployment-guide">Deployment Guide<a class="headerlink" href="#deployment-guide" title="Permanent link">¶</a></h1>
+<p>This guide covers how to deploy FastAPI Task Manager in production environments, from single-instance setups to multi-instance distributed deployments.</p>
+<hr>
+<h2 id="single-instance">Single Instance<a class="headerlink" href="#single-instance" title="Permanent link">¶</a></h2>
+<p>The simplest deployment: one FastAPI process with one or more uvicorn workers.</p>
+<div class="highlight"><pre><span></span><code><span id="__span-0-1">uvicorn<span class="w"> </span>app.main:app<span class="w"> </span>--workers<span class="w"> </span><span class="m">4</span>
+</span></code></pre></div>
+<p>In this setup:</p>
+<ul>
+<li>One worker becomes the <strong>leader</strong> and handles task scheduling</li>
+<li>All workers <strong>consume and execute</strong> tasks from the Redis Stream</li>
+<li>If the leader worker crashes, another worker automatically takes over</li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Concurrency</p>
+<p>Set <code>concurrent_tasks</code> in your config to control how many tasks each worker can execute in parallel. With 4 workers and <code>concurrent_tasks=2</code>, you can run up to 8 tasks simultaneously.</p>
+</div>
+<hr>
+<h2 id="multi-instance-distributed">Multi-Instance (Distributed)<a class="headerlink" href="#multi-instance-distributed" title="Permanent link">¶</a></h2>
+<p>For high availability, run multiple instances of your application across different servers or containers.</p>
+<div class="highlight"><pre><span></span><code><span id="__span-1-1"><span class="c1"># docker-compose.yml example</span>
+</span><span id="__span-1-2"><span class="nt">services</span><span class="p">:</span>
+</span><span id="__span-1-3"><span class="w">  </span><span class="nt">app-1</span><span class="p">:</span>
+</span><span id="__span-1-4"><span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-fastapi-app</span>
+</span><span id="__span-1-5"><span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+</span><span id="__span-1-6"><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">REDIS_HOST=redis</span>
+</span><span id="__span-1-7"><span class="w">    </span><span class="nt">deploy</span><span class="p">:</span>
+</span><span id="__span-1-8"><span class="w">      </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
+</span><span id="__span-1-9">
+</span><span id="__span-1-10"><span class="w">  </span><span class="nt">app-2</span><span class="p">:</span>
+</span><span id="__span-1-11"><span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-fastapi-app</span>
+</span><span id="__span-1-12"><span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+</span><span id="__span-1-13"><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">REDIS_HOST=redis</span>
+</span><span id="__span-1-14"><span class="w">    </span><span class="nt">deploy</span><span class="p">:</span>
+</span><span id="__span-1-15"><span class="w">      </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
+</span><span id="__span-1-16">
+</span><span id="__span-1-17"><span class="w">  </span><span class="nt">redis</span><span class="p">:</span>
+</span><span id="__span-1-18"><span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">redis:7-alpine</span>
+</span><span id="__span-1-19"><span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+</span><span id="__span-1-20"><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">redis-data:/data</span>
+</span><span id="__span-1-21">
+</span><span id="__span-1-22"><span class="nt">volumes</span><span class="p">:</span>
+</span><span id="__span-1-23"><span class="w">  </span><span class="nt">redis-data</span><span class="p">:</span>
+</span></code></pre></div>
+<p>All instances must:</p>
+<ul>
+<li>Point to the <strong>same Redis</strong> server</li>
+<li>Use the <strong>same <code>redis_key_prefix</code></strong> and <strong>same <code>redis_db</code></strong></li>
+<li>Have the <strong>same task definitions</strong> (same code deployed)</li>
+</ul>
+<p>The leader election system ensures only one instance schedules tasks, while all instances execute them.</p>
+<hr>
+<h2 id="redis-requirements">Redis Requirements<a class="headerlink" href="#redis-requirements" title="Permanent link">¶</a></h2>
+<h3 id="minimum-version">Minimum Version<a class="headerlink" href="#minimum-version" title="Permanent link">¶</a></h3>
+<p>FastAPI Task Manager uses Redis Streams (<code>XADD</code>, <code>XREADGROUP</code>, <code>XACK</code>, <code>XCLAIM</code>), which require <strong>Redis 5.0+</strong>. Redis 7.0+ is recommended.</p>
+<h3 id="persistence">Persistence<a class="headerlink" href="#persistence" title="Permanent link">¶</a></h3>
+<p>For production, enable Redis persistence to survive restarts:</p>
+<div class="highlight"><pre><span></span><code><span id="__span-2-1"># redis.conf
+</span><span id="__span-2-2">appendonly yes
+</span><span id="__span-2-3">appendfsync everysec
+</span></code></pre></div>
+<p>This ensures dynamic task definitions and task state are not lost if Redis restarts.</p>
+<h3 id="memory">Memory<a class="headerlink" href="#memory" title="Permanent link">¶</a></h3>
+<p>Redis memory usage depends on:</p>
+<ul>
+<li>Number of tasks and their statistics history (<code>statistics_history_runs</code>)</li>
+<li>Stream length (<code>stream_max_len</code>)</li>
+<li>Number of dynamic task definitions</li>
+</ul>
+<p>For most deployments, a few hundred MB is sufficient.</p>
+<hr>
+<h2 id="configuration-for-production">Configuration for Production<a class="headerlink" href="#configuration-for-production" title="Permanent link">¶</a></h2>
+<p>Here is a recommended production configuration:</p>
+<div class="highlight"><pre><span></span><code><span id="__span-3-1"><span class="kn">from</span><span class="w"> </span><span class="nn">fastapi_task_manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">Config</span>
+</span><span id="__span-3-2">
+</span><span id="__span-3-3"><span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span>
+</span><span id="__span-3-4">    <span class="c1"># Redis connection</span>
+</span><span id="__span-3-5">    <span class="n">redis_host</span><span class="o">=</span><span class="s2">"redis.internal"</span><span class="p">,</span>
+</span><span id="__span-3-6">    <span class="n">redis_port</span><span class="o">=</span><span class="mi">6379</span><span class="p">,</span>
+</span><span id="__span-3-7">    <span class="n">redis_password</span><span class="o">=</span><span class="s2">"your-secure-password"</span><span class="p">,</span>
+</span><span id="__span-3-8">    <span class="n">redis_db</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+</span><span id="__span-3-9">
+</span><span id="__span-3-10">    <span class="c1"># Use a unique prefix per application</span>
+</span><span id="__span-3-11">    <span class="n">redis_key_prefix</span><span class="o">=</span><span class="s2">"myapp-tasks"</span><span class="p">,</span>
+</span><span id="__span-3-12">
+</span><span id="__span-3-13">    <span class="c1"># Concurrency: tune based on your workload</span>
+</span><span id="__span-3-14">    <span class="n">concurrent_tasks</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+</span><span id="__span-3-15">
+</span><span id="__span-3-16">    <span class="c1"># Statistics: keep 7 days of history</span>
+</span><span id="__span-3-17">    <span class="n">statistics_redis_expiration</span><span class="o">=</span><span class="mi">604_800</span><span class="p">,</span>
+</span><span id="__span-3-18">    <span class="n">statistics_history_runs</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+</span><span id="__span-3-19">
+</span><span id="__span-3-20">    <span class="c1"># Reconciliation</span>
+</span><span id="__span-3-21">    <span class="n">reconciliation_interval</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+</span><span id="__span-3-22">
+</span><span id="__span-3-23">    <span class="c1"># Retry: configure based on task failure patterns</span>
+</span><span id="__span-3-24">    <span class="n">retry_backoff</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>
+</span><span id="__span-3-25">    <span class="n">retry_backoff_max</span><span class="o">=</span><span class="mf">120.0</span><span class="p">,</span>
+</span><span id="__span-3-26">    <span class="n">retry_backoff_multiplier</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>
+</span><span id="__span-3-27"><span class="p">)</span>
+</span></code></pre></div>
+<hr>
+<h2 id="health-checks">Health Checks<a class="headerlink" href="#health-checks" title="Permanent link">¶</a></h2>
+<p>Use the built-in health endpoint for load balancer and orchestrator health checks:</p>
+<div class="highlight"><pre><span></span><code><span id="__span-4-1">curl<span class="w"> </span>http://localhost:8000/task-manager/health
+</span></code></pre></div>
+<div class="highlight"><pre><span></span><code><span id="__span-5-1"><span class="p">{</span>
+</span><span id="__span-5-2"><span class="w">  </span><span class="nt">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"healthy"</span><span class="p">,</span>
+</span><span id="__span-5-3"><span class="w">  </span><span class="nt">"redis_connected"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+</span><span id="__span-5-4"><span class="w">  </span><span class="nt">"worker_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"fastapi-task-manager-abc123"</span><span class="p">,</span>
+</span><span id="__span-5-5"><span class="w">  </span><span class="nt">"worker_started_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2026-03-08T10:00:00Z"</span><span class="p">,</span>
+</span><span id="__span-5-6"><span class="w">  </span><span class="nt">"is_leader"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+</span><span id="__span-5-7"><span class="p">}</span>
+</span></code></pre></div>
+<p>For Kubernetes liveness/readiness probes:</p>
+<div class="highlight"><pre><span></span><code><span id="__span-6-1"><span class="c1"># kubernetes deployment</span>
+</span><span id="__span-6-2"><span class="nt">livenessProbe</span><span class="p">:</span>
+</span><span id="__span-6-3"><span class="w">  </span><span class="nt">httpGet</span><span class="p">:</span>
+</span><span id="__span-6-4"><span class="w">    </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/task-manager/health</span>
+</span><span id="__span-6-5"><span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8000</span>
+</span><span id="__span-6-6"><span class="w">  </span><span class="nt">initialDelaySeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
+</span><span id="__span-6-7"><span class="w">  </span><span class="nt">periodSeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30</span>
+</span><span id="__span-6-8"><span class="nt">readinessProbe</span><span class="p">:</span>
+</span><span id="__span-6-9"><span class="w">  </span><span class="nt">httpGet</span><span class="p">:</span>
+</span><span id="__span-6-10"><span class="w">    </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/task-manager/health</span>
+</span><span id="__span-6-11"><span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8000</span>
+</span><span id="__span-6-12"><span class="w">  </span><span class="nt">initialDelaySeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+</span><span id="__span-6-13"><span class="w">  </span><span class="nt">periodSeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
+</span></code></pre></div>
+<p>You can also use the programmatic health check in your own health endpoint:</p>
+<div class="highlight"><pre><span></span><code><span id="__span-7-1"><span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/health"</span><span class="p">)</span>
+</span><span id="__span-7-2"><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">health</span><span class="p">():</span>
+</span><span id="__span-7-3">    <span class="k">return</span> <span class="p">{</span>
+</span><span id="__span-7-4">        <span class="s2">"app"</span><span class="p">:</span> <span class="s2">"ok"</span><span class="p">,</span>
+</span><span id="__span-7-5">        <span class="s2">"task_manager"</span><span class="p">:</span> <span class="k">await</span> <span class="n">task_manager</span><span class="o">.</span><span class="n">is_healthy</span><span class="p">(),</span>
+</span><span id="__span-7-6">    <span class="p">}</span>
+</span></code></pre></div>
+<hr>
+<h2 id="logging">Logging<a class="headerlink" href="#logging" title="Permanent link">¶</a></h2>
+<p>FastAPI Task Manager uses Python's standard logging library. The root logger is named <code>fastapi.task-manager</code>, and each internal component uses a dedicated sub-logger.</p>
+<h3 id="sub-loggers">Sub-loggers<a class="headerlink" href="#sub-loggers" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>Logger name</th>
+<th>Component</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>fastapi.task-manager</code></td>
+<td>TaskManager</td>
+<td>Root logger. Lifecycle events (start/stop), dynamic task loading</td>
+</tr>
+<tr>
+<td><code>fastapi.task-manager.runner</code></td>
+<td>Runner</td>
+<td>Runner start/stop, worker identity</td>
+</tr>
+<tr>
+<td><code>fastapi.task-manager.leader</code></td>
+<td>LeaderElection</td>
+<td>Leadership acquisition, renewal, release, and errors</td>
+</tr>
+<tr>
+<td><code>fastapi.task-manager.coordinator</code></td>
+<td>Coordinator</td>
+<td>Task scheduling decisions, due-task detection, stream publishing</td>
+</tr>
+<tr>
+<td><code>fastapi.task-manager.consumer</code></td>
+<td>StreamConsumer</td>
+<td>Task execution, success/failure, heartbeat renewal, pending message recovery</td>
+</tr>
+<tr>
+<td><code>fastapi.task-manager.reconciler</code></td>
+<td>Reconciler</td>
+<td>Overdue task detection, stale task republishing, pending message reclaim</td>
+</tr>
+<tr>
+<td><code>fastapi.task-manager.group</code></td>
+<td>TaskGroup</td>
+<td>Dynamic task addition and removal from groups</td>
+</tr>
+<tr>
+<td><code>fastapi.task-manager.api</code></td>
+<td>Task Router Services</td>
+<td>API-driven task creation and deletion</td>
+</tr>
+<tr>
+<td><code>fastapi.task-manager.statistics</code></td>
+<td>Statistics</td>
+<td>Task execution history tracking</td>
+</tr>
+</tbody>
+</table>
+<p>Since all sub-loggers are children of <code>fastapi.task-manager</code>, setting the level on the root logger controls all of them. You can also fine-tune individual components:</p>
+<div class="highlight"><pre><span></span><code><span id="__span-8-1"><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+</span><span id="__span-8-2">
+</span><span id="__span-8-3"><span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span>
+</span><span id="__span-8-4">    <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span>
+</span><span id="__span-8-5">    <span class="nb">format</span><span class="o">=</span><span class="s2">"</span><span class="si">%(asctime)s</span><span class="s2"> </span><span class="si">%(name)s</span><span class="s2"> </span><span class="si">%(levelname)s</span><span class="s2"> </span><span class="si">%(message)s</span><span class="s2">"</span><span class="p">,</span>
+</span><span id="__span-8-6"><span class="p">)</span>
+</span><span id="__span-8-7">
+</span><span id="__span-8-8"><span class="c1"># Reduce all task manager verbosity</span>
+</span><span id="__span-8-9"><span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">"fastapi.task-manager"</span><span class="p">)</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">WARNING</span><span class="p">)</span>
+</span><span id="__span-8-10">
+</span><span id="__span-8-11"><span class="c1"># But keep reconciler at INFO to monitor recovery events</span>
+</span><span id="__span-8-12"><span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">"fastapi.task-manager.reconciler"</span><span class="p">)</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+</span></code></pre></div>
+<h3 id="key-log-events-to-monitor">Key log events to monitor<a class="headerlink" href="#key-log-events-to-monitor" title="Permanent link">¶</a></h3>
+<ul>
+<li><strong>Leader election</strong>: <code>"Worker &lt;id&gt; became LEADER"</code> / <code>"Worker &lt;id&gt; released leadership"</code></li>
+<li><strong>Task execution</strong>: <code>"Task &lt;group&gt;/&lt;name&gt; failed"</code></li>
+<li><strong>Reconciliation</strong>: <code>"Reclaimed pending message"</code> / <code>"Republished overdue task"</code></li>
+<li><strong>Dynamic tasks</strong>: <code>"Dynamic task '&lt;name&gt;' created in group '&lt;group&gt;'"</code> / <code>"Loaded N dynamic task(s) from Redis"</code></li>
+</ul>
+<hr>
+<h2 id="graceful-shutdown">Graceful Shutdown<a class="headerlink" href="#graceful-shutdown" title="Permanent link">¶</a></h2>
+<p>FastAPI Task Manager handles graceful shutdown automatically through FastAPI's lifespan system. When the application receives a shutdown signal:</p>
+<ol>
+<li>The runner stops accepting new tasks</li>
+<li>Currently executing tasks are allowed to complete</li>
+<li>The Redis connection is closed</li>
+</ol>
+<p>No special configuration is needed. Just ensure your orchestrator sends a <code>SIGTERM</code> and waits for the process to exit before forcefully killing it.</p>
+<div class="highlight"><pre><span></span><code><span id="__span-9-1"><span class="c1"># docker-compose.yml</span>
+</span><span id="__span-9-2"><span class="nt">services</span><span class="p">:</span>
+</span><span id="__span-9-3"><span class="w">  </span><span class="nt">app</span><span class="p">:</span>
+</span><span id="__span-9-4"><span class="w">    </span><span class="nt">stop_grace_period</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30s</span>
+</span></code></pre></div>
+<hr>
+<h2 id="multiple-applications-on-the-same-redis">Multiple Applications on the Same Redis<a class="headerlink" href="#multiple-applications-on-the-same-redis" title="Permanent link">¶</a></h2>
+<p>If multiple applications share the same Redis instance, use distinct <code>redis_key_prefix</code> values to avoid key collisions:</p>
+<div class="highlight"><pre><span></span><code><span id="__span-10-1"><span class="c1"># Application A</span>
+</span><span id="__span-10-2"><span class="n">config_a</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span><span class="n">redis_host</span><span class="o">=</span><span class="s2">"redis"</span><span class="p">,</span> <span class="n">redis_key_prefix</span><span class="o">=</span><span class="s2">"app-a-tasks"</span><span class="p">,</span> <span class="n">redis_db</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</span><span id="__span-10-3">
+</span><span id="__span-10-4"><span class="c1"># Application B</span>
+</span><span id="__span-10-5"><span class="n">config_b</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span><span class="n">redis_host</span><span class="o">=</span><span class="s2">"redis"</span><span class="p">,</span> <span class="n">redis_key_prefix</span><span class="o">=</span><span class="s2">"app-b-tasks"</span><span class="p">,</span> <span class="n">redis_db</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</span></code></pre></div>
+<p>Alternatively, use different <code>redis_db</code> numbers for complete isolation.</p>
 
 
-  
+
+
+
+
+
+
+
 
 
 
@@ -1287,12 +1610,10 @@
   
     
       
-        
-      
       <nav class="md-footer__inner md-grid" aria-label="Footer">
         
           
-          <a href="../about/people.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: People">
+          <a href="architecture.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: Architecture">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
@@ -1302,11 +1623,27 @@
                 Previous
               </span>
               <div class="md-ellipsis">
-                People
+                Architecture
               </div>
             </div>
           </a>
         
+        
+          
+          <a href="../about/index.html" class="md-footer__link md-footer__link--next" aria-label="Next: About">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                About
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"></path></svg>
+            </div>
+          </a>
         
       </nav>
     
