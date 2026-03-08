@@ -18,6 +18,7 @@ from typing import TYPE_CHECKING
 from cronsim import CronSim
 from redis.asyncio import Redis
 
+from fastapi_task_manager.async_utils import interruptible_sleep
 from fastapi_task_manager.leader_election import LeaderElector
 from fastapi_task_manager.redis_keys import RedisKeyBuilder
 from fastapi_task_manager.schema.task import Task
@@ -99,19 +100,19 @@ class Coordinator:
                     await self._leader.try_acquire_leadership()
                     if not self._leader.is_leader:
                         # Still not leader, wait and retry
-                        await asyncio.sleep(config.leader_retry_interval)
+                        await interruptible_sleep(config.leader_retry_interval, lambda: self._running)
                         continue
 
                 # We are the leader - evaluate and publish tasks
                 await self._evaluate_and_publish_all()
-                await asyncio.sleep(config.poll_interval)
+                await interruptible_sleep(config.poll_interval, lambda: self._running)
 
             except asyncio.CancelledError:
                 logger.info("Coordinator loop cancelled")
                 break
             except Exception:
                 logger.exception("Error in coordinator loop")
-                await asyncio.sleep(1)
+                await interruptible_sleep(1, lambda: self._running)
 
     async def _evaluate_and_publish_all(self) -> None:
         """Check all tasks and publish ready ones to stream.
@@ -179,11 +180,14 @@ class Coordinator:
         task_group: TaskGroup,
         task: Task,
     ) -> str:
-        """Publish a task to the Redis stream.
+        """Publish a task to the Redis stream and track it in the scheduled set.
 
         Creates a message in the appropriate task stream (high or low priority)
         containing the task group name, task name, and scheduling timestamp.
         The stream is automatically trimmed to the configured max length.
+
+        After publishing, the task identifier is added to the scheduled tracking
+        SET so the Reconciler can detect lost tasks.
 
         Args:
             stream_key: The Redis key for the task stream (high or low).
@@ -193,6 +197,8 @@ class Coordinator:
         Returns:
             The message ID assigned by Redis.
         """
+        task_id = f"{task_group.name}:{task.name}"
+
         message_id = await self._redis.xadd(
             stream_key,
             {
@@ -203,6 +209,9 @@ class Coordinator:
             maxlen=self._task_manager.config.stream_max_len,
             approximate=True,  # Use ~ for efficiency
         )
+
+        # Track the published task in the scheduled set for reconciliation
+        await self._redis.sadd(self._keys.scheduled_set_key(), task_id)  # ty: ignore[invalid-await]
 
         # Decode message_id if bytes
         if isinstance(message_id, bytes):

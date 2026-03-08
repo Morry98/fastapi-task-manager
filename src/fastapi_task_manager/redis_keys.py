@@ -23,22 +23,21 @@ class StreamKeys:
 
     This immutable dataclass holds all the Redis keys needed for Redis Streams
     operation, including the dual task streams (high/low priority), consumer group,
-    and leader election.
-
-    The dual-queue design ensures high priority tasks are always processed first,
-    while low priority tasks are only consumed when workers have available capacity.
+    leader election, and reconciliation tracking.
 
     Attributes:
         task_stream_high: Key for the high priority Redis Stream.
         task_stream_low: Key for the low priority Redis Stream.
         consumer_group: Name of the consumer group for task workers.
         leader_lock: Key used for leader election distributed lock.
+        scheduled_set: Key for the SET tracking tasks currently in the stream.
     """
 
     task_stream_high: str
     task_stream_low: str
     consumer_group: str
     leader_lock: str
+    scheduled_set: str
 
 
 @dataclass(frozen=True)
@@ -269,6 +268,7 @@ class RedisKeyBuilder:
             task_stream_low=f"{self._prefix}_task_stream_low",
             consumer_group=f"{self._prefix}_workers",
             leader_lock=f"{self._prefix}_leader_lock",
+            scheduled_set=f"{self._prefix}_scheduled_tasks",
         )
 
     def leader_lock_key(self) -> str:
@@ -317,3 +317,39 @@ class RedisKeyBuilder:
             The consumer group name.
         """
         return f"{self._prefix}_workers"
+
+    # =========================================================================
+    # Reconciliation-related keys
+    # These methods provide keys for the reconciliation system, including
+    # the scheduled task tracking set and per-task running indicators.
+    # =========================================================================
+
+    def scheduled_set_key(self) -> str:
+        """Build the key for the SET tracking currently scheduled tasks.
+
+        This Redis SET contains task identifiers (format: "group:task") for tasks
+        that have been published to a stream but not yet completed. The Reconciler
+        uses this to detect tasks that were lost (e.g., due to a leader crash
+        before XADD, or a consumer crash before XACK).
+
+        Returns:
+            The Redis key for the scheduled tasks SET.
+        """
+        return f"{self._prefix}_scheduled_tasks"
+
+    def running_task_key(self, group: str, task: str) -> str:
+        """Build the key indicating a task is currently being executed.
+
+        This key is SET with a short TTL and renewed via heartbeat while the task
+        runs. If the worker crashes, the key expires, signaling that the task is
+        no longer being executed. The Reconciler checks this key to distinguish
+        between "still running" and "worker crashed" scenarios.
+
+        Args:
+            group: The task group name.
+            task: The individual task name.
+
+        Returns:
+            The Redis key for the running task indicator.
+        """
+        return f"{self._prefix}_{group}_{task}_running"

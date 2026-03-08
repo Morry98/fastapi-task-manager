@@ -1,7 +1,6 @@
 from fastapi_task_manager import Config
 
 config = Config(
-    log_level="NOTSET",
     redis_key_prefix=__name__,
     concurrent_tasks=2,
     statistics_redis_expiration=432_000,

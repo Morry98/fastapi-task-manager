@@ -4,8 +4,10 @@ This module provides the StreamConsumer class which is responsible for:
 - Setting up the Redis consumer groups for dual-queue (high/low priority)
 - Consuming tasks from the appropriate stream based on priority and capacity
 - Executing task functions with proper concurrency control
+- Maintaining a running heartbeat during task execution for crash detection
 - Acknowledging completed tasks with XACK
 - Recording execution statistics
+- Recovering pending messages from crashed workers on startup
 
 The dual-queue design ensures:
 - High priority tasks are always attempted first
@@ -13,11 +15,17 @@ The dual-queue design ensures:
 - Workers without capacity don't consume low priority messages, leaving them
   for other workers with available slots
 
+The running heartbeat ensures:
+- A "running" key with short TTL is renewed periodically while a task executes
+- If a worker crashes, the key expires quickly (~10s), enabling fast recovery
+- Long-running tasks (minutes/hours) are protected by the continuous heartbeat
+
 The StreamConsumer runs on ALL workers (both leader and followers),
 enabling horizontal scaling of task execution.
 """
 
 import asyncio
+import contextlib
 import logging
 import time
 from datetime import datetime, timezone
@@ -26,6 +34,7 @@ from typing import TYPE_CHECKING
 from redis.asyncio import Redis
 from redis.exceptions import ResponseError
 
+from fastapi_task_manager.async_utils import interruptible_sleep
 from fastapi_task_manager.redis_keys import RedisKeyBuilder
 from fastapi_task_manager.schema.task import Task
 from fastapi_task_manager.schema.worker_identity import WorkerIdentity
@@ -156,10 +165,14 @@ class StreamConsumer:
     async def start(self) -> asyncio.Task:
         """Start the consumer loop.
 
+        Before entering the main loop, attempts to recover any pending messages
+        left by crashed consumers (using XAUTOCLAIM).
+
         Returns:
             The asyncio Task running the consumer loop.
         """
         self._running = True
+        await self._recover_pending_on_startup()
         return asyncio.create_task(self._consume_loop(), name="StreamConsumer")
 
     async def stop(self) -> None:
@@ -214,14 +227,14 @@ class StreamConsumer:
                         continue
 
                 # No capacity or no messages - short sleep to avoid busy loop
-                await asyncio.sleep(NO_WORK_SLEEP_SECONDS)
+                await interruptible_sleep(NO_WORK_SLEEP_SECONDS, lambda: self._running)
 
             except asyncio.CancelledError:
                 logger.info("Consumer loop cancelled")
                 break
             except Exception:
                 logger.exception("Error in consumer loop")
-                await asyncio.sleep(1)
+                await interruptible_sleep(1, lambda: self._running)
 
     async def _try_read_stream(
         self,
@@ -348,10 +361,15 @@ class StreamConsumer:
         task: Task,
         is_high_priority: bool,
     ) -> None:
-        """Execute task and acknowledge on completion.
+        """Execute task with running heartbeat and acknowledge on completion.
 
-        Executes the task function (handling both sync and async functions),
-        records execution statistics, and acknowledges the message on success.
+        While the task executes, a background heartbeat periodically renews a
+        "running" key in Redis with a short TTL. This allows the Reconciler to
+        quickly detect crashed workers: if the key expires, the worker is dead.
+
+        On success: records stats, removes tracking entries, ACKs the message.
+        On failure: stops heartbeat, removes running key, does NOT ACK (message
+        remains pending for reconciliation/retry).
 
         Args:
             message_id: The Redis message ID to acknowledge.
@@ -360,8 +378,37 @@ class StreamConsumer:
             is_high_priority: Whether this is from the high priority stream.
         """
         keys = self._keys.get_task_keys(group_name, task.name)
-        start = time.monotonic_ns()
+        config = self._task_manager.config
+        task_id = f"{group_name}:{task.name}"
+        running_key = self._keys.running_task_key(group_name, task.name)
 
+        # Mark the task as running with a short TTL
+        await self._redis.set(
+            running_key,
+            self._worker.redis_safe_id,
+            ex=config.running_heartbeat_ttl,
+        )
+
+        # Start the heartbeat loop in the background
+        heartbeat_active = True
+
+        async def _heartbeat() -> None:
+            """Renew the running key at regular intervals while the task executes."""
+            while heartbeat_active:
+                await interruptible_sleep(config.running_heartbeat_interval, lambda: heartbeat_active)
+                if heartbeat_active:
+                    try:
+                        await self._redis.set(
+                            running_key,
+                            self._worker.redis_safe_id,
+                            ex=config.running_heartbeat_ttl,
+                        )
+                    except Exception:
+                        logger.exception("Failed to renew running heartbeat for %s/%s", group_name, task.name)
+
+        heartbeat_task = asyncio.create_task(_heartbeat(), name=f"Heartbeat-{task_id}")
+
+        start = time.monotonic_ns()
         try:
             # Execute the task function
             if asyncio.iscoroutinefunction(task.function):
@@ -372,6 +419,12 @@ class StreamConsumer:
 
             end = time.monotonic_ns()
 
+            # Stop heartbeat
+            heartbeat_active = False
+            heartbeat_task.cancel()
+            with contextlib.suppress(asyncio.CancelledError):
+                await heartbeat_task
+
             # Record execution statistics
             await self._statistics.record_execution(
                 runs_key=keys.runs,
@@ -379,6 +432,10 @@ class StreamConsumer:
                 timestamp=datetime.now(timezone.utc).timestamp(),
                 duration_seconds=(end - start) / 1e9,
             )
+
+            # Clean up: remove running key and tracking entry
+            await self._redis.delete(running_key)
+            await self._redis.srem(self._keys.scheduled_set_key(), task_id)  # ty: ignore[invalid-await]
 
             # Acknowledge successful execution
             await self._ack_message(message_id, is_high_priority)
@@ -392,12 +449,18 @@ class StreamConsumer:
 
         except Exception:
             logger.exception("Task %s/%s failed", group_name, task.name)
-            # TODO: Implement retry logic and DLQ (Dead Letter Queue)
-            # For now, don't ACK - message remains pending for potential retry
-            # Future implementation should:
-            # - Track retry count
-            # - Move to DLQ after max retries
-            # - Support configurable retry policies
+
+            # Stop heartbeat and remove running key
+            heartbeat_active = False
+            heartbeat_task.cancel()
+            with contextlib.suppress(asyncio.CancelledError):
+                await heartbeat_task
+            await self._redis.delete(running_key)
+
+            # Do not ACK - message remains pending for reconciliation/retry.
+            # TODO: Implement retry logic and DLQ (Dead Letter Queue).
+            # Future implementation should track retry count, apply backoff,
+            # and move to DLQ after max retries.
 
     async def _ack_message(self, message_id: str, is_high_priority: bool) -> None:
         """Acknowledge a message as successfully processed.
@@ -436,3 +499,58 @@ class StreamConsumer:
                     if task.name == task_name:
                         return task
         return None
+
+    async def _recover_pending_on_startup(self) -> None:
+        """Recover pending messages from crashed consumers on startup.
+
+        Uses XAUTOCLAIM (Redis >= 6.2) to reclaim messages that have been idle
+        for longer than pending_message_timeout_ms. These are messages that were
+        read by a consumer but never ACK'd (e.g., the consumer crashed mid-execution).
+
+        Reclaimed messages are spawned as tasks for this worker to process.
+        This runs once at startup before the main consume loop begins.
+        """
+        stream_keys = self._keys.get_stream_keys()
+        config = self._task_manager.config
+        min_idle = config.pending_message_timeout_ms
+
+        for stream_key, is_high in [
+            (stream_keys.task_stream_high, True),
+            (stream_keys.task_stream_low, False),
+        ]:
+            try:
+                # XAUTOCLAIM returns: [next_start_id, [(msg_id, data), ...], [deleted_ids]]
+                result = await self._redis.xautoclaim(
+                    stream_key,
+                    stream_keys.consumer_group,
+                    self._worker.redis_safe_id,
+                    min_idle_time=min_idle,
+                    count=50,
+                )
+
+                if not result or not result[1]:
+                    continue
+
+                claimed_messages = result[1]
+                priority_label = "high" if is_high else "low"
+                logger.info(
+                    "Recovered %d pending %s priority message(s) on startup",
+                    len(claimed_messages),
+                    priority_label,
+                )
+
+                for msg_id, data in claimed_messages:
+                    decoded_id = msg_id.decode("utf-8") if isinstance(msg_id, bytes) else msg_id
+                    self._spawn_task(decoded_id, data, is_high_priority=is_high)
+
+            except ResponseError as e:
+                # XAUTOCLAIM requires Redis >= 6.2; log and continue if unavailable
+                if "unknown command" in str(e).lower():
+                    logger.warning(
+                        "XAUTOCLAIM not available (requires Redis >= 6.2), skipping pending recovery for %s stream",
+                        "high" if is_high else "low",
+                    )
+                else:
+                    logger.exception("Error recovering pending messages from %s stream", stream_key)
+            except Exception:
+                logger.exception("Error recovering pending messages from %s stream", stream_key)

@@ -18,6 +18,7 @@ import logging
 
 from redis.asyncio import Redis
 
+from fastapi_task_manager.async_utils import interruptible_sleep
 from fastapi_task_manager.redis_keys import RedisKeyBuilder
 from fastapi_task_manager.schema.worker_identity import WorkerIdentity
 
@@ -121,7 +122,7 @@ class LeaderElector:
         the worker loses leadership and the loop exits.
         """
         while self._is_leader:
-            await asyncio.sleep(self._heartbeat_interval)
+            await interruptible_sleep(self._heartbeat_interval, lambda: self._is_leader)
             try:
                 # Renew only if we still own the lock (XX = only if exists)
                 # We also verify ownership by checking if the value matches

@@ -30,7 +30,7 @@ class TaskManager:
         self._runner: Runner | None = None
         self._task_groups: list[TaskGroup] = []
 
-        logger.setLevel(self._config.log_level.upper().strip())
+        logger.setLevel(logging.NOTSET)
 
         self.append_to_app_lifecycle(app)
 

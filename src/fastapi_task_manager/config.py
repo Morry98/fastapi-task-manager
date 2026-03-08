@@ -2,10 +2,6 @@ from pydantic import BaseModel
 
 
 class Config(BaseModel):
-    # --------- Logging config variables ---------
-    log_level: str = "NOTSET"
-    # --------- End of logging config variables ---------
-
     # --------- App config variables ---------
     redis_key_prefix: str = __name__
     concurrent_tasks: int = 2
@@ -52,3 +48,27 @@ class Config(BaseModel):
     # Interval between leadership acquisition attempts for followers in seconds
     leader_retry_interval: float = 5.0
     # --------- End of leader election config variables ---------
+
+    # --------- Reconciliation config variables ---------
+    # Enable/disable the reconciliation loop (leader only)
+    reconciliation_enabled: bool = True
+    # Interval between reconciliation checks in seconds
+    reconciliation_interval: int = 30
+    # How long a task must be overdue before reconciliation republishes it (seconds).
+    # Safe to keep low thanks to the running heartbeat: if the running key is absent,
+    # no worker is executing the task.
+    reconciliation_overdue_seconds: int = 30
+    # How long a pending message must be idle before being reclaimed (milliseconds).
+    # Should be > running_heartbeat_ttl * 3 to tolerate transient delays.
+    pending_message_timeout_ms: int = 30_000
+    # --------- End of reconciliation config variables ---------
+
+    # --------- Running heartbeat config variables ---------
+    # TTL for the "running" key heartbeat in seconds. When a worker crashes,
+    # the key expires after this time, signaling that the task is no longer executing.
+    # Must be > running_heartbeat_interval * 2 to tolerate a missed heartbeat.
+    running_heartbeat_ttl: int = 10
+    # Interval between running key renewals in seconds. The worker renews the
+    # running key at this interval while a task is executing.
+    running_heartbeat_interval: float = 3.0
+    # --------- End of running heartbeat config variables ---------

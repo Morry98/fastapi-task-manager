@@ -12,6 +12,7 @@ from redis.asyncio import Redis
 from fastapi_task_manager import TaskGroup
 from fastapi_task_manager.coordinator import Coordinator
 from fastapi_task_manager.leader_election import LeaderElector
+from fastapi_task_manager.reconciler import Reconciler
 from fastapi_task_manager.redis_keys import RedisKeyBuilder
 from fastapi_task_manager.schema.task import Task
 from fastapi_task_manager.schema.worker_identity import WorkerIdentity
@@ -65,8 +66,10 @@ class Runner:
         self._leader_elector: LeaderElector | None = None
         self._coordinator: Coordinator | None = None
         self._consumer: StreamConsumer | None = None
+        self._reconciler: Reconciler | None = None
         self._coordinator_task: asyncio.Task | None = None
         self._consumer_task: asyncio.Task | None = None
+        self._reconciler_task: asyncio.Task | None = None
 
     async def start(self) -> None:
         """Start the runner in the configured mode (polling or stream)."""
@@ -128,14 +131,28 @@ class Runner:
             task_manager=self._task_manager,
         )
 
+        # Initialize reconciler if enabled (leader only, but all workers start it;
+        # the reconciler checks leadership internally before acting)
+        if config.reconciliation_enabled:
+            self._reconciler = Reconciler(
+                redis_client=self._redis_client,
+                key_builder=self._key_builder,
+                leader_elector=self._leader_elector,
+                task_manager=self._task_manager,
+            )
+
         # Setup consumer groups for both high and low priority streams
         await self._consumer.setup_consumer_groups()
 
         # Start coordinator (handles leader election internally)
         self._coordinator_task = await self._coordinator.start()
 
-        # Start consumer (runs on all workers)
+        # Start consumer (runs on all workers, recovers pending messages on startup)
         self._consumer_task = await self._consumer.start()
+
+        # Start reconciler if enabled
+        if self._reconciler:
+            self._reconciler_task = await self._reconciler.start()
 
         logger.info("Runner started in STREAM mode. Worker: %s", self._worker)
 
@@ -168,7 +185,16 @@ class Runner:
             logger.warning(msg)
             return
 
-        # Stop coordinator first (stop scheduling new tasks)
+        # Stop reconciler first (stop recovery actions)
+        if self._reconciler:
+            await self._reconciler.stop()
+        if self._reconciler_task:
+            self._reconciler_task.cancel()
+            with contextlib.suppress(asyncio.CancelledError):
+                await self._reconciler_task
+            self._reconciler_task = None
+
+        # Stop coordinator (stop scheduling new tasks)
         if self._coordinator:
             await self._coordinator.stop()
         if self._coordinator_task:
@@ -193,6 +219,7 @@ class Runner:
         # Clear references
         self._coordinator = None
         self._consumer = None
+        self._reconciler = None
         self._leader_elector = None
 
         logger.info("Runner stopped (stream mode).")
