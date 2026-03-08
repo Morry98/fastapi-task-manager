@@ -21,8 +21,10 @@ class TaskRun(BaseModel):
 
 
 class TaskDetailed(TaskBase):
+    task_group_name: str
     next_run: datetime
     is_active: bool
+    is_running: bool = False
     runs: list[TaskRun]
     # Retry backoff state (None = no backoff active, task running normally)
     retry_after: datetime | None = None
@@ -52,3 +54,17 @@ class Task(TaskBase):
             + "_"
             + self.function.__name__,  # ty: ignore[unresolved-attribute]
         )
+
+
+class AffectedTask(BaseModel):
+    """Identifies a single task that was affected by a bulk operation."""
+
+    task_group: str
+    task: str
+
+
+class TaskActionResponse(BaseModel):
+    """Response for bulk task operations (disable, enable, trigger, reset-retry, clear-statistics)."""
+
+    affected_tasks: list[AffectedTask]
+    count: int

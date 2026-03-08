@@ -1,50 +1,85 @@
 """Service layer for task router API endpoints.
 
-This module provides service functions for managing tasks via the REST API.
-It handles task retrieval, enabling/disabling, and statistics collection
-using Redis as the backend store.
+This module provides async service functions for managing tasks via the REST API.
+It handles task retrieval, enabling/disabling, triggering, statistics management,
+health checks and configuration inspection using the shared async Redis connection.
 """
 
 from datetime import datetime, timezone
 from typing import TYPE_CHECKING
 
 from fastapi.exceptions import HTTPException
-from redis.client import Redis
 
-from fastapi_task_manager import TaskGroup
 from fastapi_task_manager.redis_keys import RedisKeyBuilder
-from fastapi_task_manager.schema.task import Task, TaskDetailed, TaskRun
+from fastapi_task_manager.schema.health import ConfigResponse, HealthResponse
+from fastapi_task_manager.schema.task import AffectedTask, Task, TaskActionResponse, TaskDetailed, TaskRun
+from fastapi_task_manager.schema.task_group import TaskGroup as TaskGroupSchema
 
 if TYPE_CHECKING:
-    from fastapi_task_manager import TaskManager
+    from fastapi_task_manager.task_group import TaskGroup
+    from fastapi_task_manager.task_manager import TaskManager
+
+
+# ---------------------------------------------------------------------------
+# Shared helpers
+# ---------------------------------------------------------------------------
+
+
+def _find_tasks(
+    task_manager: "TaskManager",
+    task_group_name: str | None = None,
+    name: str | None = None,
+    tag: str | None = None,
+) -> list[tuple["TaskGroup", Task]]:
+    """Find all tasks matching the given filters.
+
+    Returns a list of (TaskGroup, Task) pairs for every match.
+    Raises 404 if nothing matches.
+    """
+    matches: list[tuple[TaskGroup, Task]] = []
+
+    for tg in task_manager.task_groups:
+        if task_group_name is not None and task_group_name != tg.name:
+            continue
+        for t in tg.tasks:
+            if name is not None and name != t.name:
+                continue
+            if tag is not None and t.tags is not None and tag not in t.tags:
+                continue
+            matches.append((tg, t))
+
+    if not matches:
+        raise HTTPException(status_code=404, detail="No matching tasks found")
+
+    return matches
+
+
+# ---------------------------------------------------------------------------
+# GET endpoints
+# ---------------------------------------------------------------------------
 
 
 def get_task_groups(
     task_manager: "TaskManager",
     name: str | None = None,
     tag: str | None = None,
-) -> list[TaskGroup]:
+) -> list[TaskGroupSchema]:
     """Retrieve task groups with optional filtering.
 
-    Args:
-        task_manager: The TaskManager instance containing all task groups.
-        name: Optional filter to match task group name exactly.
-        tag: Optional filter to match task groups containing this tag.
-
-    Returns:
-        A list of TaskGroup objects matching the filter criteria.
+    Returns group metadata including task count.
     """
     return [
-        TaskGroup(
+        TaskGroupSchema(
             name=x.name,
             tags=x.tags,
+            task_count=len(x.tasks),
         )
         for x in task_manager.task_groups
         if (name is None or name == x.name) and (tag is None or tag in x.tags)
     ]
 
 
-def get_tasks(
+async def get_tasks(
     task_manager: "TaskManager",
     task_group_name: str | None = None,
     name: str | None = None,
@@ -52,55 +87,42 @@ def get_tasks(
 ) -> list[TaskDetailed]:
     """Retrieve detailed task information with statistics from Redis.
 
-    This function fetches task metadata along with execution statistics
-    (run history, durations, next scheduled run) from Redis. It uses
-    Redis pipelines to batch multiple read operations and reduce
-    network round-trips.
-
-    Args:
-        task_manager: The TaskManager instance containing all task groups.
-        task_group_name: Optional filter for a specific task group.
-        name: Optional filter to match task name exactly.
-        tag: Optional filter to match tasks containing this tag.
-
-    Returns:
-        A list of TaskDetailed objects with full statistics.
+    Uses the shared async Redis connection and pipelines for efficient batch reads.
+    Includes running state detection for both polling and stream modes.
     """
-    list_to_return = []
-
-    # Create Redis client connection
-    redis_client = Redis(
-        host=task_manager.config.redis_host,
-        port=task_manager.config.redis_port,
-        password=task_manager.config.redis_password,
-        db=task_manager.config.redis_db,
-    )
-
-    # Create key builder for centralized key construction
+    redis_client = task_manager.redis_client
     key_builder = RedisKeyBuilder(task_manager.config.redis_key_prefix)
+    use_streams = task_manager.config.use_streams
+
+    list_to_return: list[TaskDetailed] = []
 
     for tg in task_manager.task_groups:
-        # Skip task groups that don't match the filter
         if task_group_name is not None and task_group_name != tg.name:
             continue
 
         for t in tg.tasks:
-            # Skip tasks that don't match the name or tag filters
             if (name is not None and name != t.name) or (tag is not None and t.tags is not None and tag not in t.tags):
                 continue
 
-            # Get all Redis keys for this task using the centralized key builder
             keys = key_builder.get_task_keys(tg.name, t.name)
 
-            # Use a pipeline to batch all Redis read operations for this task
+            # Build async pipeline with all reads for this task
             pipe = redis_client.pipeline()
-            pipe.lrange(keys.runs, 0, -1)  # Get all run timestamps from the list
-            pipe.lrange(keys.durations_second, 0, -1)  # Get all durations from the list
-            pipe.get(keys.next_run)  # Get next scheduled run timestamp
-            pipe.get(keys.disabled)  # Check if task is disabled
-            pipe.get(keys.retry_after)  # Get retry backoff timestamp
-            pipe.get(keys.retry_delay)  # Get current backoff delay
-            results = pipe.execute()
+            pipe.lrange(keys.runs, 0, -1)
+            pipe.lrange(keys.durations_second, 0, -1)
+            pipe.get(keys.next_run)
+            pipe.get(keys.disabled)
+            pipe.get(keys.retry_after)
+            pipe.get(keys.retry_delay)
+
+            # Check running state depending on mode
+            if use_streams:
+                running_key = key_builder.running_task_key(tg.name, t.name)
+                pipe.exists(running_key)
+            else:
+                pipe.exists(keys.runner_uuid)
+
+            results = await pipe.execute()
 
             # Unpack pipeline results
             runs_raw: list[bytes] = results[0]
@@ -109,42 +131,30 @@ def get_tasks(
             disabled_b: bytes | None = results[3]
             retry_after_b: bytes | None = results[4]
             retry_delay_b: bytes | None = results[5]
+            is_running: bool = bool(results[6])
 
-            # Convert runs from bytes to floats
-            # Redis Lists with LPUSH store items in reverse order (newest first)
-            # We reverse to get chronological order (oldest first)
+            # Runs and durations are stored via LPUSH (newest first) - reverse to chronological
             runs: list[float] = [float(r) for r in runs_raw[::-1]] if runs_raw else []
-
-            # Convert durations from bytes to floats (same reverse logic)
             durations: list[float] = [float(d) for d in durations_raw[::-1]] if durations_raw else []
 
-            # Handle potential data inconsistency between runs and durations
-            # Truncate to the minimum length to ensure paired data
+            # Truncate to paired data if inconsistent
             if len(runs) != len(durations):
                 min_length = min(len(runs), len(durations))
                 runs = runs[:min_length]
                 durations = durations[:min_length]
 
-            # Parse next run timestamp (use default if not set)
-            # Default to year 2000 as a sentinel value indicating "never scheduled"
+            # Parse next run timestamp (sentinel value = year 2000 = never scheduled)
             next_run = datetime(year=2000, month=1, day=1, tzinfo=timezone.utc)
             if next_run_b is not None:
                 next_run = datetime.fromtimestamp(float(next_run_b.decode("utf-8")), tz=timezone.utc)
 
-            # Determine if task is active (not disabled)
-            # A task is disabled if the disabled key exists (has any value)
             is_active = disabled_b is None
 
-            # Parse retry backoff state (None if no backoff active)
             retry_after = None
             if retry_after_b is not None:
-                retry_after = datetime.fromtimestamp(
-                    float(retry_after_b.decode("utf-8")),
-                    tz=timezone.utc,
-                )
+                retry_after = datetime.fromtimestamp(float(retry_after_b.decode("utf-8")), tz=timezone.utc)
             retry_delay = float(retry_delay_b.decode("utf-8")) if retry_delay_b is not None else None
 
-            # Build the detailed task response with run history
             list_to_return.append(
                 TaskDetailed(
                     name=t.name,
@@ -152,8 +162,10 @@ def get_tasks(
                     tags=t.tags,
                     expression=t.expression,
                     high_priority=t.high_priority,
+                    task_group_name=tg.name,
                     next_run=next_run,
                     is_active=is_active,
+                    is_running=is_running,
                     retry_after=retry_after,
                     retry_delay=retry_delay,
                     runs=[
@@ -169,172 +181,209 @@ def get_tasks(
     return list_to_return
 
 
-def disable_task(
+# ---------------------------------------------------------------------------
+# POST action endpoints (bulk)
+# ---------------------------------------------------------------------------
+
+
+async def disable_tasks(
     task_manager: "TaskManager",
     task_group_name: str | None = None,
     task_name: str | None = None,
     tag: str | None = None,
-) -> None:
-    """Disable a task to prevent its execution.
+) -> TaskActionResponse:
+    """Disable all matching tasks. Sets a disabled flag in Redis.
 
-    Sets a disabled flag in Redis for the matching task. When disabled,
-    the runner will skip execution of this task until it is re-enabled.
-
-    Args:
-        task_manager: The TaskManager instance containing all task groups.
-        task_group_name: Optional filter for a specific task group.
-        task_name: Optional filter to match task name exactly.
-        tag: Optional filter to match tasks containing this tag.
-
-    Raises:
-        HTTPException: 404 error if no matching task is found.
+    When disabled, the runner/coordinator skips execution.
+    Operates on ALL matching tasks (bulk).
     """
-    # Find the matching task
-    task: Task | None = None
-    task_group: TaskGroup | None = None
-
-    for tg in task_manager.task_groups:
-        if task_group_name is not None and task_group_name != tg.name:
-            continue
-        for t in tg.tasks:
-            if (task_name is not None and task_name != t.name) or (
-                tag is not None and t.tags is not None and tag not in t.tags
-            ):
-                continue
-            task = t
-            task_group = tg
-            break
-
-    if task is None or task_group is None:
-        raise HTTPException(status_code=404, detail="Task not found")
-
-    # Create Redis client connection
-    redis_client = Redis(
-        host=task_manager.config.redis_host,
-        port=task_manager.config.redis_port,
-        password=task_manager.config.redis_password,
-        db=task_manager.config.redis_db,
-    )
-
-    # Use key builder for centralized key construction
+    matches = _find_tasks(task_manager, task_group_name, task_name, tag)
+    redis_client = task_manager.redis_client
     key_builder = RedisKeyBuilder(task_manager.config.redis_key_prefix)
-    keys = key_builder.get_task_keys(task_group.name, task.name)
 
-    # Set the disabled flag with expiration
-    # The flag value "1" is arbitrary; presence of the key indicates disabled state
-    redis_client.set(
-        keys.disabled,
-        "1",
-        ex=task_manager.config.statistics_redis_expiration,
-    )
+    affected: list[AffectedTask] = []
+    for tg, t in matches:
+        keys = key_builder.get_task_keys(tg.name, t.name)
+        await redis_client.set(
+            keys.disabled,
+            "1",
+            ex=task_manager.config.statistics_redis_expiration,
+        )
+        affected.append(AffectedTask(task_group=tg.name, task=t.name))
+
+    return TaskActionResponse(affected_tasks=affected, count=len(affected))
 
 
-def reset_retry(
+async def enable_tasks(
     task_manager: "TaskManager",
     task_group_name: str | None = None,
     task_name: str | None = None,
     tag: str | None = None,
-) -> None:
-    """Reset the backoff state for a task, allowing immediate re-execution.
+) -> TaskActionResponse:
+    """Enable all matching tasks. Removes the disabled flag from Redis.
 
-    Removes the retry_after and retry_delay keys from Redis, clearing any
-    active backoff. The task will be scheduled normally on the next cron tick.
-
-    Args:
-        task_manager: The TaskManager instance containing all task groups.
-        task_group_name: Optional filter for a specific task group.
-        task_name: Optional filter to match task name exactly.
-        tag: Optional filter to match tasks containing this tag.
-
-    Raises:
-        HTTPException: 404 error if no matching task is found.
+    Operates on ALL matching tasks (bulk).
     """
-    # Find the matching task
-    task: Task | None = None
-    task_group: TaskGroup | None = None
-
-    for tg in task_manager.task_groups:
-        if task_group_name is not None and task_group_name != tg.name:
-            continue
-        for t in tg.tasks:
-            if (task_name is not None and task_name != t.name) or (
-                tag is not None and t.tags is not None and tag not in t.tags
-            ):
-                continue
-            task = t
-            task_group = tg
-            break
-
-    if task is None or task_group is None:
-        raise HTTPException(status_code=404, detail="Task not found")
-
-    # Create Redis client connection
-    redis_client = Redis(
-        host=task_manager.config.redis_host,
-        port=task_manager.config.redis_port,
-        password=task_manager.config.redis_password,
-        db=task_manager.config.redis_db,
-    )
-
-    # Use key builder for centralized key construction
+    matches = _find_tasks(task_manager, task_group_name, task_name, tag)
+    redis_client = task_manager.redis_client
     key_builder = RedisKeyBuilder(task_manager.config.redis_key_prefix)
-    keys = key_builder.get_task_keys(task_group.name, task.name)
 
-    # Delete both retry keys to clear the backoff state
-    redis_client.delete(keys.retry_after, keys.retry_delay)
+    affected: list[AffectedTask] = []
+    for tg, t in matches:
+        keys = key_builder.get_task_keys(tg.name, t.name)
+        await redis_client.delete(keys.disabled)
+        affected.append(AffectedTask(task_group=tg.name, task=t.name))
+
+    return TaskActionResponse(affected_tasks=affected, count=len(affected))
 
 
-def enable_task(
+async def reset_retry(
     task_manager: "TaskManager",
     task_group_name: str | None = None,
     task_name: str | None = None,
     tag: str | None = None,
-) -> None:
-    """Enable a previously disabled task.
+) -> TaskActionResponse:
+    """Reset the backoff state for all matching tasks.
 
-    Removes the disabled flag from Redis for the matching task,
-    allowing the runner to execute it according to its schedule.
-
-    Args:
-        task_manager: The TaskManager instance containing all task groups.
-        task_group_name: Optional filter for a specific task group.
-        task_name: Optional filter to match task name exactly.
-        tag: Optional filter to match tasks containing this tag.
-
-    Raises:
-        HTTPException: 404 error if no matching task is found.
+    Removes retry_after and retry_delay keys, allowing immediate re-scheduling.
+    Operates on ALL matching tasks (bulk).
     """
-    # Find the matching task
-    task: Task | None = None
-    task_group: TaskGroup | None = None
+    matches = _find_tasks(task_manager, task_group_name, task_name, tag)
+    redis_client = task_manager.redis_client
+    key_builder = RedisKeyBuilder(task_manager.config.redis_key_prefix)
 
-    for tg in task_manager.task_groups:
-        if task_group_name is not None and task_group_name != tg.name:
-            continue
-        for t in tg.tasks:
-            if (task_name is not None and task_name != t.name) or (
-                tag is not None and t.tags is not None and tag not in t.tags
-            ):
-                continue
-            task = t
-            task_group = tg
-            break
+    affected: list[AffectedTask] = []
+    for tg, t in matches:
+        keys = key_builder.get_task_keys(tg.name, t.name)
+        await redis_client.delete(keys.retry_after, keys.retry_delay)
+        affected.append(AffectedTask(task_group=tg.name, task=t.name))
 
-    if task is None or task_group is None:
-        raise HTTPException(status_code=404, detail="Task not found")
+    return TaskActionResponse(affected_tasks=affected, count=len(affected))
 
-    # Create Redis client connection
-    redis_client = Redis(
-        host=task_manager.config.redis_host,
-        port=task_manager.config.redis_port,
-        password=task_manager.config.redis_password,
-        db=task_manager.config.redis_db,
+
+async def trigger_tasks(
+    task_manager: "TaskManager",
+    task_group_name: str | None = None,
+    task_name: str | None = None,
+    tag: str | None = None,
+) -> TaskActionResponse:
+    """Trigger immediate execution of all matching tasks.
+
+    Sets next_run to epoch 0 so the runner/coordinator picks them up
+    on the next cycle. Also clears retry backoff if present.
+    Operates on ALL matching tasks (bulk).
+    """
+    matches = _find_tasks(task_manager, task_group_name, task_name, tag)
+    redis_client = task_manager.redis_client
+    key_builder = RedisKeyBuilder(task_manager.config.redis_key_prefix)
+
+    affected: list[AffectedTask] = []
+    for tg, t in matches:
+        keys = key_builder.get_task_keys(tg.name, t.name)
+        pipe = redis_client.pipeline()
+        # Set next_run to epoch 0 to force immediate scheduling
+        pipe.set(keys.next_run, "0")
+        # Also clear any active backoff that would block scheduling
+        pipe.delete(keys.retry_after, keys.retry_delay)
+        await pipe.execute()
+        affected.append(AffectedTask(task_group=tg.name, task=t.name))
+
+    return TaskActionResponse(affected_tasks=affected, count=len(affected))
+
+
+async def clear_statistics(
+    task_manager: "TaskManager",
+    task_group_name: str | None = None,
+    task_name: str | None = None,
+    tag: str | None = None,
+) -> TaskActionResponse:
+    """Clear execution history (runs and durations) for all matching tasks.
+
+    Operates on ALL matching tasks (bulk).
+    """
+    matches = _find_tasks(task_manager, task_group_name, task_name, tag)
+    redis_client = task_manager.redis_client
+    key_builder = RedisKeyBuilder(task_manager.config.redis_key_prefix)
+
+    affected: list[AffectedTask] = []
+    for tg, t in matches:
+        keys = key_builder.get_task_keys(tg.name, t.name)
+        await redis_client.delete(keys.runs, keys.durations_second)
+        affected.append(AffectedTask(task_group=tg.name, task=t.name))
+
+    return TaskActionResponse(affected_tasks=affected, count=len(affected))
+
+
+# ---------------------------------------------------------------------------
+# Health & config endpoints
+# ---------------------------------------------------------------------------
+
+
+async def get_health(task_manager: "TaskManager") -> HealthResponse:
+    """Return system health: runner status, Redis connectivity, worker info."""
+    runner = task_manager.runner
+    config = task_manager.config
+
+    # Check Redis connectivity
+    redis_connected = False
+    if task_manager.redis_client is not None:
+        try:
+            redis_connected = bool(await task_manager.redis_client.ping())  # ty: ignore[invalid-await]
+        except Exception:
+            redis_connected = False
+
+    # Determine status - runner must be alive and Redis reachable
+    is_running = runner is not None
+    status = "healthy" if is_running and redis_connected else "unhealthy"
+
+    # Worker and leader info (only available when runner is active)
+    worker_id: str | None = None
+    worker_started_at: str | None = None
+    is_leader: bool | None = None
+
+    if runner is not None:
+        worker_id = runner.worker_id
+        worker_started_at = runner.worker_started_at
+        if config.use_streams:
+            is_leader = runner.is_leader
+
+    return HealthResponse(
+        status=status,
+        mode="stream" if config.use_streams else "polling",
+        redis_connected=redis_connected,
+        worker_id=worker_id,
+        worker_started_at=worker_started_at,
+        is_leader=is_leader,
     )
 
-    # Use key builder for centralized key construction
-    key_builder = RedisKeyBuilder(task_manager.config.redis_key_prefix)
-    keys = key_builder.get_task_keys(task_group.name, task.name)
 
-    # Delete the disabled key directly (no need to check EXISTS first)
-    # Redis DELETE is idempotent - safe to call even if key doesn't exist
-    redis_client.delete(keys.disabled)
+def get_config(task_manager: "TaskManager") -> ConfigResponse:
+    """Return the current operational configuration (no secrets)."""
+    c = task_manager.config
+    return ConfigResponse(
+        redis_key_prefix=c.redis_key_prefix,
+        concurrent_tasks=c.concurrent_tasks,
+        statistics_history_runs=c.statistics_history_runs,
+        statistics_redis_expiration=c.statistics_redis_expiration,
+        poll_interval=c.poll_interval,
+        lock_renewal_interval=c.lock_renewal_interval,
+        initial_lock_ttl=c.initial_lock_ttl,
+        running_lock_ttl=c.running_lock_ttl,
+        worker_service_name=c.worker_service_name,
+        use_streams=c.use_streams,
+        stream_max_len=c.stream_max_len,
+        stream_block_ms=c.stream_block_ms,
+        leader_lock_ttl=c.leader_lock_ttl,
+        leader_heartbeat_interval=c.leader_heartbeat_interval,
+        leader_retry_interval=c.leader_retry_interval,
+        reconciliation_enabled=c.reconciliation_enabled,
+        reconciliation_interval=c.reconciliation_interval,
+        reconciliation_overdue_seconds=c.reconciliation_overdue_seconds,
+        pending_message_timeout_ms=c.pending_message_timeout_ms,
+        retry_backoff=c.retry_backoff,
+        retry_backoff_max=c.retry_backoff_max,
+        retry_backoff_multiplier=c.retry_backoff_multiplier,
+        retry_key_ttl=c.retry_key_ttl,
+        running_heartbeat_ttl=c.running_heartbeat_ttl,
+        running_heartbeat_interval=c.running_heartbeat_interval,
+    )

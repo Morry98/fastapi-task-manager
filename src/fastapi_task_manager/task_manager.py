@@ -8,10 +8,21 @@ from redis.asyncio import Redis
 
 from fastapi_task_manager.config import Config
 from fastapi_task_manager.runner import Runner
-from fastapi_task_manager.schema.task import TaskDetailed
+from fastapi_task_manager.schema.health import ConfigResponse, HealthResponse
+from fastapi_task_manager.schema.task import TaskActionResponse, TaskDetailed
 from fastapi_task_manager.schema.task_group import TaskGroup as TaskGroupSchema
 from fastapi_task_manager.task_group import TaskGroup
-from fastapi_task_manager.task_router_services import disable_task, enable_task, get_task_groups, get_tasks, reset_retry
+from fastapi_task_manager.task_router_services import (
+    clear_statistics,
+    disable_tasks,
+    enable_tasks,
+    get_config,
+    get_health,
+    get_task_groups,
+    get_tasks,
+    reset_retry,
+    trigger_tasks,
+)
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -28,11 +39,16 @@ class TaskManager:
         self._config = config
         self._app = app
         self._runner: Runner | None = None
+        self._redis_client: Redis | None = None
         self._task_groups: list[TaskGroup] = []
 
         logger.setLevel(logging.NOTSET)
 
         self.append_to_app_lifecycle(app)
+
+    # ---------------------------------------------------------------------------
+    # Properties
+    # ---------------------------------------------------------------------------
 
     @property
     def task_groups(self) -> list[TaskGroup]:
@@ -42,19 +58,102 @@ class TaskManager:
     def config(self) -> Config:
         return self._config
 
+    @property
+    def redis_client(self) -> Redis:
+        """Return the shared async Redis client.
+
+        Raises RuntimeError if the TaskManager has not been started yet.
+        """
+        if self._redis_client is None:
+            msg = "TaskManager has not been started. Redis client is not available."
+            raise RuntimeError(msg)
+        return self._redis_client
+
+    @property
+    def runner(self) -> Runner | None:
+        """Return the current Runner instance, or None if not started."""
+        return self._runner
+
+    # ---------------------------------------------------------------------------
+    # Health check API (for programmatic use)
+    # ---------------------------------------------------------------------------
+
+    @property
+    def is_running(self) -> bool:
+        """Synchronous check: True if the runner has been started.
+
+        This is a cheap, non-blocking check that can be used in sync code.
+        It does NOT verify Redis connectivity. For a full check use
+        ``is_healthy()`` or ``health_check()``.
+
+        Example::
+
+            @app.get("/health")
+            async def health():
+                return {"task_manager_running": task_manager.is_running}
+        """
+        return self._runner is not None
+
+    async def is_healthy(self) -> bool:
+        """Async check: True if the runner is alive AND Redis is reachable.
+
+        Convenience method that returns a single boolean suitable for
+        inclusion in an application health endpoint.
+
+        Example::
+
+            @app.get("/health")
+            async def health():
+                return {
+                    "task_manager": await task_manager.is_healthy(),
+                    "other_service": ...,
+                }
+        """
+        if self._runner is None or self._redis_client is None:
+            return False
+        try:
+            return bool(await self._redis_client.ping())  # ty: ignore[invalid-await]
+        except Exception:
+            return False
+
+    async def health_check(self) -> HealthResponse:
+        """Async check: returns the full ``HealthResponse`` model.
+
+        Same data returned by the ``GET /health`` router endpoint, but
+        callable directly from application code without HTTP.
+
+        Example::
+
+            @app.get("/health")
+            async def health():
+                tm_health = await task_manager.health_check()
+                return {
+                    "task_manager": tm_health.model_dump(),
+                    "other_service": ...,
+                }
+        """
+        return await get_health(self)
+
+    # ---------------------------------------------------------------------------
+    # Router
+    # ---------------------------------------------------------------------------
+
     def get_manager_router(
         self,
     ) -> APIRouter:
         router = APIRouter()
         func: Callable
+
+        # Define all route registrations: (service_function, route_decorator)
         for func, router_path in {
+            # --- GET endpoints ---
             (
                 cast("Callable[..., Any]", get_task_groups),
                 router.get(
                     "/task-groups",
                     response_model_by_alias=True,
                     response_model=list[TaskGroupSchema],
-                    description="Get task groups",
+                    description="Get task groups with optional filtering",
                     name="Get task groups",
                 ),
             ),
@@ -64,35 +163,80 @@ class TaskManager:
                     "/tasks",
                     response_model_by_alias=True,
                     response_model=list[TaskDetailed],
-                    description="Get tasks",
+                    description="Get tasks with execution statistics and running state",
                     name="Get tasks",
                 ),
             ),
             (
-                cast("Callable[..., Any]", disable_task),
-                router.post(
-                    "/disable-tasks",
+                cast("Callable[..., Any]", get_health),
+                router.get(
+                    "/health",
                     response_model_by_alias=True,
-                    description="Disable tasks",
+                    response_model=HealthResponse,
+                    description="Health check: runner status, Redis connectivity, worker info",
+                    name="Health check",
+                ),
+            ),
+            (
+                cast("Callable[..., Any]", get_config),
+                router.get(
+                    "/config",
+                    response_model_by_alias=True,
+                    response_model=ConfigResponse,
+                    description="Current operational configuration (no secrets)",
+                    name="Get config",
+                ),
+            ),
+            # --- POST action endpoints ---
+            (
+                cast("Callable[..., Any]", disable_tasks),
+                router.post(
+                    "/tasks/disable",
+                    response_model_by_alias=True,
+                    response_model=TaskActionResponse,
+                    description="Disable matching tasks (bulk)",
                     name="Disable tasks",
                 ),
             ),
             (
-                cast("Callable[..., Any]", enable_task),
+                cast("Callable[..., Any]", enable_tasks),
                 router.post(
-                    "/enable-tasks",
+                    "/tasks/enable",
                     response_model_by_alias=True,
-                    description="Enable tasks",
+                    response_model=TaskActionResponse,
+                    description="Enable matching tasks (bulk)",
                     name="Enable tasks",
                 ),
             ),
             (
                 cast("Callable[..., Any]", reset_retry),
                 router.post(
-                    "/reset-retry",
+                    "/tasks/reset-retry",
                     response_model_by_alias=True,
-                    description="Reset retry backoff for a task",
+                    response_model=TaskActionResponse,
+                    description="Reset retry backoff for matching tasks (bulk)",
                     name="Reset retry",
+                ),
+            ),
+            (
+                cast("Callable[..., Any]", trigger_tasks),
+                router.post(
+                    "/tasks/trigger",
+                    response_model_by_alias=True,
+                    response_model=TaskActionResponse,
+                    description="Trigger immediate execution of matching tasks (bulk)",
+                    name="Trigger tasks",
+                ),
+            ),
+            # --- DELETE endpoints ---
+            (
+                cast("Callable[..., Any]", clear_statistics),
+                router.delete(
+                    "/tasks/statistics",
+                    response_model_by_alias=True,
+                    response_model=TaskActionResponse,
+                    description="Clear execution history for matching tasks (bulk)",
+                    name="Clear statistics",
                 ),
             ),
         }:
@@ -102,6 +246,10 @@ class TaskManager:
             )
             router_path(partial_func)
         return router
+
+    # ---------------------------------------------------------------------------
+    # Lifecycle
+    # ---------------------------------------------------------------------------
 
     def append_to_app_lifecycle(self, app: FastAPI) -> None:
         """Automatically start/stop with app lifecycle."""
@@ -130,13 +278,17 @@ class TaskManager:
             logger.warning("TaskManager is already running.")
             return
         logger.info("Starting TaskManager...")
+
+        # Create and store the shared async Redis client
+        self._redis_client = Redis(
+            host=self._config.redis_host,
+            port=self._config.redis_port,
+            password=self._config.redis_password,
+            db=self._config.redis_db,
+        )
+
         self._runner = Runner(
-            redis_client=Redis(
-                host=self._config.redis_host,
-                port=self._config.redis_port,
-                password=self._config.redis_password,
-                db=self._config.redis_db,
-            ),
+            redis_client=self._redis_client,
             concurrent_tasks=self._config.concurrent_tasks,
             task_manager=self,
         )
@@ -150,6 +302,12 @@ class TaskManager:
         logger.info("Stopping TaskManager...")
         await self._runner.stop()
         self._runner = None
+
+        # Close the shared Redis connection
+        if self._redis_client is not None:
+            await self._redis_client.aclose()
+            self._redis_client = None
+
         logger.info("Stopped TaskManager.")
 
     def add_task_group(

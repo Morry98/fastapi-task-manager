@@ -71,6 +71,27 @@ class Runner:
         self._consumer_task: asyncio.Task | None = None
         self._reconciler_task: asyncio.Task | None = None
 
+    # ---------------------------------------------------------------------------
+    # Properties exposed for the management API (health endpoint)
+    # ---------------------------------------------------------------------------
+
+    @property
+    def worker_id(self) -> str:
+        """Return the human-readable worker short ID."""
+        return self._worker.short_id
+
+    @property
+    def worker_started_at(self) -> str:
+        """Return the ISO timestamp when this worker was initialized."""
+        return self._worker.started_at
+
+    @property
+    def is_leader(self) -> bool:
+        """Return whether this worker currently holds leadership (stream mode only)."""
+        if self._leader_elector is None:
+            return False
+        return self._leader_elector.is_leader
+
     async def start(self) -> None:
         """Start the runner in the configured mode (polling or stream)."""
         # Check if already running (either mode)
