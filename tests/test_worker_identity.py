@@ -1,6 +1,7 @@
 """Tests for WorkerIdentity schema."""
 
 import re
+from datetime import datetime
 
 from fastapi_task_manager.schema.worker_identity import WorkerIdentity
 
@@ -34,8 +35,6 @@ class TestWorkerIdentity:
     def test_started_at_is_iso_format(self):
         w = WorkerIdentity("svc")
         # Should not raise
-        from datetime import datetime
-
         datetime.fromisoformat(w.started_at)
 
     def test_str_returns_short_id(self):

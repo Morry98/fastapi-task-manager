@@ -1,5 +1,7 @@
 """Tests for Redis key builder module."""
 
+import dataclasses
+
 from fastapi_task_manager.redis_keys import RedisKeyBuilder, StreamKeys, TaskKeys
 
 
@@ -70,8 +72,6 @@ class TestTaskKeys:
         )
         assert keys.next_run == "a"
         # frozen=True should prevent modification
-        import dataclasses
-
         assert dataclasses.is_dataclass(keys)
 
 

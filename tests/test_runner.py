@@ -27,8 +27,7 @@ def _make_fake_asyncio_task():
     async def noop():
         pass
 
-    task = asyncio.ensure_future(noop())
-    return task
+    return asyncio.ensure_future(noop())
 
 
 class TestRunnerInit:
@@ -68,7 +67,7 @@ class TestRunnerStart:
         mock_coordinator,
         mock_reconciler,
     ):
-        runner, redis = _make_runner()
+        runner, _redis = _make_runner()
 
         # Mock component methods - start() must return a real awaitable task
         mock_consumer_inst = mock_consumer.return_value
@@ -132,7 +131,7 @@ class TestRunnerStop:
         mock_reconciler,
     ):
         """Calling start() when already running should return early."""
-        runner, redis = _make_runner()
+        runner, _redis = _make_runner()
 
         mock_consumer_inst = mock_consumer.return_value
         mock_consumer_inst.setup_consumer_groups = AsyncMock()
@@ -166,7 +165,7 @@ class TestRunnerStop:
         mock_coordinator,
         mock_reconciler,
     ):
-        runner, redis = _make_runner()
+        runner, _redis = _make_runner()
 
         # Setup mocks with real awaitable tasks
         mock_consumer_inst = mock_consumer.return_value

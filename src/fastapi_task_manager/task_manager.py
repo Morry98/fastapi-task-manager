@@ -122,7 +122,7 @@ class TaskManager:
         if self._runner is None or self._redis_client is None:
             return False
         try:
-            return bool(await self._redis_client.ping())  # ty: ignore[invalid-await]
+            return bool(await self._redis_client.ping())
         except Exception:
             return False
 

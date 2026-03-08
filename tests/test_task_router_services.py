@@ -1,5 +1,6 @@
 """Tests for task_router_services - service layer for API endpoints."""
 
+import time
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
@@ -214,7 +215,6 @@ class TestGetTasks:
 
     async def test_parses_retry_after_and_delay(self):
         """When retry_after and retry_delay are set, they should be parsed."""
-        import time
 
         task = _make_task("t1")
         group = _make_group("g1", [task])
@@ -316,7 +316,6 @@ class TestTriggerTasks:
     async def test_sets_next_run_to_zero_and_clears_backoff(self):
         task = _make_task("t1")
         group = _make_group("g1", [task])
-        # pipeline() is sync in Redis
         redis = MagicMock()
         pipe = MagicMock()
         pipe.set = MagicMock()

@@ -89,7 +89,7 @@ class StatisticsStorage:
             List of dicts with 'ts' and 'dur' float values, oldest first.
         """
         # XRANGE returns entries in chronological order (oldest → newest)
-        entries = await self._redis_client.xrange(stream_key)  # ty: ignore[invalid-await]
+        entries = await self._redis_client.xrange(stream_key)
 
         return [
             {

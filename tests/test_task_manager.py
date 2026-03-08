@@ -1,6 +1,7 @@
 """Tests for TaskManager - entry point and lifecycle."""
 
 import json
+from contextlib import asynccontextmanager
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -335,7 +336,6 @@ class TestAppendToAppLifecycle:
     @patch("fastapi_task_manager.task_manager.Redis")
     async def test_lifecycle_chains_existing_lifespan(self, mock_redis_cls, mock_runner_cls):
         """When the app already has a lifespan, it should be chained."""
-        from contextlib import asynccontextmanager
 
         existing_called = False
 

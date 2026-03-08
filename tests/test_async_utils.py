@@ -33,7 +33,7 @@ class TestInterruptibleSleep:
             await asyncio.sleep(0.15)
             running = False
 
-        asyncio.create_task(stop_after_delay())
+        bg_task = asyncio.create_task(stop_after_delay())  # noqa: F841, RUF006
         start = time.monotonic()
         await interruptible_sleep(5.0, lambda: running, step=0.05)
         elapsed = time.monotonic() - start

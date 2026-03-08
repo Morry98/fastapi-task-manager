@@ -1,5 +1,6 @@
 """Tests for Reconciler - detects and recovers lost tasks."""
 
+import asyncio
 import time
 from datetime import timedelta
 from unittest.mock import AsyncMock, MagicMock
@@ -336,8 +337,6 @@ class TestRunLoop:
     """Tests for the _run reconciliation loop."""
 
     async def test_run_loop_executes_when_leader(self):
-        import asyncio
-
         task = _make_task("t1")
         group = _make_group("g1", [task])
         reconciler, redis = _make_reconciler(task_groups=[group], is_leader=True)
@@ -351,13 +350,11 @@ class TestRunLoop:
             await asyncio.sleep(0.15)
             await reconciler.stop()
 
-        asyncio.create_task(stop_after())
+        stop_task = asyncio.create_task(stop_after())  # noqa: F841, RUF006
         asyncio_task = await reconciler.start()
         await asyncio_task
 
     async def test_run_loop_skips_when_not_leader(self):
-        import asyncio
-
         reconciler, redis = _make_reconciler(is_leader=False)
         reconciler._task_manager.config.reconciliation_interval = 0.05
 
@@ -365,7 +362,7 @@ class TestRunLoop:
             await asyncio.sleep(0.15)
             await reconciler.stop()
 
-        asyncio.create_task(stop_after())
+        stop_task = asyncio.create_task(stop_after())  # noqa: F841, RUF006
         asyncio_task = await reconciler.start()
         await asyncio_task
 

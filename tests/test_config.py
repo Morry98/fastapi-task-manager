@@ -55,15 +55,16 @@ class TestConfigCustomValues:
     """Verify custom values override defaults."""
 
     def test_custom_redis_settings(self):
+        test_password = "secret"  # noqa: S105
         config = Config(
             redis_host="redis.example.com",
             redis_port=6380,
-            redis_password="secret",
+            redis_password=test_password,
             redis_db=5,
         )
         assert config.redis_host == "redis.example.com"
         assert config.redis_port == 6380
-        assert config.redis_password == "secret"
+        assert config.redis_password == test_password
         assert config.redis_db == 5
 
     def test_custom_prefix_and_concurrency(self):

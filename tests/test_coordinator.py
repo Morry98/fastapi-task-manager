@@ -1,5 +1,6 @@
 """Tests for Coordinator - cron evaluation and stream publishing."""
 
+import asyncio
 import time
 from unittest.mock import AsyncMock, MagicMock
 
@@ -121,7 +122,7 @@ class TestPublishTask:
     """Tests for _publish_task."""
 
     async def test_publishes_to_stream_and_tracks(self):
-        coordinator, redis, tm = _make_coordinator()
+        coordinator, redis, _tm = _make_coordinator()
         task = _make_task()
         group = _make_task_group()
         redis.xadd = AsyncMock(return_value=b"1-0")
@@ -172,7 +173,7 @@ class TestEvaluateAndPublishAll:
         """Due tasks get published and next_run updated."""
         task = _make_task("t1")
         group = _make_task_group("g1", [task])
-        coordinator, redis, tm = _make_coordinator(tasks=[group])
+        coordinator, redis, _tm = _make_coordinator(tasks=[group])
         # Task is due (no next_run set)
         redis.get = AsyncMock(return_value=None)
         redis.xadd = AsyncMock(return_value=b"1-0")
@@ -189,7 +190,7 @@ class TestEvaluateAndPublishAll:
         """Tasks not due are not published."""
         task = _make_task("t1")
         group = _make_task_group("g1", [task])
-        coordinator, redis, tm = _make_coordinator(tasks=[group])
+        coordinator, redis, _tm = _make_coordinator(tasks=[group])
         # Task is disabled
         redis.get = AsyncMock(return_value=b"1")
 
@@ -201,7 +202,7 @@ class TestEvaluateAndPublishAll:
         """An exception evaluating one task does not stop processing others."""
         task = _make_task("t1")
         group = _make_task_group("g1", [task])
-        coordinator, redis, tm = _make_coordinator(tasks=[group])
+        coordinator, redis, _tm = _make_coordinator(tasks=[group])
         redis.get = AsyncMock(side_effect=ConnectionError("Redis down"))
 
         # Should not raise
@@ -213,11 +214,9 @@ class TestRunLoop:
 
     async def test_run_as_leader_evaluates_tasks(self):
         """When leader, the loop evaluates and publishes tasks."""
-        import asyncio
-
         task = _make_task("t1")
         group = _make_task_group("g1", [task])
-        coordinator, redis, tm = _make_coordinator(tasks=[group], is_leader=True)
+        coordinator, redis, _tm = _make_coordinator(tasks=[group], is_leader=True)
         # Make task disabled so evaluation is quick
         redis.get = AsyncMock(return_value=b"1")
 
@@ -226,22 +225,20 @@ class TestRunLoop:
             await asyncio.sleep(0.15)
             await coordinator.stop()
 
-        asyncio.create_task(stop_after())
+        stop_task = asyncio.create_task(stop_after())  # noqa: F841, RUF006
         asyncio_task = await coordinator.start()
         await asyncio_task
 
     async def test_run_as_follower_tries_to_acquire(self):
         """When not leader, the loop tries to acquire leadership."""
-        import asyncio
-
-        coordinator, redis, tm = _make_coordinator(is_leader=False)
+        coordinator, _redis, tm = _make_coordinator(is_leader=False)
         tm.config.leader_retry_interval = 0.05
 
         async def stop_after():
             await asyncio.sleep(0.15)
             await coordinator.stop()
 
-        asyncio.create_task(stop_after())
+        stop_task = asyncio.create_task(stop_after())  # noqa: F841, RUF006
         asyncio_task = await coordinator.start()
         await asyncio_task
 

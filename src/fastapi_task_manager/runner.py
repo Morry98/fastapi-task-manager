@@ -87,7 +87,7 @@ class Runner:
 
         # Verify Redis connection
         try:
-            pong = await self._redis_client.ping()  # ty: ignore[invalid-await]
+            pong = await self._redis_client.ping()
         except Exception as e:
             msg = f"Redis ping failed: {e!r}"
             raise ConnectionError(msg) from e

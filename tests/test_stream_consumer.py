@@ -39,17 +39,15 @@ def _make_consumer():
 
 def _make_task(name="task1", is_async=True, should_fail=False):
     """Create a mock Task."""
+    task_error_msg = "task failed"
     if is_async:
-        if should_fail:
-            func = AsyncMock(side_effect=RuntimeError("task failed"))
-        else:
-            func = AsyncMock()
+        func = AsyncMock(side_effect=RuntimeError(task_error_msg)) if should_fail else AsyncMock()
         func.__name__ = name
     else:
         func = MagicMock()
         func.__name__ = name
         if should_fail:
-            func.side_effect = RuntimeError("task failed")
+            func.side_effect = RuntimeError(task_error_msg)
 
     return Task(
         function=func,
@@ -152,7 +150,7 @@ class TestProcessMessageFound:
 
     async def test_calls_execute_and_ack_for_known_task(self):
         """When the task exists, _execute_and_ack should be called."""
-        consumer, redis, tm, stats = _make_consumer()
+        consumer, redis, tm, _stats = _make_consumer()
         task = _make_task("t1")
         group = MagicMock()
         group.name = "g1"
@@ -181,7 +179,7 @@ class TestExecuteAndAck:
 
     async def test_successful_async_task_execution(self):
         """Successful task should record stats, clean up, and ACK."""
-        consumer, redis, tm, stats = _make_consumer()
+        consumer, redis, _tm, stats = _make_consumer()
         task = _make_task("t1")
         redis.set = AsyncMock()
         redis.delete = AsyncMock()
@@ -201,7 +199,7 @@ class TestExecuteAndAck:
 
     async def test_failed_task_applies_backoff_and_acks(self):
         """Failed task should apply backoff, ACK, and clean up tracking."""
-        consumer, redis, tm, stats = _make_consumer()
+        consumer, redis, _tm, stats = _make_consumer()
         task = _make_task("t1", should_fail=True)
         redis.set = AsyncMock()
         redis.delete = AsyncMock()
@@ -292,7 +290,7 @@ class TestTryReadStream:
         result = await consumer._try_read_stream("stream", "group", block_ms=0)
 
         assert result is not None
-        msg_id, data = result
+        msg_id, _data = result
         assert msg_id == "1-0"
 
     async def test_returns_none_when_no_messages(self):
@@ -350,7 +348,7 @@ class TestConsumeLoop:
 
     async def test_loop_spawns_high_priority_task(self):
         """When a high priority message is available, it should be spawned."""
-        consumer, redis, tm, stats = _make_consumer()
+        consumer, redis, tm, _stats = _make_consumer()
         tm.task_groups = []
         call_count = 0
 
@@ -375,7 +373,7 @@ class TestConsumeLoop:
 
     async def test_loop_spawns_low_priority_task(self):
         """When only a low priority message is available, it should be spawned."""
-        consumer, redis, tm, stats = _make_consumer()
+        consumer, redis, tm, _stats = _make_consumer()
         tm.task_groups = []
         call_count = 0
 
@@ -401,14 +399,15 @@ class TestConsumeLoop:
 
     async def test_loop_handles_exception(self):
         """Generic exception in consume loop should be caught and logged."""
-        consumer, redis, tm, _ = _make_consumer()
+        consumer, redis, _tm, _ = _make_consumer()
         call_count = 0
 
         async def mock_xreadgroup(**kwargs):
             nonlocal call_count
             call_count += 1
             if call_count == 1:
-                raise ConnectionError("Redis down")
+                msg = "Redis down"
+                raise ConnectionError(msg)
             consumer._running = False
             return []
 
@@ -423,7 +422,7 @@ class TestStopWithRunningTasks:
 
     async def test_stop_waits_for_running_tasks(self):
         """stop() should wait for in-progress tasks to complete."""
-        consumer, redis, tm, stats = _make_consumer()
+        consumer, _redis, _tm, _stats = _make_consumer()
         # Add a fake running task
         completed = False
 
@@ -448,7 +447,7 @@ class TestSyncFunctionExecution:
 
     async def test_sync_function_execution(self):
         """Sync functions should be run via to_thread."""
-        consumer, redis, tm, stats = _make_consumer()
+        consumer, redis, _tm, stats = _make_consumer()
         task = _make_task("sync_t", is_async=False)
         redis.set = AsyncMock()
         redis.delete = AsyncMock()
