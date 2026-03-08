@@ -10,6 +10,9 @@ class TaskBase(BaseModel):
     description: str | None = None
     tags: list[str] | None = None
     high_priority: bool = False
+    # Per-task retry overrides (None = use global config defaults)
+    retry_backoff: float | None = None
+    retry_backoff_max: float | None = None
 
 
 class TaskRun(BaseModel):
@@ -21,6 +24,9 @@ class TaskDetailed(TaskBase):
     next_run: datetime
     is_active: bool
     runs: list[TaskRun]
+    # Retry backoff state (None = no backoff active, task running normally)
+    retry_after: datetime | None = None
+    retry_delay: float | None = None
 
 
 class Task(TaskBase):

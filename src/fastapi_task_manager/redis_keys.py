@@ -61,6 +61,10 @@ class TaskKeys:
             Used for statistics and monitoring purposes.
         durations_second: Key for a Redis list containing the history of execution
             durations in seconds. Used for performance monitoring and statistics.
+        retry_after: Key storing the Unix timestamp after which the task can be
+            re-executed. When present and > now, the Coordinator skips scheduling.
+        retry_delay: Key storing the current backoff delay in seconds. Used to
+            calculate the next delay on consecutive failures. Reset on success.
     """
 
     next_run: str
@@ -68,6 +72,8 @@ class TaskKeys:
     disabled: str
     runs: str
     durations_second: str
+    retry_after: str
+    retry_delay: str
 
 
 class RedisKeyBuilder:
@@ -154,6 +160,8 @@ class RedisKeyBuilder:
             disabled=self._build_key(group, task, "disabled"),
             runs=self._build_key(group, task, "runs"),
             durations_second=self._build_key(group, task, "durations_second"),
+            retry_after=self._build_key(group, task, "retry_after"),
+            retry_delay=self._build_key(group, task, "retry_delay"),
         )
 
     # =========================================================================

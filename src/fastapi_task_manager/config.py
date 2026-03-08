@@ -63,6 +63,18 @@ class Config(BaseModel):
     pending_message_timeout_ms: int = 30_000
     # --------- End of reconciliation config variables ---------
 
+    # --------- Retry / backoff config variables ---------
+    # Initial backoff delay in seconds after a task failure
+    retry_backoff: float = 1.0
+    # Maximum backoff delay in seconds (cap). The delay will never exceed this value.
+    retry_backoff_max: float = 60.0
+    # Multiplier applied to the current delay after each consecutive failure
+    retry_backoff_multiplier: float = 2.0
+    # TTL for retry keys in Redis (safety net cleanup). Retry state expires
+    # after this period if no new failures occur.
+    retry_key_ttl: int = 86_400  # 24 hours
+    # --------- End of retry / backoff config variables ---------
+
     # --------- Running heartbeat config variables ---------
     # TTL for the "running" key heartbeat in seconds. When a worker crashes,
     # the key expires after this time, signaling that the task is no longer executing.

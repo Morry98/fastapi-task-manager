@@ -12,6 +12,7 @@ leadership via the LeaderElector.
 
 import asyncio
 import logging
+import time
 from datetime import datetime, timezone
 from typing import TYPE_CHECKING
 
@@ -160,6 +161,20 @@ class Coordinator:
         disabled = await self._redis.get(keys.disabled)
         if disabled is not None:
             return False
+
+        # Check if task is in backoff (retry_after timestamp in the future)
+        retry_after_raw = await self._redis.get(keys.retry_after)
+        if retry_after_raw is not None:
+            if isinstance(retry_after_raw, bytes):
+                retry_after_raw = retry_after_raw.decode("utf-8")
+            if time.time() < float(retry_after_raw):
+                logger.debug(
+                    "Task %s/%s in backoff until %.0f, skipping",
+                    task_group.name,
+                    task.name,
+                    float(retry_after_raw),
+                )
+                return False
 
         # Check next_run time
         next_run_b = await self._redis.get(keys.next_run)

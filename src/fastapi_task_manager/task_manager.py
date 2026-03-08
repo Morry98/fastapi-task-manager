@@ -11,7 +11,7 @@ from fastapi_task_manager.runner import Runner
 from fastapi_task_manager.schema.task import TaskDetailed
 from fastapi_task_manager.schema.task_group import TaskGroup as TaskGroupSchema
 from fastapi_task_manager.task_group import TaskGroup
-from fastapi_task_manager.task_router_services import disable_task, enable_task, get_task_groups, get_tasks
+from fastapi_task_manager.task_router_services import disable_task, enable_task, get_task_groups, get_tasks, reset_retry
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -84,6 +84,15 @@ class TaskManager:
                     response_model_by_alias=True,
                     description="Enable tasks",
                     name="Enable tasks",
+                ),
+            ),
+            (
+                cast("Callable[..., Any]", reset_retry),
+                router.post(
+                    "/reset-retry",
+                    response_model_by_alias=True,
+                    description="Reset retry backoff for a task",
+                    name="Reset retry",
                 ),
             ),
         }:

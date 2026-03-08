@@ -437,6 +437,9 @@ class StreamConsumer:
             await self._redis.delete(running_key)
             await self._redis.srem(self._keys.scheduled_set_key(), task_id)  # ty: ignore[invalid-await]
 
+            # Reset backoff state on success (if any was active)
+            await self._redis.delete(keys.retry_after, keys.retry_delay)
+
             # Acknowledge successful execution
             await self._ack_message(message_id, is_high_priority)
 
@@ -457,10 +460,56 @@ class StreamConsumer:
                 await heartbeat_task
             await self._redis.delete(running_key)
 
-            # Do not ACK - message remains pending for reconciliation/retry.
-            # TODO: Implement retry logic and DLQ (Dead Letter Queue).
-            # Future implementation should track retry count, apply backoff,
-            # and move to DLQ after max retries.
+            # Apply exponential backoff with cap
+            await self._apply_backoff(group_name, task)
+
+            # ACK the message — retry is managed by the backoff mechanism,
+            # not by leaving the message pending in the stream.
+            await self._ack_message(message_id, is_high_priority)
+
+            # Clean up tracking entry
+            await self._redis.srem(self._keys.scheduled_set_key(), task_id)  # ty: ignore[invalid-await]
+
+    async def _apply_backoff(self, group_name: str, task: Task) -> None:
+        """Apply exponential backoff after a task failure.
+
+        Reads the current delay from Redis (or uses the initial value),
+        sets a retry_after timestamp, and stores the next delay (capped).
+        Both keys have a TTL as a safety net for cleanup.
+
+        Args:
+            group_name: The task group name.
+            task: The Task that failed.
+        """
+        keys = self._keys.get_task_keys(group_name, task.name)
+        config = self._task_manager.config
+
+        # Resolve effective backoff values (per-task override or global config)
+        initial = task.retry_backoff or config.retry_backoff
+        max_delay = task.retry_backoff_max or config.retry_backoff_max
+        multiplier = config.retry_backoff_multiplier
+        ttl = config.retry_key_ttl
+
+        # Read current delay from Redis, or start with initial value
+        current_raw = await self._redis.get(keys.retry_delay)
+        current = float(current_raw) if current_raw else initial
+
+        # Set retry_after timestamp — Coordinator will skip scheduling until this expires
+        retry_after = time.time() + current
+        await self._redis.set(keys.retry_after, str(retry_after), ex=ttl)
+
+        # Calculate and store next delay for the next potential failure (capped at max)
+        next_delay = min(current * multiplier, max_delay)
+        await self._redis.set(keys.retry_delay, str(next_delay), ex=ttl)
+
+        logger.warning(
+            "Task %s/%s in backoff: retry after %.1fs (next delay: %.1fs, cap: %.1fs)",
+            group_name,
+            task.name,
+            current,
+            next_delay,
+            max_delay,
+        )
 
     async def _ack_message(self, message_id: str, is_high_priority: bool) -> None:
         """Acknowledge a message as successfully processed.

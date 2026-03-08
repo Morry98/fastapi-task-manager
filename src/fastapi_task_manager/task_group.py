@@ -38,6 +38,8 @@ class TaskGroup:
         name: str | None = None,
         description: str | None = None,
         high_priority: bool = False,
+        retry_backoff: float | None = None,
+        retry_backoff_max: float | None = None,
     ):
         """Decorator for creating task."""
 
@@ -78,6 +80,8 @@ class TaskGroup:
                     tags=_tags or None,
                     high_priority=high_priority,
                     kwargs=kwargs_list[i],
+                    retry_backoff=retry_backoff,
+                    retry_backoff_max=retry_backoff_max,
                 )
                 self._tasks.append(task)
 
