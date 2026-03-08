@@ -77,7 +77,7 @@ sequenceDiagram
     S-->>W1: XREADGROUP (claims message)
     W1->>R: SET running heartbeat
     W1->>W1: Execute task function
-    W1->>R: Record run + duration
+    W1->>R: Record stats (XADD)
     W1->>R: Update next_run
     W1->>S: XACK (acknowledge message)
     W1->>R: DEL running heartbeat

@@ -123,8 +123,7 @@ async def get_tasks(
 
             # Build async pipeline with all reads for this task
             pipe = redis_client.pipeline()
-            pipe.lrange(keys.runs, 0, -1)
-            pipe.lrange(keys.durations_second, 0, -1)
+            pipe.xrange(keys.stats_stream)
             pipe.get(keys.next_run)
             pipe.get(keys.disabled)
             pipe.get(keys.retry_after)
@@ -137,23 +136,25 @@ async def get_tasks(
             results = await pipe.execute()
 
             # Unpack pipeline results
-            runs_raw: list[bytes] = results[0]
-            durations_raw: list[bytes] = results[1]
-            next_run_b: bytes | None = results[2]
-            disabled_b: bytes | None = results[3]
-            retry_after_b: bytes | None = results[4]
-            retry_delay_b: bytes | None = results[5]
-            is_running: bool = bool(results[6])
+            stats_entries: list[tuple[bytes, dict]] = results[0]
+            next_run_b: bytes | None = results[1]
+            disabled_b: bytes | None = results[2]
+            retry_after_b: bytes | None = results[3]
+            retry_delay_b: bytes | None = results[4]
+            is_running: bool = bool(results[5])
 
-            # Runs and durations are stored via LPUSH (newest first) - reverse to chronological
-            runs: list[float] = [float(r) for r in runs_raw[::-1]] if runs_raw else []
-            durations: list[float] = [float(d) for d in durations_raw[::-1]] if durations_raw else []
-
-            # Truncate to paired data if inconsistent
-            if len(runs) != len(durations):
-                min_length = min(len(runs), len(durations))
-                runs = runs[:min_length]
-                durations = durations[:min_length]
+            # Parse stream entries (already in chronological order from XRANGE)
+            task_runs: list[TaskRun] = []
+            for _entry_id, fields in stats_entries:
+                ts_val = fields.get(b"ts", fields.get("ts"))
+                dur_val = fields.get(b"dur", fields.get("dur"))
+                if ts_val is not None and dur_val is not None:
+                    task_runs.append(
+                        TaskRun(
+                            run_date=datetime.fromtimestamp(float(ts_val), timezone.utc),
+                            durations_second=float(dur_val),
+                        ),
+                    )
 
             # Parse next run timestamp (sentinel value = year 2000 = never scheduled)
             next_run = datetime(year=2000, month=1, day=1, tzinfo=timezone.utc)
@@ -180,13 +181,7 @@ async def get_tasks(
                     is_running=is_running,
                     retry_after=retry_after,
                     retry_delay=retry_delay,
-                    runs=[
-                        TaskRun(
-                            run_date=datetime.fromtimestamp(runs[i], timezone.utc),
-                            durations_second=durations[i],
-                        )
-                        for i in range(len(runs))
-                    ],
+                    runs=task_runs,
                 ),
             )
 
@@ -320,7 +315,7 @@ async def clear_statistics(
     affected: list[AffectedTask] = []
     for tg, t in matches:
         keys = key_builder.get_task_keys(tg.name, t.name)
-        await redis_client.delete(keys.runs, keys.durations_second)
+        await redis_client.delete(keys.stats_stream)
         affected.append(AffectedTask(task_group=tg.name, task=t.name))
 
     return TaskActionResponse(affected_tasks=affected, count=len(affected))
@@ -515,8 +510,7 @@ async def delete_dynamic_task(
     await redis_client.delete(
         keys.next_run,
         keys.disabled,
-        keys.runs,
-        keys.durations_second,
+        keys.stats_stream,
         keys.retry_after,
         keys.retry_delay,
         running_key,

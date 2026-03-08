@@ -429,8 +429,7 @@ class StreamConsumer:
 
             # Record execution statistics
             await self._statistics.record_execution(
-                runs_key=keys.runs,
-                durations_key=keys.durations_second,
+                stream_key=keys.stats_stream,
                 timestamp=datetime.now(timezone.utc).timestamp(),
                 duration_seconds=(end - start) / 1e9,
             )

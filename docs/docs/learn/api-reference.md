@@ -165,7 +165,7 @@ Same query parameters and response model as `POST /tasks/disable`.
 
 ### DELETE /tasks/statistics
 
-Clear execution history (runs and durations) for all matching tasks.
+Clear execution history for all matching tasks. Deletes the statistics stream containing run timestamps and durations.
 
 Same query parameters and response model as `POST /tasks/disable`.
 

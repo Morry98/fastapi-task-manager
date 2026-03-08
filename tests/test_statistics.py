@@ -19,91 +19,81 @@ def _make_mock_redis():
     ctx.__aenter__ = AsyncMock(return_value=pipe)
     ctx.__aexit__ = AsyncMock(return_value=False)
     redis.pipeline.return_value = ctx
-    # Keep lrange as async (used directly, not via pipeline)
-    redis.lrange = AsyncMock(return_value=[])
+    # XRANGE is used directly (not via pipeline) for get_statistics
+    redis.xrange = AsyncMock(return_value=[])
     return redis, pipe
 
 
-class TestRecordRun:
-    """Tests for record_run."""
+class TestRecordExecution:
+    """Tests for record_execution using Redis Streams."""
 
-    async def test_record_run_pushes_and_trims(self):
+    async def test_record_execution_adds_stream_entry(self):
+        """Verify XADD is called with correct fields and MAXLEN trimming."""
         redis, pipe = _make_mock_redis()
         storage = StatisticsStorage(redis, max_entries=10, ttl_seconds=300)
-        await storage.record_run("runs_key", 1700000000.0)
+        await storage.record_execution("stats_key", 1700000000.0, 2.5)
 
-        pipe.lpush.assert_called_once_with("runs_key", "1700000000.0")
-        pipe.ltrim.assert_called_once_with("runs_key", 0, 9)
-        pipe.expire.assert_called_once_with("runs_key", 300)
+        # XADD with fields and maxlen
+        pipe.xadd.assert_called_once_with(
+            "stats_key",
+            {"ts": "1700000000.0", "dur": "2.5"},
+            maxlen=10,
+            approximate=True,
+        )
+        # TTL refreshed
+        pipe.expire.assert_called_once_with("stats_key", 300)
         pipe.execute.assert_awaited_once()
 
-
-class TestRecordDuration:
-    """Tests for record_duration."""
-
-    async def test_record_duration_pushes_and_trims(self):
+    async def test_record_execution_single_pipeline(self):
+        """Verify all operations are batched in a single pipeline."""
         redis, pipe = _make_mock_redis()
-        storage = StatisticsStorage(redis, max_entries=5, ttl_seconds=600)
-        await storage.record_duration("dur_key", 1.234)
+        storage = StatisticsStorage(redis, max_entries=30, ttl_seconds=432_000)
+        await storage.record_execution("key", 1.0, 0.5)
 
-        pipe.lpush.assert_called_once_with("dur_key", "1.234")
-        pipe.ltrim.assert_called_once_with("dur_key", 0, 4)
-        pipe.expire.assert_called_once_with("dur_key", 600)
-
-
-class TestRecordExecution:
-    """Tests for record_execution (combined run + duration)."""
-
-    async def test_record_execution_writes_both_in_single_pipeline(self):
-        redis, pipe = _make_mock_redis()
-        storage = StatisticsStorage(redis, max_entries=3, ttl_seconds=100)
-        await storage.record_execution("rk", "dk", 1700000000.0, 2.5)
-
-        # Should have two lpush, two ltrim, two expire calls
-        assert pipe.lpush.call_count == 2
-        assert pipe.ltrim.call_count == 2
-        assert pipe.expire.call_count == 2
+        # Only one pipeline execution
         pipe.execute.assert_awaited_once()
-
-
-class TestGetRuns:
-    """Tests for get_runs."""
-
-    async def test_get_runs_converts_to_floats(self):
-        redis, _ = _make_mock_redis()
-        redis.lrange = AsyncMock(return_value=[b"1.0", b"2.0", b"3.0"])
-        storage = StatisticsStorage(redis)
-        result = await storage.get_runs("key")
-        assert result == [1.0, 2.0, 3.0]
-
-    async def test_get_runs_empty_list(self):
-        redis, _ = _make_mock_redis()
-        redis.lrange = AsyncMock(return_value=[])
-        storage = StatisticsStorage(redis)
-        result = await storage.get_runs("key")
-        assert result == []
-
-
-class TestGetDurations:
-    """Tests for get_durations."""
-
-    async def test_get_durations_converts_to_floats(self):
-        redis, _ = _make_mock_redis()
-        redis.lrange = AsyncMock(return_value=[b"0.5", b"1.5"])
-        storage = StatisticsStorage(redis)
-        result = await storage.get_durations("key")
-        assert result == [0.5, 1.5]
+        # Exactly one XADD and one EXPIRE
+        assert pipe.xadd.call_count == 1
+        assert pipe.expire.call_count == 1
 
 
 class TestGetStatistics:
-    """Tests for get_statistics (combined read)."""
+    """Tests for get_statistics (reading from Redis Stream)."""
 
-    async def test_get_statistics_returns_both_lists(self):
-        redis, pipe = _make_mock_redis()
-        pipe.execute = AsyncMock(return_value=[[b"100.0", b"200.0"], [b"0.5", b"1.0"]])
+    async def test_get_statistics_returns_entries(self):
+        """Verify stream entries are parsed into dicts with ts and dur."""
+        redis, _ = _make_mock_redis()
+        redis.xrange = AsyncMock(
+            return_value=[
+                (b"1700000000000-0", {b"ts": b"100.0", b"dur": b"0.5"}),
+                (b"1700000001000-0", {b"ts": b"200.0", b"dur": b"1.0"}),
+            ],
+        )
+        storage = StatisticsStorage(redis, max_entries=500, ttl_seconds=432_000)
+        result = await storage.get_statistics("key")
 
-        storage = StatisticsStorage(redis)
-        result = await storage.get_statistics("rk", "dk")
+        assert len(result) == 2
+        assert result[0] == {"ts": 100.0, "dur": 0.5}
+        assert result[1] == {"ts": 200.0, "dur": 1.0}
 
-        assert result["runs"] == [100.0, 200.0]
-        assert result["durations"] == [0.5, 1.0]
+    async def test_get_statistics_empty_stream(self):
+        """Verify empty stream returns empty list."""
+        redis, _ = _make_mock_redis()
+        redis.xrange = AsyncMock(return_value=[])
+        storage = StatisticsStorage(redis, max_entries=500, ttl_seconds=432_000)
+        result = await storage.get_statistics("key")
+        assert result == []
+
+    async def test_get_statistics_string_keys(self):
+        """Verify parsing works when Redis returns string keys (decode_responses=True)."""
+        redis, _ = _make_mock_redis()
+        redis.xrange = AsyncMock(
+            return_value=[
+                ("1700000000000-0", {"ts": "42.0", "dur": "3.14"}),
+            ],
+        )
+        storage = StatisticsStorage(redis, max_entries=500, ttl_seconds=432_000)
+        result = await storage.get_statistics("key")
+
+        assert len(result) == 1
+        assert result[0] == {"ts": 42.0, "dur": 3.14}

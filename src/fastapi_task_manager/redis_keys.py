@@ -54,10 +54,9 @@ class TaskKeys:
             Used by the coordinator to determine when a task should be triggered.
         disabled: Key storing a flag that indicates whether the task is paused.
             When set, the coordinator will skip scheduling of this task.
-        runs: Key for a Redis list containing the history of execution timestamps.
-            Used for statistics and monitoring purposes.
-        durations_second: Key for a Redis list containing the history of execution
-            durations in seconds. Used for performance monitoring and statistics.
+        stats_stream: Key for a Redis Stream containing execution history entries.
+            Each entry has 'ts' (timestamp) and 'dur' (duration) fields, keeping
+            both values correlated in a single data structure.
         retry_after: Key storing the Unix timestamp after which the task can be
             re-executed. When present and > now, the Coordinator skips scheduling.
         retry_delay: Key storing the current backoff delay in seconds. Used to
@@ -66,8 +65,7 @@ class TaskKeys:
 
     next_run: str
     disabled: str
-    runs: str
-    durations_second: str
+    stats_stream: str
     retry_after: str
     retry_delay: str
 
@@ -153,8 +151,7 @@ class RedisKeyBuilder:
         return TaskKeys(
             next_run=self._build_key(group, task, "next_run"),
             disabled=self._build_key(group, task, "disabled"),
-            runs=self._build_key(group, task, "runs"),
-            durations_second=self._build_key(group, task, "durations_second"),
+            stats_stream=self._build_key(group, task, "stats_stream"),
             retry_after=self._build_key(group, task, "retry_after"),
             retry_delay=self._build_key(group, task, "retry_delay"),
         )
@@ -196,37 +193,21 @@ class RedisKeyBuilder:
         """
         return self._build_key(group, task, "disabled")
 
-    def runs_key(self, group: str, task: str) -> str:
-        """Build the key for the execution history list.
+    def stats_stream_key(self, group: str, task: str) -> str:
+        """Build the key for the execution statistics stream.
 
-        This key stores a Redis list of timestamps representing when the task
-        was executed. The list is capped at Config.statistics_history_runs entries
-        to limit memory usage.
-
-        Args:
-            group: The task group name.
-            task: The individual task name.
-
-        Returns:
-            The Redis key for the runs history list.
-        """
-        return self._build_key(group, task, "runs")
-
-    def durations_key(self, group: str, task: str) -> str:
-        """Build the key for the execution durations list.
-
-        This key stores a Redis list of execution durations in seconds.
-        Each entry corresponds to how long a task execution took.
-        The list is capped at Config.statistics_history_runs entries.
+        This key stores a Redis Stream where each entry contains both the
+        execution timestamp ('ts') and duration ('dur'), keeping them
+        correlated. The stream is trimmed via XADD MAXLEN.
 
         Args:
             group: The task group name.
             task: The individual task name.
 
         Returns:
-            The Redis key for the durations history list.
+            The Redis key for the statistics stream.
         """
-        return self._build_key(group, task, "durations_second")
+        return self._build_key(group, task, "stats_stream")
 
     # =========================================================================
     # Stream-related keys

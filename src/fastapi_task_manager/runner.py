@@ -40,7 +40,7 @@ class Runner:
         self._redis_client = redis_client
         self._semaphore = asyncio.Semaphore(concurrent_tasks)
         self._task_manager = task_manager
-        # Initialize statistics storage with Redis Lists for atomic operations
+        # Initialize statistics storage with Redis Streams for correlated entries
         self._statistics = StatisticsStorage(
             redis_client=redis_client,
             max_entries=task_manager.config.statistics_history_runs,

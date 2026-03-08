@@ -84,7 +84,7 @@ Source code lives in `src/fastapi_task_manager/`.
 
 - **Reconciler** (`reconciler.py`): Detects and recovers stale/failed tasks to ensure consistency.
 
-- **Statistics** (`statistics.py`): Tracks task execution history (runs, durations).
+- **Statistics** (`statistics.py`): Tracks task execution history using Redis Streams (timestamp + duration per entry).
 
 - **Config** (`config.py`): Pydantic model for configuration. Key settings:
   - `redis_key_prefix`: Namespace for Redis keys
@@ -104,8 +104,7 @@ Source code lives in `src/fastapi_task_manager/`.
 All keys are prefixed with `{redis_key_prefix}_{task_group_name}_{task_name}_`:
 - `_next_run`: Timestamp of next scheduled execution
 - `_disabled`: Flag to pause task execution
-- `_runs`: History of execution timestamps
-- `_durations_second`: History of execution durations
+- `_stats_stream`: Redis Stream with execution history (each entry has `ts` and `dur` fields)
 - `_running`: Heartbeat key indicating task is currently executing
 
 ### Public API

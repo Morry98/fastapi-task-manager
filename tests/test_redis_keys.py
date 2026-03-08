@@ -22,8 +22,7 @@ class TestRedisKeyBuilder:
         assert isinstance(keys, TaskKeys)
         assert keys.next_run == "pfx_g_t_next_run"
         assert keys.disabled == "pfx_g_t_disabled"
-        assert keys.runs == "pfx_g_t_runs"
-        assert keys.durations_second == "pfx_g_t_durations_second"
+        assert keys.stats_stream == "pfx_g_t_stats_stream"
         assert keys.retry_after == "pfx_g_t_retry_after"
         assert keys.retry_delay == "pfx_g_t_retry_delay"
 
@@ -32,8 +31,7 @@ class TestRedisKeyBuilder:
         keys = builder.get_task_keys("g", "t")
         assert builder.next_run_key("g", "t") == keys.next_run
         assert builder.disabled_key("g", "t") == keys.disabled
-        assert builder.runs_key("g", "t") == keys.runs
-        assert builder.durations_key("g", "t") == keys.durations_second
+        assert builder.stats_stream_key("g", "t") == keys.stats_stream
 
     def test_get_stream_keys(self):
         builder = RedisKeyBuilder("myapp")
@@ -66,10 +64,9 @@ class TestTaskKeys:
         keys = TaskKeys(
             next_run="a",
             disabled="b",
-            runs="c",
-            durations_second="d",
-            retry_after="e",
-            retry_delay="f",
+            stats_stream="c",
+            retry_after="d",
+            retry_delay="e",
         )
         assert keys.next_run == "a"
         # frozen=True should prevent modification

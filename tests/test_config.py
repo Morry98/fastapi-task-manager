@@ -18,7 +18,7 @@ class TestConfigDefaults:
         config = Config(redis_host="localhost")
         assert config.concurrent_tasks == 2
         assert config.statistics_redis_expiration == 432_000
-        assert config.statistics_history_runs == 30
+        assert config.statistics_history_runs == 500
 
     def test_runner_config_defaults(self):
         config = Config(redis_host="localhost")

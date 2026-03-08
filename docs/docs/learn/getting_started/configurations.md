@@ -29,8 +29,8 @@ Default value is `432000` (5 days).
 ### Statistics History Runs
 {* ./docs_src/tutorial/configurations_py310.py ln[8] *}
 
-This configuration sets how many historical execution records (runs and durations) are kept per task. Older records are discarded when new ones are added.
-Default value is `30`.
+This configuration sets how many historical execution entries are kept per task in the statistics Redis Stream. Each entry contains both the run timestamp and duration. Older entries are automatically trimmed via `XADD MAXLEN`.
+Default value is `500`.
 
 ---
 
