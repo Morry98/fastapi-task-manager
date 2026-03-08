@@ -2,22 +2,38 @@
 
 This module provides async service functions for managing tasks via the REST API.
 It handles task retrieval, enabling/disabling, triggering, statistics management,
-health checks and configuration inspection using the shared async Redis connection.
+health checks, configuration inspection, and dynamic task CRUD using the shared
+async Redis connection.
 """
 
+import json
+import logging
 from datetime import datetime, timezone
 from typing import TYPE_CHECKING
 
+from cronsim import CronSim
 from fastapi.exceptions import HTTPException
 
 from fastapi_task_manager.redis_keys import RedisKeyBuilder
 from fastapi_task_manager.schema.health import ConfigResponse, HealthResponse
-from fastapi_task_manager.schema.task import AffectedTask, Task, TaskActionResponse, TaskDetailed, TaskRun
+from fastapi_task_manager.schema.task import (
+    AffectedTask,
+    CreateDynamicTaskRequest,
+    DynamicTaskResponse,
+    RegisteredFunctionInfo,
+    RegisteredFunctionsResponse,
+    Task,
+    TaskActionResponse,
+    TaskDetailed,
+    TaskRun,
+)
 from fastapi_task_manager.schema.task_group import TaskGroup as TaskGroupSchema
 
 if TYPE_CHECKING:
     from fastapi_task_manager.task_group import TaskGroup
     from fastapi_task_manager.task_manager import TaskManager
+
+logger = logging.getLogger("fastapi.task-manager.api")
 
 
 # ---------------------------------------------------------------------------
@@ -377,3 +393,177 @@ def get_config(task_manager: "TaskManager") -> ConfigResponse:
         running_heartbeat_ttl=c.running_heartbeat_ttl,
         running_heartbeat_interval=c.running_heartbeat_interval,
     )
+
+
+# ---------------------------------------------------------------------------
+# Dynamic task CRUD endpoints
+# ---------------------------------------------------------------------------
+
+
+async def create_dynamic_task(
+    task_manager: "TaskManager",
+    request: CreateDynamicTaskRequest,
+) -> DynamicTaskResponse:
+    """Create a dynamic task at runtime from a registered function.
+
+    Validates the cron expression, checks function registry, persists the
+    definition in Redis, and adds the task to the in-memory TaskGroup.
+    """
+    # Find the target TaskGroup
+    target_group: TaskGroup | None = None
+    for tg in task_manager.task_groups:
+        if tg.name == request.task_group_name:
+            target_group = tg
+            break
+    if target_group is None:
+        raise HTTPException(status_code=404, detail=f"Task group '{request.task_group_name}' not found")
+
+    # Validate function is registered
+    if request.function_name not in target_group.function_registry:
+        available = list(target_group.function_registry.keys())
+        raise HTTPException(
+            status_code=400,
+            detail=f"Function '{request.function_name}' is not registered in group "
+            f"'{request.task_group_name}'. Available: {available}",
+        )
+
+    # Validate cron expression
+    try:
+        CronSim(request.cron_expression, datetime.now(timezone.utc))
+    except Exception as e:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid cron expression '{request.cron_expression}': {e}",
+        ) from e
+
+    # Add the dynamic task to the in-memory TaskGroup
+    try:
+        task = target_group.add_dynamic_task(
+            function_name=request.function_name,
+            cron_expression=request.cron_expression,
+            kwargs=request.kwargs,
+            name=request.name,
+            description=request.description,
+            high_priority=request.high_priority,
+            tags=request.tags,
+            retry_backoff=request.retry_backoff,
+            retry_backoff_max=request.retry_backoff_max,
+        )
+    except RuntimeError as e:
+        raise HTTPException(status_code=409, detail=str(e)) from e
+
+    # Persist the dynamic task definition in Redis Hash for restart survival
+    redis_client = task_manager.redis_client
+    key_builder = RedisKeyBuilder(task_manager.config.redis_key_prefix)
+    hash_key = key_builder.dynamic_tasks_key()
+    field = f"{request.task_group_name}:{task.name}"
+
+    definition = {
+        "task_group_name": request.task_group_name,
+        "function_name": request.function_name,
+        "cron_expression": request.cron_expression,
+        "kwargs": request.kwargs,
+        "name": task.name,
+        "description": request.description,
+        "high_priority": request.high_priority,
+        "tags": request.tags,
+        "retry_backoff": request.retry_backoff,
+        "retry_backoff_max": request.retry_backoff_max,
+    }
+    await redis_client.hset(hash_key, field, json.dumps(definition))  # ty: ignore[invalid-await]
+
+    logger.info("Dynamic task '%s' created in group '%s' and persisted to Redis", task.name, request.task_group_name)
+
+    return DynamicTaskResponse(
+        task_group_name=request.task_group_name,
+        task_name=task.name,
+        function_name=request.function_name,
+        cron_expression=request.cron_expression,
+        kwargs=request.kwargs,
+    )
+
+
+async def delete_dynamic_task(
+    task_manager: "TaskManager",
+    task_group_name: str,
+    task_name: str,
+) -> DynamicTaskResponse:
+    """Delete a dynamic task at runtime.
+
+    Removes the task from in-memory TaskGroup, cleans up all associated Redis
+    keys, and removes the persisted definition from Redis Hash.
+    Only dynamic tasks can be deleted — static tasks raise 400.
+    """
+    # Find the target TaskGroup
+    target_group: TaskGroup | None = None
+    for tg in task_manager.task_groups:
+        if tg.name == task_group_name:
+            target_group = tg
+            break
+    if target_group is None:
+        raise HTTPException(status_code=404, detail=f"Task group '{task_group_name}' not found")
+
+    # Remove the task from in-memory list (validates it exists and is dynamic)
+    try:
+        removed_task = target_group.remove_dynamic_task(task_name)
+    except RuntimeError as e:
+        # Distinguish between "not found" and "not dynamic"
+        if "not found" in str(e):
+            raise HTTPException(status_code=404, detail=str(e)) from e
+        raise HTTPException(status_code=400, detail=str(e)) from e
+
+    # Clean up all associated Redis keys
+    redis_client = task_manager.redis_client
+    key_builder = RedisKeyBuilder(task_manager.config.redis_key_prefix)
+    keys = key_builder.get_task_keys(task_group_name, task_name)
+    running_key = key_builder.running_task_key(task_group_name, task_name)
+
+    # Delete all task-related keys
+    await redis_client.delete(
+        keys.next_run,
+        keys.disabled,
+        keys.runs,
+        keys.durations_second,
+        keys.retry_after,
+        keys.retry_delay,
+        running_key,
+    )
+
+    # Remove from scheduled set if present
+    await redis_client.srem(key_builder.scheduled_set_key(), f"{task_group_name}:{task_name}")  # ty: ignore[invalid-await]
+
+    # Remove persisted definition from Redis Hash
+    hash_key = key_builder.dynamic_tasks_key()
+    field = f"{task_group_name}:{task_name}"
+    await redis_client.hdel(hash_key, field)  # ty: ignore[invalid-await]
+
+    logger.info("Dynamic task '%s' deleted from group '%s' with full Redis cleanup", task_name, task_group_name)
+
+    return DynamicTaskResponse(
+        task_group_name=task_group_name,
+        task_name=task_name,
+        function_name=removed_task.function_name or "",
+        cron_expression=removed_task.expression,
+        kwargs=removed_task.kwargs,
+    )
+
+
+def get_registered_functions(
+    task_manager: "TaskManager",
+    task_group_name: str | None = None,
+) -> RegisteredFunctionsResponse:
+    """List all registered functions available for dynamic task creation."""
+    functions: list[RegisteredFunctionInfo] = []
+
+    for tg in task_manager.task_groups:
+        if task_group_name is not None and tg.name != task_group_name:
+            continue
+        for func_name in tg.function_registry:
+            functions.append(
+                RegisteredFunctionInfo(
+                    task_group_name=tg.name,
+                    function_name=func_name,
+                ),
+            )
+
+    return RegisteredFunctionsResponse(functions=functions, count=len(functions))

@@ -1,4 +1,5 @@
 import functools
+import json
 import logging
 from contextlib import asynccontextmanager
 from typing import TYPE_CHECKING, Any, cast
@@ -7,17 +8,26 @@ from fastapi import APIRouter, FastAPI
 from redis.asyncio import Redis
 
 from fastapi_task_manager.config import Config
+from fastapi_task_manager.redis_keys import RedisKeyBuilder
 from fastapi_task_manager.runner import Runner
 from fastapi_task_manager.schema.health import ConfigResponse, HealthResponse
-from fastapi_task_manager.schema.task import TaskActionResponse, TaskDetailed
+from fastapi_task_manager.schema.task import (
+    DynamicTaskResponse,
+    RegisteredFunctionsResponse,
+    TaskActionResponse,
+    TaskDetailed,
+)
 from fastapi_task_manager.schema.task_group import TaskGroup as TaskGroupSchema
 from fastapi_task_manager.task_group import TaskGroup
 from fastapi_task_manager.task_router_services import (
     clear_statistics,
+    create_dynamic_task,
+    delete_dynamic_task,
     disable_tasks,
     enable_tasks,
     get_config,
     get_health,
+    get_registered_functions,
     get_task_groups,
     get_tasks,
     reset_retry,
@@ -228,6 +238,37 @@ class TaskManager:
                     name="Trigger tasks",
                 ),
             ),
+            # --- Dynamic task endpoints ---
+            (
+                cast("Callable[..., Any]", create_dynamic_task),
+                router.post(
+                    "/tasks",
+                    response_model_by_alias=True,
+                    response_model=DynamicTaskResponse,
+                    description="Create a dynamic task from a registered function",
+                    name="Create dynamic task",
+                ),
+            ),
+            (
+                cast("Callable[..., Any]", delete_dynamic_task),
+                router.delete(
+                    "/tasks",
+                    response_model_by_alias=True,
+                    response_model=DynamicTaskResponse,
+                    description="Delete a dynamic task and clean up its Redis keys",
+                    name="Delete dynamic task",
+                ),
+            ),
+            (
+                cast("Callable[..., Any]", get_registered_functions),
+                router.get(
+                    "/functions",
+                    response_model_by_alias=True,
+                    response_model=RegisteredFunctionsResponse,
+                    description="List registered functions available for dynamic task creation",
+                    name="Get registered functions",
+                ),
+            ),
             # --- DELETE endpoints ---
             (
                 cast("Callable[..., Any]", clear_statistics),
@@ -287,6 +328,9 @@ class TaskManager:
             db=self._config.redis_db,
         )
 
+        # Load persisted dynamic tasks from Redis before starting the Runner
+        await self._load_dynamic_tasks()
+
         self._runner = Runner(
             redis_client=self._redis_client,
             concurrent_tasks=self._config.concurrent_tasks,
@@ -319,3 +363,73 @@ class TaskManager:
                 msg = f"Task group {task_group.name} already exists."
                 raise RuntimeError(msg)
         self._task_groups.append(task_group)
+
+    async def _load_dynamic_tasks(self) -> None:
+        """Load persisted dynamic task definitions from Redis on startup.
+
+        Reads all entries from the dynamic_tasks Redis Hash and adds them
+        to the corresponding in-memory TaskGroups via add_dynamic_task().
+        Silently skips tasks whose function is not registered (e.g., after
+        a code change that removed the function).
+        """
+        if self._redis_client is None:
+            return
+
+        key_builder = RedisKeyBuilder(self._config.redis_key_prefix)
+        hash_key = key_builder.dynamic_tasks_key()
+
+        # Read all persisted dynamic task definitions
+        raw_definitions = await self._redis_client.hgetall(hash_key)  # ty: ignore[invalid-await]
+        if not raw_definitions:
+            return
+
+        loaded_count = 0
+        for _field, raw_value in raw_definitions.items():
+            try:
+                # Decode bytes if needed
+                value = raw_value.decode("utf-8") if isinstance(raw_value, bytes) else raw_value
+                definition = json.loads(value)
+
+                # Find the target TaskGroup
+                target_group: TaskGroup | None = None
+                for tg in self._task_groups:
+                    if tg.name == definition["task_group_name"]:
+                        target_group = tg
+                        break
+
+                if target_group is None:
+                    logger.warning(
+                        "Skipping dynamic task '%s': task group '%s' not found",
+                        definition.get("name", "unknown"),
+                        definition["task_group_name"],
+                    )
+                    continue
+
+                # Check if the function is still registered
+                if definition["function_name"] not in target_group.function_registry:
+                    logger.warning(
+                        "Skipping dynamic task '%s': function '%s' not registered in group '%s'",
+                        definition.get("name", "unknown"),
+                        definition["function_name"],
+                        definition["task_group_name"],
+                    )
+                    continue
+
+                target_group.add_dynamic_task(
+                    function_name=definition["function_name"],
+                    cron_expression=definition["cron_expression"],
+                    kwargs=definition.get("kwargs"),
+                    name=definition.get("name"),
+                    description=definition.get("description"),
+                    high_priority=definition.get("high_priority", False),
+                    tags=definition.get("tags"),
+                    retry_backoff=definition.get("retry_backoff"),
+                    retry_backoff_max=definition.get("retry_backoff_max"),
+                )
+                loaded_count += 1
+
+            except Exception:
+                logger.exception("Failed to load dynamic task definition")
+
+        if loaded_count:
+            logger.info("Loaded %d dynamic task(s) from Redis", loaded_count)

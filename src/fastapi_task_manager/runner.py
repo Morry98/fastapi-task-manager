@@ -16,7 +16,7 @@ from fastapi_task_manager.stream_consumer import StreamConsumer
 if TYPE_CHECKING:
     from fastapi_task_manager import TaskManager
 
-logger = logging.getLogger("fastapi.task-manager")
+logger = logging.getLogger("fastapi.task-manager.runner")
 
 
 class Runner:

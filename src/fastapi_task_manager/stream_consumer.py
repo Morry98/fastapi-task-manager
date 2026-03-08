@@ -43,7 +43,7 @@ from fastapi_task_manager.statistics import StatisticsStorage
 if TYPE_CHECKING:
     from fastapi_task_manager import TaskManager
 
-logger = logging.getLogger("fastapi.task-manager")
+logger = logging.getLogger("fastapi.task-manager.consumer")
 
 # Short sleep duration when no messages or no capacity (50ms)
 NO_WORK_SLEEP_SECONDS = 0.05

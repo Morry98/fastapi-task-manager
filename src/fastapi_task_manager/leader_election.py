@@ -22,7 +22,7 @@ from fastapi_task_manager.async_utils import interruptible_sleep
 from fastapi_task_manager.redis_keys import RedisKeyBuilder
 from fastapi_task_manager.schema.worker_identity import WorkerIdentity
 
-logger = logging.getLogger("fastapi.task-manager")
+logger = logging.getLogger("fastapi.task-manager.leader")
 
 
 class LeaderElector:

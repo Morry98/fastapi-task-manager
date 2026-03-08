@@ -11,7 +11,7 @@ import logging
 
 from redis.asyncio import Redis
 
-logger = logging.getLogger("fastapi.task-manager")
+logger = logging.getLogger("fastapi.task-manager.statistics")
 
 
 class StatisticsStorage:

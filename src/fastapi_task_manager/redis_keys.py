@@ -324,6 +324,18 @@ class RedisKeyBuilder:
         """
         return f"{self._prefix}_scheduled_tasks"
 
+    def dynamic_tasks_key(self) -> str:
+        """Build the key for the Hash storing dynamic task definitions.
+
+        This Redis Hash persists dynamic task definitions so they survive
+        application restarts. Each field is a "{group}:{task_name}" identifier
+        and the value is the JSON-serialized task definition.
+
+        Returns:
+            The Redis key for the dynamic tasks Hash.
+        """
+        return f"{self._prefix}_dynamic_tasks"
+
     def running_task_key(self, group: str, task: str) -> str:
         """Build the key indicating a task is currently being executed.
 

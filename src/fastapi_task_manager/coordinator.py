@@ -28,7 +28,7 @@ from fastapi_task_manager.task_group import TaskGroup
 if TYPE_CHECKING:
     from fastapi_task_manager import TaskManager
 
-logger = logging.getLogger("fastapi.task-manager")
+logger = logging.getLogger("fastapi.task-manager.coordinator")
 
 
 class Coordinator:
