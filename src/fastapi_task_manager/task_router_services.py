@@ -334,7 +334,7 @@ async def get_health(task_manager: "TaskManager") -> HealthResponse:
     redis_connected = False
     if task_manager.redis_client is not None:
         try:
-            redis_connected = bool(await task_manager.redis_client.ping())
+            redis_connected = bool(await task_manager.redis_client.ping())  # ty: ignore[invalid-await]
         except Exception:
             redis_connected = False
 
