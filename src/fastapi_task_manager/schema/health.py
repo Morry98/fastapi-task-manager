@@ -30,22 +30,16 @@ class ConfigResponse(BaseModel):
     stream_block_ms: int
 
     # Leader election
-    leader_lock_ttl: int
     leader_heartbeat_interval: float
     leader_retry_interval: float
 
     # Reconciliation
-    reconciliation_enabled: bool
     reconciliation_interval: int
-    reconciliation_overdue_seconds: int
-    pending_message_timeout_ms: int
 
     # Retry / backoff
     retry_backoff: float
     retry_backoff_max: float
     retry_backoff_multiplier: float
-    retry_key_ttl: int
 
     # Running heartbeat
-    running_heartbeat_ttl: int
     running_heartbeat_interval: float

@@ -118,10 +118,8 @@ config = Config(
     statistics_redis_expiration=604_800,
     statistics_history_runs=50,
 
-    # Reconciliation: enable for production
-    reconciliation_enabled=True,
+    # Reconciliation
     reconciliation_interval=30,
-    reconciliation_overdue_seconds=30,
 
     # Retry: configure based on task failure patterns
     retry_backoff=2.0,

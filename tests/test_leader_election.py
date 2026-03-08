@@ -19,7 +19,6 @@ def _make_elector(redis=None):
         redis_client=redis_client,
         key_builder=key_builder,
         worker_identity=worker,
-        lock_ttl=10,
         heartbeat_interval=0.1,
     ), redis_client
 
@@ -39,7 +38,7 @@ class TestTryAcquireLeadership:
             "test_leader_lock",
             "worker_1",
             nx=True,
-            ex=10,
+            ex=1,  # math.ceil(heartbeat_interval(0.1) * 3)
         )
         # Clean up heartbeat task
         await elector.release_leadership()

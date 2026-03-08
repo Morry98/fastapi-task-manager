@@ -111,39 +111,6 @@ class TestRunnerStart:
         with pytest.raises(ConnectionError, match="falsy"):
             await runner.start()
 
-    @patch("fastapi_task_manager.runner.Reconciler")
-    @patch("fastapi_task_manager.runner.Coordinator")
-    @patch("fastapi_task_manager.runner.StreamConsumer")
-    @patch("fastapi_task_manager.runner.LeaderElector")
-    async def test_start_skips_reconciler_when_disabled(
-        self,
-        mock_leader,
-        mock_consumer,
-        mock_coordinator,
-        mock_reconciler,
-    ):
-        redis = AsyncMock()
-        redis.ping = AsyncMock(return_value=True)
-        config = Config(redis_host="localhost", reconciliation_enabled=False)
-        tm = MagicMock()
-        tm.config = config
-        tm.task_groups = []
-        runner = Runner(redis_client=redis, concurrent_tasks=2, task_manager=tm)
-
-        mock_consumer_inst = mock_consumer.return_value
-        mock_consumer_inst.setup_consumer_groups = AsyncMock()
-        mock_consumer_inst.start = AsyncMock(return_value=_make_fake_asyncio_task())
-        mock_consumer_inst.stop = AsyncMock()
-        mock_coordinator.return_value.start = AsyncMock(return_value=_make_fake_asyncio_task())
-        mock_coordinator.return_value.stop = AsyncMock()
-        mock_leader.return_value.release_leadership = AsyncMock()
-
-        await runner.start()
-
-        # Reconciler should not have been started
-        mock_reconciler.return_value.start.assert_not_called()
-        await runner.stop()
-
 
 class TestRunnerStop:
     """Tests for Runner.stop."""

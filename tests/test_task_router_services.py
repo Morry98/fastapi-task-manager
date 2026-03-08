@@ -393,7 +393,7 @@ class TestGetConfig:
 
         assert result.redis_key_prefix == "myapp"
         assert result.concurrent_tasks == 2
-        assert result.leader_lock_ttl == 10
+        assert result.leader_heartbeat_interval == 3.0
 
 
 class TestGetRegisteredFunctions:

@@ -17,7 +17,7 @@ The dual-queue design ensures:
 
 The running heartbeat ensures:
 - A "running" key with short TTL is renewed periodically while a task executes
-- If a worker crashes, the key expires quickly (~10s), enabling fast recovery
+- If a worker crashes, the key expires quickly, enabling fast recovery
 - Long-running tasks (minutes/hours) are protected by the continuous heartbeat
 
 The StreamConsumer runs on ALL workers (both leader and followers),
@@ -27,6 +27,7 @@ enabling horizontal scaling of task execution.
 import asyncio
 import contextlib
 import logging
+import math
 import time
 from datetime import datetime, timezone
 from typing import TYPE_CHECKING
@@ -382,11 +383,12 @@ class StreamConsumer:
         task_id = f"{group_name}:{task.name}"
         running_key = self._keys.running_task_key(group_name, task.name)
 
-        # Mark the task as running with a short TTL
+        # Mark the task as running with a TTL derived from heartbeat interval
+        running_ttl = math.ceil(config.running_heartbeat_interval * 3)
         await self._redis.set(
             running_key,
             self._worker.redis_safe_id,
-            ex=config.running_heartbeat_ttl,
+            ex=running_ttl,
         )
 
         # Start the heartbeat loop in the background
@@ -401,7 +403,7 @@ class StreamConsumer:
                         await self._redis.set(
                             running_key,
                             self._worker.redis_safe_id,
-                            ex=config.running_heartbeat_ttl,
+                            ex=running_ttl,
                         )
                     except Exception:
                         logger.exception("Failed to renew running heartbeat for %s/%s", group_name, task.name)
@@ -488,7 +490,8 @@ class StreamConsumer:
         initial = task.retry_backoff or config.retry_backoff
         max_delay = task.retry_backoff_max or config.retry_backoff_max
         multiplier = config.retry_backoff_multiplier
-        ttl = config.retry_key_ttl
+        # Safety net: retry state expires after 24 hours if no new failures occur
+        ttl = 86_400
 
         # Read current delay from Redis, or start with initial value
         current_raw = await self._redis.get(keys.retry_delay)
@@ -553,7 +556,7 @@ class StreamConsumer:
         """Recover pending messages from crashed consumers on startup.
 
         Uses XAUTOCLAIM (Redis >= 6.2) to reclaim messages that have been idle
-        for longer than pending_message_timeout_ms. These are messages that were
+        for longer than running_heartbeat_interval * 9 (in ms). These are messages that were
         read by a consumer but never ACK'd (e.g., the consumer crashed mid-execution).
 
         Reclaimed messages are spawned as tasks for this worker to process.
@@ -561,7 +564,9 @@ class StreamConsumer:
         """
         stream_keys = self._keys.get_stream_keys()
         config = self._task_manager.config
-        min_idle = config.pending_message_timeout_ms
+        # Derived from running_heartbeat_interval: TTL is interval * 3,
+        # and we wait 3x the TTL to be sure the heartbeat has expired
+        min_idle = math.ceil(config.running_heartbeat_interval * 9) * 1000
 
         for stream_key, is_high in [
             (stream_keys.task_stream_high, True),

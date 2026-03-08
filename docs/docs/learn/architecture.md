@@ -94,13 +94,13 @@ sequenceDiagram
 
 ### Leader Failover
 
-If the leader crashes, its lock expires after `leader_lock_ttl` seconds. Another instance acquires leadership and resumes scheduling. The Reconciler detects any tasks that were missed during the failover window.
+If the leader crashes, its lock expires after `leader_heartbeat_interval * 3` seconds. Another instance acquires leadership and resumes scheduling. The Reconciler detects any tasks that were missed during the failover window.
 
 ### Worker Crash Recovery
 
 Each executing task maintains a heartbeat key in Redis with a short TTL. If a worker crashes:
 
-1. The heartbeat key expires (after `running_heartbeat_ttl` seconds)
+1. The heartbeat key expires (after `running_heartbeat_interval * 3` seconds)
 2. The Reconciler detects the pending message has been idle too long
 3. The message is reclaimed and re-executed by another worker
 

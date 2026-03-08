@@ -378,18 +378,12 @@ def get_config(task_manager: "TaskManager") -> ConfigResponse:
         worker_service_name=c.worker_service_name,
         stream_max_len=c.stream_max_len,
         stream_block_ms=c.stream_block_ms,
-        leader_lock_ttl=c.leader_lock_ttl,
         leader_heartbeat_interval=c.leader_heartbeat_interval,
         leader_retry_interval=c.leader_retry_interval,
-        reconciliation_enabled=c.reconciliation_enabled,
         reconciliation_interval=c.reconciliation_interval,
-        reconciliation_overdue_seconds=c.reconciliation_overdue_seconds,
-        pending_message_timeout_ms=c.pending_message_timeout_ms,
         retry_backoff=c.retry_backoff,
         retry_backoff_max=c.retry_backoff_max,
         retry_backoff_multiplier=c.retry_backoff_multiplier,
-        retry_key_ttl=c.retry_key_ttl,
-        running_heartbeat_ttl=c.running_heartbeat_ttl,
         running_heartbeat_interval=c.running_heartbeat_interval,
     )
 

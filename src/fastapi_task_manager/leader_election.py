@@ -15,6 +15,7 @@ and periodic heartbeat renewal to maintain leadership.
 import asyncio
 import contextlib
 import logging
+import math
 
 from redis.asyncio import Redis
 
@@ -47,7 +48,6 @@ class LeaderElector:
         redis_client: Redis,
         key_builder: RedisKeyBuilder,
         worker_identity: WorkerIdentity,
-        lock_ttl: int = 10,
         heartbeat_interval: float = 3.0,
     ) -> None:
         """Initialize the LeaderElector.
@@ -56,17 +56,15 @@ class LeaderElector:
             redis_client: Async Redis client for lock operations.
             key_builder: RedisKeyBuilder instance for key construction.
             worker_identity: WorkerIdentity instance for this worker.
-            lock_ttl: Time-to-live for the leader lock in seconds.
-                Should be greater than heartbeat_interval * 3 to allow
-                for network latency and temporary failures.
             heartbeat_interval: Interval between lock renewals in seconds.
-                Should be significantly less than lock_ttl to ensure
-                the lock doesn't expire during normal operation.
+                The lock TTL is automatically set to heartbeat_interval * 3
+                to allow for network latency and temporary failures.
         """
         self._redis = redis_client
         self._keys = key_builder
         self._worker = worker_identity
-        self._lock_ttl = lock_ttl
+        # Lock TTL is derived from heartbeat interval to ensure consistency
+        self._lock_ttl = math.ceil(heartbeat_interval * 3)
         self._heartbeat_interval = heartbeat_interval
         self._is_leader = False
         self._heartbeat_task: asyncio.Task | None = None

@@ -33,27 +33,21 @@ class TestConfigDefaults:
 
     def test_leader_election_defaults(self):
         config = Config(redis_host="localhost")
-        assert config.leader_lock_ttl == 10
         assert config.leader_heartbeat_interval == 3.0
         assert config.leader_retry_interval == 5.0
 
     def test_reconciliation_defaults(self):
         config = Config(redis_host="localhost")
-        assert config.reconciliation_enabled is True
         assert config.reconciliation_interval == 30
-        assert config.reconciliation_overdue_seconds == 30
-        assert config.pending_message_timeout_ms == 30_000
 
     def test_retry_backoff_defaults(self):
         config = Config(redis_host="localhost")
         assert config.retry_backoff == 1.0
         assert config.retry_backoff_max == 60.0
         assert config.retry_backoff_multiplier == 2.0
-        assert config.retry_key_ttl == 86_400
 
     def test_running_heartbeat_defaults(self):
         config = Config(redis_host="localhost")
-        assert config.running_heartbeat_ttl == 10
         assert config.running_heartbeat_interval == 3.0
 
 

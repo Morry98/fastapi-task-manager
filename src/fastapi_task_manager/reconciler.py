@@ -19,6 +19,7 @@ The Reconciler only runs on the leader worker to avoid duplicate recovery work.
 
 import asyncio
 import logging
+import math
 from datetime import datetime, timedelta, timezone
 from typing import TYPE_CHECKING
 
@@ -120,11 +121,16 @@ class Reconciler:
         - It is not disabled
         - It is not in the scheduled tracking SET (not in the stream)
         - It does not have an active running key (not being executed)
-        - Its next_run timestamp is in the past by more than the overdue threshold
+        - Its next_run timestamp is in the past by more than the safety margin
+
+        The safety margin (reconciliation_interval * 5) avoids race conditions
+        with the Coordinator: it ensures the Coordinator has had plenty of
+        scheduling cycles to publish the task before the Reconciler steps in.
         """
         config = self._task_manager.config
+        # Safety margin to avoid double-publishing with the Coordinator
+        overdue_margin = timedelta(seconds=config.reconciliation_interval * 5)
         scheduled_set_key = self._keys.scheduled_set_key()
-        overdue_threshold = timedelta(seconds=config.reconciliation_overdue_seconds)
 
         for task_group in self._task_manager.task_groups:
             for task in task_group.tasks:
@@ -133,7 +139,7 @@ class Reconciler:
                         task_group,
                         task,
                         scheduled_set_key,
-                        overdue_threshold,
+                        overdue_margin,
                     )
                 except Exception:
                     logger.exception(
@@ -147,7 +153,7 @@ class Reconciler:
         task_group: TaskGroup,
         task: Task,
         scheduled_set_key: str,
-        overdue_threshold: timedelta,
+        overdue_margin: timedelta,
     ) -> None:
         """Check a single task for overdue status and republish if needed.
 
@@ -155,7 +161,7 @@ class Reconciler:
             task_group: The TaskGroup containing the task.
             task: The Task to check.
             scheduled_set_key: Redis key for the scheduled tracking SET.
-            overdue_threshold: How long past next_run before considering overdue.
+            overdue_margin: Safety margin past next_run before considering overdue.
         """
         task_id = f"{task_group.name}:{task.name}"
         keys = self._keys.get_task_keys(task_group.name, task.name)
@@ -194,7 +200,7 @@ class Reconciler:
         next_run = datetime.fromtimestamp(float(next_run_b), tz=timezone.utc)
         now = datetime.now(timezone.utc)
 
-        if now > next_run + overdue_threshold:
+        if now > next_run + overdue_margin:
             logger.warning(
                 "Reconciliation: task %s/%s is overdue by %s, republishing",
                 task_group.name,
@@ -287,7 +293,7 @@ class Reconciler:
         """Reclaim messages stuck in the Pending Entries List (PEL).
 
         Finds messages that have been pending for longer than
-        pending_message_timeout_ms (consumer crashed before ACK). For each
+        running_heartbeat_interval * 9 (in ms) (consumer crashed before ACK). For each
         stuck message, the Reconciler:
         1. ACKs the old pending message (removes it from the PEL)
         2. Re-publishes it as a new message via XADD
@@ -298,7 +304,9 @@ class Reconciler:
         """
         config = self._task_manager.config
         stream_keys = self._keys.get_stream_keys()
-        min_idle = config.pending_message_timeout_ms
+        # Derived from running_heartbeat_interval: TTL is interval * 3,
+        # and we wait 3x the TTL to be sure the heartbeat has expired
+        min_idle = math.ceil(config.running_heartbeat_interval * 9) * 1000
 
         for stream_key, label in [
             (stream_keys.task_stream_high, "high"),

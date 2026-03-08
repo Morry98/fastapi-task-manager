@@ -158,18 +158,12 @@ class TestConfigResponse:
             worker_service_name="svc",
             stream_max_len=10000,
             stream_block_ms=1000,
-            leader_lock_ttl=10,
             leader_heartbeat_interval=3.0,
             leader_retry_interval=5.0,
-            reconciliation_enabled=True,
             reconciliation_interval=30,
-            reconciliation_overdue_seconds=30,
-            pending_message_timeout_ms=30000,
             retry_backoff=1.0,
             retry_backoff_max=60.0,
             retry_backoff_multiplier=2.0,
-            retry_key_ttl=86400,
-            running_heartbeat_ttl=10,
             running_heartbeat_interval=3.0,
         )
         assert cr.redis_key_prefix == "test"

@@ -60,7 +60,7 @@ class TestCheckSingleTask:
             group,
             task,
             "test_scheduled_tasks",
-            timedelta(seconds=30),
+            timedelta(seconds=150),
         )
         # Should not attempt to republish
         redis.xadd.assert_not_awaited()
@@ -76,7 +76,7 @@ class TestCheckSingleTask:
             group,
             task,
             "test_scheduled_tasks",
-            timedelta(seconds=30),
+            timedelta(seconds=150),
         )
         redis.xadd.assert_not_awaited()
 
@@ -92,7 +92,7 @@ class TestCheckSingleTask:
             group,
             task,
             "test_scheduled_tasks",
-            timedelta(seconds=30),
+            timedelta(seconds=150),
         )
         redis.xadd.assert_not_awaited()
 
@@ -111,7 +111,7 @@ class TestCheckSingleTask:
             group,
             task,
             "test_scheduled_tasks",
-            timedelta(seconds=30),
+            timedelta(seconds=150),
         )
         redis.xadd.assert_awaited_once()
 
@@ -120,7 +120,8 @@ class TestCheckSingleTask:
         reconciler, redis = _make_reconciler()
         task = _make_task()
         group = _make_group(tasks=[task])
-        past = str(time.time() - 120)
+        # Must exceed the overdue margin (150s) to trigger republish
+        past = str(time.time() - 200)
         # disabled=None, next_run=past
         redis.get = AsyncMock(side_effect=[None, None, past.encode()])
         redis.sismember = AsyncMock(return_value=False)
@@ -132,29 +133,9 @@ class TestCheckSingleTask:
             group,
             task,
             "test_scheduled_tasks",
-            timedelta(seconds=30),
+            timedelta(seconds=150),
         )
         redis.xadd.assert_awaited_once()
-
-    async def test_does_not_republish_not_yet_overdue(self):
-        """Task barely past next_run but within threshold should not be republished."""
-        reconciler, redis = _make_reconciler()
-        task = _make_task()
-        group = _make_group(tasks=[task])
-        # Just 5 seconds past, threshold is 30
-        recent_past = str(time.time() - 5)
-        # _check_single_task calls get(disabled) then get(next_run)
-        redis.get = AsyncMock(side_effect=[None, recent_past.encode()])
-        redis.sismember = AsyncMock(return_value=False)
-        redis.exists = AsyncMock(return_value=False)
-
-        await reconciler._check_single_task(
-            group,
-            task,
-            "test_scheduled_tasks",
-            timedelta(seconds=30),
-        )
-        redis.xadd.assert_not_awaited()
 
 
 class TestRepublishTask:

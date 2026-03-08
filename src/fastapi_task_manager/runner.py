@@ -102,7 +102,6 @@ class Runner:
             redis_client=self._redis_client,
             key_builder=self._key_builder,
             worker_identity=self._worker,
-            lock_ttl=config.leader_lock_ttl,
             heartbeat_interval=config.leader_heartbeat_interval,
         )
 
@@ -124,15 +123,14 @@ class Runner:
             task_manager=self._task_manager,
         )
 
-        # Initialize reconciler if enabled (leader only, but all workers start it;
+        # Initialize reconciler (leader only, but all workers start it;
         # the reconciler checks leadership internally before acting)
-        if config.reconciliation_enabled:
-            self._reconciler = Reconciler(
-                redis_client=self._redis_client,
-                key_builder=self._key_builder,
-                leader_elector=self._leader_elector,
-                task_manager=self._task_manager,
-            )
+        self._reconciler = Reconciler(
+            redis_client=self._redis_client,
+            key_builder=self._key_builder,
+            leader_elector=self._leader_elector,
+            task_manager=self._task_manager,
+        )
 
         # Setup consumer groups for both high and low priority streams
         await self._consumer.setup_consumer_groups()

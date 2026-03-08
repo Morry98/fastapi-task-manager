@@ -13,7 +13,6 @@ task_manager = TaskManager(
         retry_backoff=2.0,  # Start with 2 second delay after failure
         retry_backoff_max=120.0,  # Cap at 2 minutes
         retry_backoff_multiplier=2.0,  # Double delay each failure: 2s, 4s, 8s, 16s...
-        retry_key_ttl=86_400,  # Retry state expires after 24 hours
     ),
 )
 my_tasks = TaskGroup(name="My Tasks")
