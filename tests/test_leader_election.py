@@ -142,3 +142,64 @@ class TestReleaseLeadership:
         # Should not raise
         await elector.release_leadership()
         assert elector.is_leader is False
+
+    async def test_release_when_lock_not_owned(self):
+        """When Lua script returns 0 (lock owned by another), should log and continue."""
+        elector, redis = _make_elector()
+        redis.set = AsyncMock(return_value=True)
+        redis.get = AsyncMock(return_value=b"worker_1")
+        redis.eval = AsyncMock(return_value=0)  # Lock not owned
+
+        await elector.try_acquire_leadership()
+        elector._is_leader = True
+        await elector.release_leadership()
+
+        # Should complete without error
+        assert elector.is_leader is False
+
+
+class TestHeartbeatEdgeCases:
+    """Tests for heartbeat edge cases (renewal failure, exceptions)."""
+
+    async def test_heartbeat_renewal_failed(self):
+        """When SET XX returns None (renewal failed), leader steps down."""
+        elector, redis = _make_elector()
+        # Acquire succeeds
+        redis.set = AsyncMock(side_effect=[True, None])  # acquire ok, renewal fails
+        redis.get = AsyncMock(return_value=b"worker_1")  # We own the lock
+
+        await elector.try_acquire_leadership()
+        assert elector.is_leader is True
+
+        # Let heartbeat detect renewal failure
+        await asyncio.sleep(0.3)
+
+        assert elector.is_leader is False
+
+    async def test_heartbeat_cancelled_error(self):
+        """CancelledError in heartbeat loop should exit gracefully."""
+        elector, redis = _make_elector()
+        redis.set = AsyncMock(return_value=True)
+        redis.get = AsyncMock(return_value=b"worker_1")
+
+        await elector.try_acquire_leadership()
+        assert elector.is_leader is True
+
+        # Cancel the heartbeat task directly
+        elector._heartbeat_task.cancel()
+        await asyncio.sleep(0.2)
+
+        # The heartbeat should have exited; release should still work
+        await elector.release_leadership()
+
+    async def test_heartbeat_generic_exception(self):
+        """Generic exception in heartbeat should cause leader to step down."""
+        elector, redis = _make_elector()
+        redis.set = AsyncMock(return_value=True)
+        # get raises a generic exception after acquire
+        redis.get = AsyncMock(side_effect=ConnectionError("Redis unavailable"))
+
+        await elector.try_acquire_leadership()
+        await asyncio.sleep(0.3)
+
+        assert elector.is_leader is False

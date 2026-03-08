@@ -134,6 +134,110 @@ class TestGetTaskGroups:
 class TestGetTasks:
     """Tests for get_tasks."""
 
+    async def test_filters_by_group_name(self):
+        """get_tasks should skip groups that don't match the filter."""
+        t1 = _make_task("t1")
+        t2 = _make_task("t2")
+        g1 = _make_group("g1", [t1])
+        g2 = _make_group("g2", [t2])
+        redis = MagicMock()
+        pipe = MagicMock()
+        pipe.lrange = MagicMock()
+        pipe.get = MagicMock()
+        pipe.exists = MagicMock()
+        pipe.execute = AsyncMock(
+            return_value=[[], [], None, None, None, None, 0],
+        )
+        redis.pipeline.return_value = pipe
+
+        tm = _make_tm(task_groups=[g1, g2], redis=redis)
+        result = await get_tasks(tm, task_group_name="g2")
+
+        assert len(result) == 1
+        assert result[0].name == "t2"
+
+    async def test_filters_by_tag(self):
+        """get_tasks should skip tasks where tag doesn't match."""
+        t1 = _make_task("t1")
+        t1.tags = ["important"]
+        t2 = _make_task("t2")
+        t2.tags = ["other"]
+        group = _make_group("g1", [t1, t2])
+        redis = MagicMock()
+        pipe = MagicMock()
+        pipe.lrange = MagicMock()
+        pipe.get = MagicMock()
+        pipe.exists = MagicMock()
+        pipe.execute = AsyncMock(
+            return_value=[[], [], None, None, None, None, 0],
+        )
+        redis.pipeline.return_value = pipe
+
+        tm = _make_tm(task_groups=[group], redis=redis)
+        result = await get_tasks(tm, tag="important")
+
+        assert len(result) == 1
+        assert result[0].name == "t1"
+
+    async def test_truncates_mismatched_runs_durations(self):
+        """When runs and durations have different lengths, truncate to paired data."""
+        task = _make_task("t1")
+        group = _make_group("g1", [task])
+        redis = MagicMock()
+        pipe = MagicMock()
+        pipe.lrange = MagicMock()
+        pipe.get = MagicMock()
+        pipe.exists = MagicMock()
+        pipe.execute = AsyncMock(
+            return_value=[
+                [b"100.0", b"200.0", b"300.0"],  # 3 runs
+                [b"1.0", b"2.0"],  # Only 2 durations
+                None,
+                None,
+                None,
+                None,
+                0,
+            ],
+        )
+        redis.pipeline.return_value = pipe
+
+        tm = _make_tm(task_groups=[group], redis=redis)
+        result = await get_tasks(tm)
+
+        # Truncated to min(3, 2) = 2 paired entries
+        assert len(result[0].runs) == 2
+
+    async def test_parses_retry_after_and_delay(self):
+        """When retry_after and retry_delay are set, they should be parsed."""
+        import time
+
+        task = _make_task("t1")
+        group = _make_group("g1", [task])
+        redis = MagicMock()
+        pipe = MagicMock()
+        pipe.lrange = MagicMock()
+        pipe.get = MagicMock()
+        pipe.exists = MagicMock()
+        future_ts = str(time.time() + 3600)
+        pipe.execute = AsyncMock(
+            return_value=[
+                [],
+                [],
+                None,
+                None,
+                future_ts.encode(),  # retry_after
+                b"4.0",  # retry_delay
+                0,
+            ],
+        )
+        redis.pipeline.return_value = pipe
+
+        tm = _make_tm(task_groups=[group], redis=redis)
+        result = await get_tasks(tm)
+
+        assert result[0].retry_after is not None
+        assert result[0].retry_delay == 4.0
+
     async def test_returns_task_details_with_redis_data(self):
         task = _make_task("t1")
         group = _make_group("g1", [task])
@@ -152,7 +256,7 @@ class TestGetTasks:
                 None,  # retry_after
                 None,  # retry_delay
                 0,  # is_running (exists result)
-            ]
+            ],
         )
         redis.pipeline.return_value = pipe
 

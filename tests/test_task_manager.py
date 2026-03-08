@@ -181,7 +181,7 @@ class TestLoadDynamicTasks:
                 "function_name": "my_func",
                 "cron_expression": "* * * * *",
                 "name": "loaded_task",
-            }
+            },
         )
         redis.hgetall = AsyncMock(return_value={b"g1:loaded_task": definition.encode()})
         tm._redis_client = redis
@@ -201,7 +201,7 @@ class TestLoadDynamicTasks:
                 "function_name": "func",
                 "cron_expression": "* * * * *",
                 "name": "task",
-            }
+            },
         )
         redis.hgetall = AsyncMock(return_value={b"key": definition.encode()})
         tm._redis_client = redis
@@ -221,7 +221,7 @@ class TestLoadDynamicTasks:
                 "function_name": "unregistered",
                 "cron_expression": "* * * * *",
                 "name": "task",
-            }
+            },
         )
         redis.hgetall = AsyncMock(return_value={b"key": definition.encode()})
         tm._redis_client = redis
@@ -241,6 +241,132 @@ class TestLoadDynamicTasks:
         redis.hgetall = AsyncMock(return_value={})
         tm._redis_client = redis
         await tm._load_dynamic_tasks()
+
+    async def test_load_catches_exception_in_definition(self):
+        """Malformed JSON in a definition should be caught and logged."""
+        tm = _make_task_manager()
+        group = TaskGroup(name="g1")
+
+        @group.register_function("my_func")
+        async def my_func():
+            pass
+
+        tm.add_task_group(group)
+
+        redis = AsyncMock()
+        # Invalid JSON triggers an exception during loading
+        redis.hgetall = AsyncMock(return_value={b"g1:bad": b"not valid json"})
+        tm._redis_client = redis
+
+        # Should not raise
+        await tm._load_dynamic_tasks()
+        assert len(group.tasks) == 0
+
+
+class TestRedisClientProperty:
+    """Tests for redis_client property."""
+
+    def test_returns_client_when_started(self):
+        """When started, redis_client returns the client instance."""
+        tm = _make_task_manager()
+        mock_redis = AsyncMock()
+        tm._redis_client = mock_redis
+        assert tm.redis_client is mock_redis
+
+
+class TestHealthCheck:
+    """Tests for health_check method."""
+
+    async def test_health_check_delegates_to_get_health(self):
+        """health_check() should return a HealthResponse."""
+        tm = _make_task_manager()
+        tm._runner = MagicMock()
+        tm._runner.worker_id = "w1"
+        tm._runner.worker_started_at = "2024-01-01T00:00:00"
+        tm._runner.is_leader = False
+        tm._redis_client = AsyncMock()
+        tm._redis_client.ping = AsyncMock(return_value=True)
+
+        result = await tm.health_check()
+        assert result.status == "healthy"
+
+
+class TestAppendToAppLifecycle:
+    """Tests for append_to_app_lifecycle."""
+
+    async def test_sets_lifespan_on_app(self):
+        """append_to_app_lifecycle should set lifespan_context on the app router."""
+        app = FastAPI()
+        tm = _make_task_manager(app=app)
+        original_lifespan = getattr(app.router, "lifespan_context", None)
+        tm.append_to_app_lifecycle(app)
+        # The lifespan_context should be replaced
+        assert app.router.lifespan_context is not original_lifespan
+
+    @patch("fastapi_task_manager.task_manager.Runner")
+    @patch("fastapi_task_manager.task_manager.Redis")
+    async def test_lifecycle_starts_and_stops(self, mock_redis_cls, mock_runner_cls):
+        """The lifespan should call start() and stop()."""
+        app = FastAPI()
+        config = Config(redis_host="localhost")
+        tm = TaskManager(app=app, config=config)
+
+        mock_redis_inst = AsyncMock()
+        mock_redis_cls.return_value = mock_redis_inst
+        mock_redis_inst.hgetall = AsyncMock(return_value={})
+        mock_redis_inst.aclose = AsyncMock()
+
+        mock_runner_inst = AsyncMock()
+        mock_runner_cls.return_value = mock_runner_inst
+        mock_runner_inst.start = AsyncMock()
+        mock_runner_inst.stop = AsyncMock()
+
+        tm.append_to_app_lifecycle(app)
+
+        # Run the lifespan context manager
+
+        lifespan = app.router.lifespan_context
+        async with lifespan(app):
+            assert tm._runner is not None
+
+        mock_runner_inst.stop.assert_awaited_once()
+
+    @patch("fastapi_task_manager.task_manager.Runner")
+    @patch("fastapi_task_manager.task_manager.Redis")
+    async def test_lifecycle_chains_existing_lifespan(self, mock_redis_cls, mock_runner_cls):
+        """When the app already has a lifespan, it should be chained."""
+        from contextlib import asynccontextmanager
+
+        existing_called = False
+
+        @asynccontextmanager
+        async def existing_lifespan(app):
+            nonlocal existing_called
+            existing_called = True
+            yield
+
+        app = FastAPI()
+        app.router.lifespan_context = existing_lifespan
+        config = Config(redis_host="localhost")
+        tm = TaskManager(app=app, config=config)
+
+        mock_redis_inst = AsyncMock()
+        mock_redis_cls.return_value = mock_redis_inst
+        mock_redis_inst.hgetall = AsyncMock(return_value={})
+        mock_redis_inst.aclose = AsyncMock()
+
+        mock_runner_inst = AsyncMock()
+        mock_runner_cls.return_value = mock_runner_inst
+        mock_runner_inst.start = AsyncMock()
+        mock_runner_inst.stop = AsyncMock()
+
+        tm.append_to_app_lifecycle(app)
+
+        lifespan = app.router.lifespan_context
+        async with lifespan(app):
+            pass
+
+        assert existing_called is True
 
 
 class TestGetManagerRouter:

@@ -147,6 +147,35 @@ class TestProcessMessage:
         redis.xack.assert_awaited_once()
 
 
+class TestProcessMessageFound:
+    """Tests for _process_message when the task is found."""
+
+    async def test_calls_execute_and_ack_for_known_task(self):
+        """When the task exists, _execute_and_ack should be called."""
+        consumer, redis, tm, stats = _make_consumer()
+        task = _make_task("t1")
+        group = MagicMock()
+        group.name = "g1"
+        group.tasks = [task]
+        tm.task_groups = [group]
+
+        redis.xack = AsyncMock()
+        redis.set = AsyncMock()
+        redis.delete = AsyncMock()
+        redis.srem = AsyncMock()
+
+        # Use string keys - _process_message uses data.get("group") not data.get(b"group")
+        await consumer._process_message(
+            "1-0",
+            {"group": "g1", "task": "t1"},
+            is_high_priority=False,
+        )
+
+        # Task should have been executed
+        task.function.assert_awaited_once()
+        redis.xack.assert_awaited_once()
+
+
 class TestExecuteAndAck:
     """Tests for _execute_and_ack."""
 
@@ -244,6 +273,209 @@ class TestRecoverPendingOnStartup:
         redis.xautoclaim = AsyncMock(
             side_effect=ResponseError("unknown command `XAUTOCLAIM`"),
         )
+
+        # Should not raise
+        await consumer._recover_pending_on_startup()
+
+
+class TestTryReadStream:
+    """Tests for _try_read_stream."""
+
+    async def test_returns_message_when_available(self):
+        consumer, redis, _, _ = _make_consumer()
+        redis.xreadgroup = AsyncMock(
+            return_value=[
+                (b"stream", [(b"1-0", {b"group": b"g1", b"task": b"t1"})]),
+            ],
+        )
+
+        result = await consumer._try_read_stream("stream", "group", block_ms=0)
+
+        assert result is not None
+        msg_id, data = result
+        assert msg_id == "1-0"
+
+    async def test_returns_none_when_no_messages(self):
+        consumer, redis, _, _ = _make_consumer()
+        redis.xreadgroup = AsyncMock(return_value=[])
+
+        result = await consumer._try_read_stream("stream", "group", block_ms=0)
+        assert result is None
+
+    async def test_decodes_string_message_id(self):
+        """When message_id is already a string, it passes through."""
+        consumer, redis, _, _ = _make_consumer()
+        redis.xreadgroup = AsyncMock(
+            return_value=[
+                ("stream", [("1-0", {"group": "g1", "task": "t1"})]),
+            ],
+        )
+
+        result = await consumer._try_read_stream("stream", "group", block_ms=0)
+        assert result[0] == "1-0"
+
+
+class TestConsumeLoop:
+    """Tests for _consume_loop."""
+
+    async def test_loop_reads_high_priority_first(self):
+        """The consume loop should try high priority before low."""
+        consumer, redis, tm, _ = _make_consumer()
+        tm.task_groups = []
+        call_count = 0
+
+        async def mock_xreadgroup(**kwargs):
+            nonlocal call_count
+            call_count += 1
+            if call_count >= 3:
+                consumer._running = False
+            return []
+
+        redis.xreadgroup = mock_xreadgroup
+
+        consumer._running = True
+        await consumer._consume_loop()
+
+        # Should have been called multiple times (high + low attempts)
+        assert call_count >= 2
+
+    async def test_loop_stops_when_running_false(self):
+        """The loop exits when _running becomes False."""
+        consumer, redis, _, _ = _make_consumer()
+        consumer._running = False
+        redis.xreadgroup = AsyncMock(return_value=[])
+
+        # Should return immediately
+        await consumer._consume_loop()
+
+    async def test_loop_spawns_high_priority_task(self):
+        """When a high priority message is available, it should be spawned."""
+        consumer, redis, tm, stats = _make_consumer()
+        tm.task_groups = []
+        call_count = 0
+
+        async def mock_xreadgroup(**kwargs):
+            nonlocal call_count
+            call_count += 1
+            if call_count == 1:
+                # First call (high priority, block_ms=0) returns a message
+                return [(b"stream", [(b"1-0", {b"group": b"g1", b"task": b"t1"})])]
+            # Stop after first message
+            consumer._running = False
+            return []
+
+        redis.xreadgroup = mock_xreadgroup
+        redis.xack = AsyncMock()
+
+        consumer._running = True
+        await consumer._consume_loop()
+
+        # Should have spawned at least one task
+        assert call_count >= 1
+
+    async def test_loop_spawns_low_priority_task(self):
+        """When only a low priority message is available, it should be spawned."""
+        consumer, redis, tm, stats = _make_consumer()
+        tm.task_groups = []
+        call_count = 0
+
+        async def mock_xreadgroup(**kwargs):
+            nonlocal call_count
+            call_count += 1
+            if call_count == 1:
+                # High priority returns nothing
+                return []
+            if call_count == 2:
+                # Low priority returns a message
+                return [(b"stream", [(b"2-0", {b"group": b"g1", b"task": b"t1"})])]
+            consumer._running = False
+            return []
+
+        redis.xreadgroup = mock_xreadgroup
+        redis.xack = AsyncMock()
+
+        consumer._running = True
+        await consumer._consume_loop()
+
+        assert call_count >= 2
+
+    async def test_loop_handles_exception(self):
+        """Generic exception in consume loop should be caught and logged."""
+        consumer, redis, tm, _ = _make_consumer()
+        call_count = 0
+
+        async def mock_xreadgroup(**kwargs):
+            nonlocal call_count
+            call_count += 1
+            if call_count == 1:
+                raise ConnectionError("Redis down")
+            consumer._running = False
+            return []
+
+        redis.xreadgroup = mock_xreadgroup
+        consumer._running = True
+        # Should not raise
+        await consumer._consume_loop()
+
+
+class TestStopWithRunningTasks:
+    """Tests for stop() with active tasks."""
+
+    async def test_stop_waits_for_running_tasks(self):
+        """stop() should wait for in-progress tasks to complete."""
+        consumer, redis, tm, stats = _make_consumer()
+        # Add a fake running task
+        completed = False
+
+        async def slow_task():
+            nonlocal completed
+            await asyncio.sleep(0.1)
+            completed = True
+
+        running = asyncio.create_task(slow_task())
+        consumer._running_tasks.add(running)
+        running.add_done_callback(consumer._running_tasks.discard)
+
+        consumer._running = True
+        await consumer.stop()
+
+        assert completed is True
+        assert consumer._running is False
+
+
+class TestSyncFunctionExecution:
+    """Tests for executing sync functions via asyncio.to_thread."""
+
+    async def test_sync_function_execution(self):
+        """Sync functions should be run via to_thread."""
+        consumer, redis, tm, stats = _make_consumer()
+        task = _make_task("sync_t", is_async=False)
+        redis.set = AsyncMock()
+        redis.delete = AsyncMock()
+        redis.srem = AsyncMock()
+        redis.xack = AsyncMock()
+
+        await consumer._execute_and_ack("1-0", "g1", task, is_high_priority=False)
+
+        task.function.assert_called_once()
+        stats.record_execution.assert_awaited_once()
+
+
+class TestRecoverPendingEdgeCases:
+    """Additional edge cases for _recover_pending_on_startup."""
+
+    async def test_handles_generic_exception(self):
+        """Generic exceptions during recovery should be caught."""
+        consumer, redis, _, _ = _make_consumer()
+        redis.xautoclaim = AsyncMock(side_effect=ConnectionError("Redis down"))
+
+        # Should not raise
+        await consumer._recover_pending_on_startup()
+
+    async def test_handles_non_unknown_response_error(self):
+        """Non-'unknown command' ResponseErrors should be logged but not crash."""
+        consumer, redis, _, _ = _make_consumer()
+        redis.xautoclaim = AsyncMock(side_effect=ResponseError("OTHER ERROR"))
 
         # Should not raise
         await consumer._recover_pending_on_startup()

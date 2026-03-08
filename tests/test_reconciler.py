@@ -263,6 +263,134 @@ class TestReclaimStuckPending:
         # Should not raise
         await reconciler._reclaim_stuck_pending()
 
+    async def test_skips_messages_below_idle_threshold(self):
+        """Messages not idle long enough should be skipped."""
+        reconciler, redis = _make_reconciler()
+        redis.xpending_range = AsyncMock(
+            return_value=[
+                {"message_id": b"1-0", "time_since_delivered": 100},  # Below 30_000ms threshold
+            ],
+        )
+
+        await reconciler._reclaim_stuck_pending()
+
+        redis.xrange.assert_not_awaited()
+        redis.xack.assert_not_awaited()
+
+    async def test_skips_entries_without_message_id(self):
+        """Entries with no message_id should be skipped."""
+        reconciler, redis = _make_reconciler()
+        redis.xpending_range = AsyncMock(
+            return_value=[
+                {"time_since_delivered": 60_000},  # No message_id
+            ],
+        )
+
+        await reconciler._reclaim_stuck_pending()
+
+        redis.xrange.assert_not_awaited()
+
+    async def test_handles_non_unknown_response_error(self):
+        """Non-'unknown command' ResponseErrors are logged but don't crash."""
+        reconciler, redis = _make_reconciler()
+        redis.xpending_range = AsyncMock(
+            side_effect=ResponseError("SOME OTHER ERROR"),
+        )
+
+        # Should not raise
+        await reconciler._reclaim_stuck_pending()
+
+    async def test_handles_generic_exception(self):
+        """Generic exceptions are caught and logged."""
+        reconciler, redis = _make_reconciler()
+        redis.xpending_range = AsyncMock(
+            side_effect=ConnectionError("Redis down"),
+        )
+
+        # Should not raise
+        await reconciler._reclaim_stuck_pending()
+
+    async def test_empty_pending_info_is_skipped(self):
+        """When pending_info is empty, no requeue is attempted."""
+        reconciler, redis = _make_reconciler()
+        redis.xpending_range = AsyncMock(return_value=[])
+
+        await reconciler._reclaim_stuck_pending()
+        redis.xrange.assert_not_awaited()
+
+
+class TestCheckOverdueTasks:
+    """Tests for _check_overdue_tasks wrapper."""
+
+    async def test_iterates_all_task_groups(self):
+        task1 = _make_task("t1")
+        task2 = _make_task("t2")
+        g1 = _make_group("g1", [task1])
+        g2 = _make_group("g2", [task2])
+        reconciler, redis = _make_reconciler(task_groups=[g1, g2])
+        # All tasks disabled (quick path)
+        redis.get = AsyncMock(return_value=b"1")
+
+        await reconciler._check_overdue_tasks()
+
+        # get() should have been called for each task's disabled key
+        assert redis.get.await_count == 2
+
+    async def test_exception_in_single_task_does_not_stop_others(self):
+        """An error checking one task should not prevent checking the rest."""
+        task1 = _make_task("t1")
+        task2 = _make_task("t2")
+        g1 = _make_group("g1", [task1, task2])
+        reconciler, redis = _make_reconciler(task_groups=[g1])
+        # First call raises, second succeeds
+        redis.get = AsyncMock(side_effect=[ConnectionError("oops"), b"1"])
+        redis.sismember = AsyncMock(return_value=False)
+        redis.exists = AsyncMock(return_value=False)
+
+        # Should not raise
+        await reconciler._check_overdue_tasks()
+
+
+class TestRunLoop:
+    """Tests for the _run reconciliation loop."""
+
+    async def test_run_loop_executes_when_leader(self):
+        import asyncio
+
+        task = _make_task("t1")
+        group = _make_group("g1", [task])
+        reconciler, redis = _make_reconciler(task_groups=[group], is_leader=True)
+        reconciler._task_manager.config.reconciliation_interval = 0.05
+        # Make checks quick (task disabled)
+        redis.get = AsyncMock(return_value=b"1")
+        redis.smembers = AsyncMock(return_value=set())
+        redis.xpending_range = AsyncMock(return_value=[])
+
+        async def stop_after():
+            await asyncio.sleep(0.15)
+            await reconciler.stop()
+
+        asyncio.create_task(stop_after())
+        asyncio_task = await reconciler.start()
+        await asyncio_task
+
+    async def test_run_loop_skips_when_not_leader(self):
+        import asyncio
+
+        reconciler, redis = _make_reconciler(is_leader=False)
+        reconciler._task_manager.config.reconciliation_interval = 0.05
+
+        async def stop_after():
+            await asyncio.sleep(0.15)
+            await reconciler.stop()
+
+        asyncio.create_task(stop_after())
+        asyncio_task = await reconciler.start()
+        await asyncio_task
+
+        # Should not have called any reconciliation methods
+        redis.smembers.assert_not_awaited()
+
 
 class TestFindTask:
     """Tests for _find_task."""

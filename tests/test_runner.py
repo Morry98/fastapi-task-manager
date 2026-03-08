@@ -157,6 +157,41 @@ class TestRunnerStop:
     @patch("fastapi_task_manager.runner.Coordinator")
     @patch("fastapi_task_manager.runner.StreamConsumer")
     @patch("fastapi_task_manager.runner.LeaderElector")
+    async def test_start_when_already_running_is_noop(
+        self,
+        mock_leader,
+        mock_consumer,
+        mock_coordinator,
+        mock_reconciler,
+    ):
+        """Calling start() when already running should return early."""
+        runner, redis = _make_runner()
+
+        mock_consumer_inst = mock_consumer.return_value
+        mock_consumer_inst.setup_consumer_groups = AsyncMock()
+        mock_consumer_inst.start = AsyncMock(return_value=_make_fake_asyncio_task())
+        mock_consumer_inst.stop = AsyncMock()
+
+        mock_coordinator.return_value.start = AsyncMock(return_value=_make_fake_asyncio_task())
+        mock_coordinator.return_value.stop = AsyncMock()
+
+        mock_reconciler.return_value.start = AsyncMock(return_value=_make_fake_asyncio_task())
+        mock_reconciler.return_value.stop = AsyncMock()
+
+        mock_leader.return_value.release_leadership = AsyncMock()
+
+        await runner.start()
+        # Second call should be a noop (lines 84-86)
+        await runner.start()
+
+        # Consumer groups setup should only be called once
+        mock_consumer_inst.setup_consumer_groups.assert_awaited_once()
+        await runner.stop()
+
+    @patch("fastapi_task_manager.runner.Reconciler")
+    @patch("fastapi_task_manager.runner.Coordinator")
+    @patch("fastapi_task_manager.runner.StreamConsumer")
+    @patch("fastapi_task_manager.runner.LeaderElector")
     async def test_stop_cleans_up_all_components(
         self,
         mock_leader,
