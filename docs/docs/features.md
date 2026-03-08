@@ -13,14 +13,14 @@ hide:
 
 # Key Features
 
-FastAPI Task Manager is designed to make background task scheduling in FastAPI applications **simple, reliable** and **scalable**.  
+FastAPI Task Manager is designed to make background task scheduling in FastAPI applications **simple, reliable** and **scalable**.
 Whether you're running a single instance with multiple uvicorn workers or a distributed system, it handles the complexity so you can focus on building your application.
 
 ---
 
 ## :material-sitemap: Distributed Scheduling
 
-Run multiple FastAPI instances without worrying about duplicate task executions. Our Redis-backed coordination system ensures that **each task runs exactly once, at the right time**, even across a cluster of workers.
+Run multiple FastAPI instances without worrying about duplicate task executions. Our Redis Streams-based coordination system with leader election ensures that **each task runs exactly once, at the right time**, even across a cluster of workers.
 
 **Perfect for:**
 
@@ -28,7 +28,7 @@ Run multiple FastAPI instances without worrying about duplicate task executions.
 - High-availability deployments
 - Multi-instance production environments
 
-**How it works:** Redis serves as a distributed lock manager, coordinating task execution across all instances and preventing race conditions.
+**How it works:** A leader instance schedules tasks into a Redis Stream, while all instances consume and execute tasks via consumer groups. Leader election ensures only one instance coordinates scheduling, while execution is distributed across all workers.
 
 ---
 
@@ -55,18 +55,40 @@ No complex configuration files. No boilerplate. Just clean, readable code.
 
 ## :material-api: Built-in Management API
 
-Get full control over your tasks through FastAPI's native router system. Pause tasks during maintenance, resume them when ready, and monitor execution status—all via REST endpoints.
+Get full control over your tasks through FastAPI's native router system. Pause tasks during maintenance, resume them when ready, trigger immediate execution, and monitor execution status—all via REST endpoints.
 
 **Available operations:**
 
+- `GET /health` - System health check with worker and leader info
+- `GET /config` - Current configuration inspection
 - `GET /task-groups` - List all task groups
-- `GET /tasks` - List all tasks with full details
-- `POST /disable-tasks` - Disable task execution
-- `POST /enable-tasks` - Enable task execution
+- `GET /tasks` - List all tasks with execution statistics and retry state
+- `POST /tasks/disable` - Disable task execution
+- `POST /tasks/enable` - Enable task execution
+- `POST /tasks/trigger` - Trigger immediate task execution
+- `POST /tasks/reset-retry` - Reset retry backoff state
+- `DELETE /tasks/statistics` - Clear execution history
+- `POST /tasks` - Create dynamic tasks at runtime
+- `DELETE /tasks` - Delete dynamic tasks
+- `GET /functions` - List registered functions for dynamic tasks
 
 <small>See the [API Reference](learn/api-reference.md) for the complete endpoint documentation.</small>
 
 Seamlessly integrate task management into your existing FastAPI admin panels or monitoring dashboards.
+
+---
+
+## :material-plus-circle: Dynamic Tasks
+
+Create and delete tasks at runtime via the REST API without redeploying your application. Register functions in your task groups, then create scheduled tasks dynamically with custom cron expressions and parameters.
+
+**Key capabilities:**
+
+- Register functions with `@task_group.register_function()`
+- Create tasks via `POST /tasks` with any cron expression
+- Pass custom kwargs to task functions
+- Persistent across restarts (definitions stored in Redis)
+- Delete tasks via `DELETE /tasks` with full Redis cleanup
 
 ---
 
@@ -76,8 +98,9 @@ Built with production environments in mind, FastAPI Task Manager includes compre
 
 **Built-in safeguards:**
 
-- Automatic retry mechanisms with exponential backoff
-- Detailed execution logs for debugging
+- Exponential backoff retry with configurable delays and per-task overrides
+- Task heartbeat monitoring for crash detection
+- Automatic reconciliation of stale and failed tasks
 - Health check endpoints for monitoring
 - Graceful shutdown handling
 
@@ -105,8 +128,9 @@ That's it. Your tasks are now scheduled and ready to run.
 While there are many task queue solutions available, FastAPI Task Manager is specifically built for FastAPI developers who need:
 
 - **Native integration** with FastAPI's async ecosystem, so you can leverage both async and sync code seamlessly like normal FastAPI routes
-- **Distributed coordination** out of the box
+- **Distributed coordination** out of the box with Redis Streams and leader election
 - **Minimal dependencies** (just FastAPI and Redis)
 - **Lightweight footprint** without the overhead of a full message broker
+- **Runtime flexibility** with dynamic task creation and deletion via API
 
 Perfect for applications that need reliable scheduled tasks without the overhead of a full message broker infrastructure.

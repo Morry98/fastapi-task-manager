@@ -6,7 +6,9 @@ We will see each config in detail with his own section in the next parts of this
 
 {* ./docs_src/tutorial/configurations_py310.py *}
 
-## Log Level
+## App Configuration
+
+### Log Level
 {* ./docs_src/tutorial/configurations_py310.py ln[4] *}
 
 //// note | Logger name
@@ -16,44 +18,212 @@ The package uses the standard logging library from python and the logger is name
 This configuration is used to set the `log_level` used by the package logger.
 The default value is set to `NOTSET` and the suggestion is to keep the default value and manage the logging level, handler and formatters in your application logging configuration.
 
-## Redis Key Prefix
+### Redis Key Prefix
 {* ./docs_src/tutorial/configurations_py310.py ln[5] *}
 
-This configuration is used as custom prefix for all the keys used by the package in redis. Pay attention to make it unique if you are using the same redis instance for multiple applications on the same redis db.  
+This configuration is used as custom prefix for all the keys used by the package in redis. Pay attention to make it unique if you are using the same redis instance for multiple applications on the same redis db.
 Default value is `__name__`.
 
-## Concurrent Tasks
+### Concurrent Tasks
 {* ./docs_src/tutorial/configurations_py310.py ln[6] *}
 
-This configuration is used to set the maximum number of concurrent tasks that can be executed by each worker.  
+This configuration is used to set the maximum number of concurrent tasks that can be executed by each worker.
 Default value is `2`.
 
-## Statistics Redis Expiration
+### Statistics Redis Expiration
 {* ./docs_src/tutorial/configurations_py310.py ln[7] *}
 
-TODO
+This configuration sets the TTL (in seconds) for statistics-related keys in Redis. After this time, the statistics data will expire and be automatically removed by Redis.
+Default value is `432000` (5 days).
 
-## Statistics History Runs
+### Statistics History Runs
 {* ./docs_src/tutorial/configurations_py310.py ln[8] *}
 
-TODO
+This configuration sets how many historical execution records (runs and durations) are kept per task. Older records are discarded when new ones are added.
+Default value is `30`.
 
-## Redis Host
-{* ./docs_src/tutorial/configurations_py310.py ln[9] *}
+---
 
-TODO
+## Redis Configuration
 
-## Redis Port
+### Redis Host
 {* ./docs_src/tutorial/configurations_py310.py ln[10] *}
 
-TODO
+The hostname or IP address of the Redis server. This is the only **required** configuration parameter with no default value.
 
-## Redis Password
+### Redis Port
 {* ./docs_src/tutorial/configurations_py310.py ln[11] *}
 
-TODO
+The port number of the Redis server.
+Default value is `6379`.
 
-## Redis DB
+### Redis Password
 {* ./docs_src/tutorial/configurations_py310.py ln[12] *}
 
-TODO
+The password for authenticating with the Redis server. Set to `None` if your Redis instance does not require authentication.
+Default value is `None`.
+
+### Redis DB
+{* ./docs_src/tutorial/configurations_py310.py ln[13] *}
+
+The Redis database number to use. Redis supports multiple databases (0-15 by default).
+Default value is `1`.
+
+---
+
+## Runner Configuration
+
+These settings control the core task scheduling loop.
+
+### Poll Interval
+{* ./docs_src/tutorial/configurations_py310.py ln[15] *}
+
+The interval (in seconds) between coordinator scheduling cycles. Lower values mean tasks are picked up faster but increase Redis load.
+Default value is `0.1`.
+
+### Initial Lock TTL
+{* ./docs_src/tutorial/configurations_py310.py ln[16] *}
+
+The initial TTL (in seconds) for the task lock before execution starts. This prevents duplicate execution during task pickup.
+Default value is `15`.
+
+### Worker Service Name
+{* ./docs_src/tutorial/configurations_py310.py ln[17] *}
+
+The service name used for worker identification. This appears in health check responses and logs to help identify which service a worker belongs to.
+Default value is `"fastapi-task-manager"`.
+
+---
+
+## Streams Configuration
+
+These settings control the Redis Streams-based task distribution system.
+
+### Stream Max Length
+{* ./docs_src/tutorial/configurations_py310.py ln[19] *}
+
+The maximum number of entries retained in the task stream. Uses approximate trimming (`MAXLEN ~`) to keep the stream size bounded. Older entries are automatically removed.
+Default value is `10000`.
+
+### Stream Block Timeout
+{* ./docs_src/tutorial/configurations_py310.py ln[20] *}
+
+The block timeout (in milliseconds) for `XREADGROUP` when consumers wait for new messages. Higher values reduce Redis round-trips but increase shutdown latency.
+Default value is `1000`.
+
+### Stream Consumer Group
+{* ./docs_src/tutorial/configurations_py310.py ln[21] *}
+
+The name of the Redis consumer group used by task workers. All workers in the same deployment should use the same consumer group name to distribute tasks evenly.
+Default value is `"task-workers"`.
+
+---
+
+## Leader Election Configuration
+
+FastAPI Task Manager uses distributed leader election via Redis to ensure that only one instance schedules tasks at a time, while all instances can execute them.
+
+### Leader Lock TTL
+{* ./docs_src/tutorial/configurations_py310.py ln[23] *}
+
+The TTL (in seconds) for the leader lock key in Redis. If the leader crashes without releasing the lock, a new leader is elected after this period.
+Should be greater than `leader_heartbeat_interval * 3` to tolerate transient delays.
+Default value is `10`.
+
+### Leader Heartbeat Interval
+{* ./docs_src/tutorial/configurations_py310.py ln[24] *}
+
+The interval (in seconds) between leader lock renewals. The leader periodically renews its lock to signal it is still alive.
+Default value is `3.0`.
+
+### Leader Retry Interval
+{* ./docs_src/tutorial/configurations_py310.py ln[25] *}
+
+The interval (in seconds) between leadership acquisition attempts for follower instances. When a worker is not the leader, it tries to acquire leadership at this interval.
+Default value is `5.0`.
+
+---
+
+## Reconciliation Configuration
+
+The reconciler detects and recovers stale or failed tasks. It runs only on the leader instance.
+
+### Reconciliation Enabled
+{* ./docs_src/tutorial/configurations_py310.py ln[27] *}
+
+Enable or disable the reconciliation loop. When disabled, stale tasks are not automatically recovered.
+Default value is `True`.
+
+### Reconciliation Interval
+{* ./docs_src/tutorial/configurations_py310.py ln[28] *}
+
+The interval (in seconds) between reconciliation checks. The reconciler scans for overdue or stuck tasks at this interval.
+Default value is `30`.
+
+### Reconciliation Overdue Seconds
+{* ./docs_src/tutorial/configurations_py310.py ln[29] *}
+
+How long (in seconds) a task must be overdue before the reconciler republishes it to the stream. Safe to keep low thanks to the running heartbeat: if the running key is absent, no worker is executing the task.
+Default value is `30`.
+
+### Pending Message Timeout
+{* ./docs_src/tutorial/configurations_py310.py ln[30] *}
+
+How long (in milliseconds) a pending message must be idle before being reclaimed by the reconciler. Should be greater than `running_heartbeat_ttl * 3` to tolerate transient delays.
+Default value is `30000`.
+
+---
+
+## Retry / Backoff Configuration
+
+When a task fails, FastAPI Task Manager applies exponential backoff to delay re-execution. This prevents rapid failure loops and gives external dependencies time to recover.
+
+### Retry Backoff
+{* ./docs_src/tutorial/configurations_py310.py ln[32] *}
+
+The initial backoff delay (in seconds) after a task failure. The first retry will be delayed by this amount.
+Default value is `1.0`.
+
+//// tip | Per-task override
+This setting can be overridden on individual tasks via the `retry_backoff` parameter on `@task_group.add_task()`.
+////
+
+### Retry Backoff Max
+{* ./docs_src/tutorial/configurations_py310.py ln[33] *}
+
+The maximum backoff delay (in seconds). The delay will never exceed this value, regardless of how many consecutive failures occur.
+Default value is `60.0`.
+
+//// tip | Per-task override
+This setting can be overridden on individual tasks via the `retry_backoff_max` parameter on `@task_group.add_task()`.
+////
+
+### Retry Backoff Multiplier
+{* ./docs_src/tutorial/configurations_py310.py ln[34] *}
+
+The multiplier applied to the current delay after each consecutive failure. For example, with default settings: 1s, 2s, 4s, 8s, 16s, 32s, 60s (capped).
+Default value is `2.0`.
+
+### Retry Key TTL
+{* ./docs_src/tutorial/configurations_py310.py ln[35] *}
+
+The TTL (in seconds) for retry state keys in Redis. This acts as a safety net: if no new failures occur within this period, the retry state is automatically cleaned up.
+Default value is `86400` (24 hours).
+
+---
+
+## Running Heartbeat Configuration
+
+While a task is executing, the worker periodically renews a heartbeat key in Redis. If a worker crashes, the key expires, signaling that the task is no longer being executed.
+
+### Running Heartbeat TTL
+{* ./docs_src/tutorial/configurations_py310.py ln[37] *}
+
+The TTL (in seconds) for the running heartbeat key. When a worker crashes, the key expires after this time. Must be greater than `running_heartbeat_interval * 2` to tolerate a missed heartbeat.
+Default value is `10`.
+
+### Running Heartbeat Interval
+{* ./docs_src/tutorial/configurations_py310.py ln[38] *}
+
+The interval (in seconds) between heartbeat renewals while a task is executing. The worker renews the running key at this interval.
+Default value is `3.0`.

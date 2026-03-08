@@ -18,7 +18,7 @@ Lightweight, efficient and fast to code scheduled task management system built o
 
 ---
 
-**Documentation**: [https://morry98.github.io/fastapi-task-manager](https://morry98.github.io/fastapi-task-manager)
+**Documentation**: [https://fastapi-task-manager.morando.uk](https://fastapi-task-manager.morando.uk)
 
 **Source Code**: [https://github.com/Morry98/fastapi-task-manager](https://github.com/Morry98/fastapi-task-manager)
 

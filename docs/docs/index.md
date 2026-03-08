@@ -31,7 +31,7 @@ hide:
 
 ---
 
-**Documentation**: [https://morry98.github.io/fastapi-task-manager](https://morry98.github.io/fastapi-task-manager){ .external-link target="_blank" }
+**Documentation**: [https://fastapi-task-manager.morando.uk](https://fastapi-task-manager.morando.uk){ .external-link target="_blank" }
 
 **Source Code**: [https://github.com/Morry98/fastapi-task-manager](https://github.com/Morry98/fastapi-task-manager){ .external-link target="_blank" }
 
@@ -44,11 +44,14 @@ FastAPI Task Manager is a lightweight and efficient scheduled task management sy
 ## Key Features
 
 - **FastAPI Extension** - Built as an extension to FastAPI, making it easy to integrate into existing FastAPI applications and leverage its features
-- **Redis-Based** - Uses Redis as the backend for storing task information, ensuring high performance and single-instance execution
+- **Redis Streams Architecture** - Uses Redis Streams with leader election for distributed task scheduling and single-instance execution safety
 - **Fast to Code** - Increase the speed to develop scheduled tasks by about 400% to 500%, only a wrapper function is needed*
 - **Fewer Bugs** - Reduce about 60% of human (developer) induced errors managing lock, Redis keys and task execution*
 - **Scheduled Tasks** - Provides a simple and intuitive API for defining and scheduling tasks to run at specific intervals or times
-- **Task Management** - Includes FastAPI router to manage tasks, such as pausing, resuming, and monitoring execution information
+- **Task Management** - Includes FastAPI router with 12 endpoints to manage tasks: disable, enable, trigger, monitor health, and more
+- **Dynamic Tasks** - Create and delete tasks at runtime via REST API without redeploying
+- **Retry with Backoff** - Automatic exponential backoff on task failures with configurable per-task overrides
+- **Fault Tolerant** - Task heartbeat monitoring, automatic reconciliation of stale tasks, and leader failover
 - **Easy to Use** - Designed to be easy to use and learn. Less time reading docs
 - **Robust** - Get production-ready code
 
