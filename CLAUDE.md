@@ -45,7 +45,7 @@ The library follows a hierarchical structure: **TaskManager** → **TaskGroup** 
 
 - **TaskGroup** (`task_group.py`): Organizes related tasks. Tasks are registered via the `@task_group.add_task(cron_expr)` decorator. Supports multiple cron expressions and kwargs per task function.
 
-- **Runner** (`runner.py`): Async loop that polls tasks and executes them. Uses Redis keys for distributed locking (`{prefix}_{group}_{task}_runner_uuid`) to ensure only one instance runs a task. Uses `ForceAcquireSemaphore` for concurrency control.
+- **Runner** (`runner.py`): Orchestrates stream mode components (LeaderElector, Coordinator, StreamConsumer, Reconciler). Uses Redis Streams with leader election for task scheduling and consumer groups for execution.
 
 - **Config** (`config.py`): Pydantic model for configuration. Key settings:
   - `redis_key_prefix`: Namespace for Redis keys
@@ -56,10 +56,10 @@ The library follows a hierarchical structure: **TaskManager** → **TaskGroup** 
 
 All keys are prefixed with `{redis_key_prefix}_{task_group_name}_{task_name}_`:
 - `_next_run`: Timestamp of next scheduled execution
-- `_runner_uuid`: Lock for single-instance execution
 - `_disabled`: Flag to pause task execution
 - `_runs`: History of execution timestamps
 - `_durations_second`: History of execution durations
+- `_running`: Heartbeat key indicating task is currently executing
 
 ### Public API
 

@@ -92,7 +92,6 @@ async def get_tasks(
     """
     redis_client = task_manager.redis_client
     key_builder = RedisKeyBuilder(task_manager.config.redis_key_prefix)
-    use_streams = task_manager.config.use_streams
 
     list_to_return: list[TaskDetailed] = []
 
@@ -115,12 +114,9 @@ async def get_tasks(
             pipe.get(keys.retry_after)
             pipe.get(keys.retry_delay)
 
-            # Check running state depending on mode
-            if use_streams:
-                running_key = key_builder.running_task_key(tg.name, t.name)
-                pipe.exists(running_key)
-            else:
-                pipe.exists(keys.runner_uuid)
+            # Check running state via heartbeat key
+            running_key = key_builder.running_task_key(tg.name, t.name)
+            pipe.exists(running_key)
 
             results = await pipe.execute()
 
@@ -322,7 +318,6 @@ async def clear_statistics(
 async def get_health(task_manager: "TaskManager") -> HealthResponse:
     """Return system health: runner status, Redis connectivity, worker info."""
     runner = task_manager.runner
-    config = task_manager.config
 
     # Check Redis connectivity
     redis_connected = False
@@ -344,12 +339,10 @@ async def get_health(task_manager: "TaskManager") -> HealthResponse:
     if runner is not None:
         worker_id = runner.worker_id
         worker_started_at = runner.worker_started_at
-        if config.use_streams:
-            is_leader = runner.is_leader
+        is_leader = runner.is_leader
 
     return HealthResponse(
         status=status,
-        mode="stream" if config.use_streams else "polling",
         redis_connected=redis_connected,
         worker_id=worker_id,
         worker_started_at=worker_started_at,
@@ -366,11 +359,8 @@ def get_config(task_manager: "TaskManager") -> ConfigResponse:
         statistics_history_runs=c.statistics_history_runs,
         statistics_redis_expiration=c.statistics_redis_expiration,
         poll_interval=c.poll_interval,
-        lock_renewal_interval=c.lock_renewal_interval,
         initial_lock_ttl=c.initial_lock_ttl,
-        running_lock_ttl=c.running_lock_ttl,
         worker_service_name=c.worker_service_name,
-        use_streams=c.use_streams,
         stream_max_len=c.stream_max_len,
         stream_block_ms=c.stream_block_ms,
         leader_lock_ttl=c.leader_lock_ttl,

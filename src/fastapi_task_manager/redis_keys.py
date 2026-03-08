@@ -11,7 +11,7 @@ Where:
     - prefix: Application-wide namespace (from Config.redis_key_prefix)
     - group: Task group name (from TaskGroup)
     - task: Individual task name (function name)
-    - suffix: Key type identifier (next_run, runner_uuid, etc.)
+    - suffix: Key type identifier (next_run, disabled, etc.)
 """
 
 from dataclasses import dataclass
@@ -51,12 +51,9 @@ class TaskKeys:
 
     Attributes:
         next_run: Key storing the timestamp of the next scheduled execution.
-            Used by the runner to determine when a task should be triggered.
-        runner_uuid: Key used as a distributed lock to ensure only one instance
-            of the application executes a task at any given time. Contains the
-            UUID of the runner that currently holds the lock.
+            Used by the coordinator to determine when a task should be triggered.
         disabled: Key storing a flag that indicates whether the task is paused.
-            When set, the runner will skip execution of this task.
+            When set, the coordinator will skip scheduling of this task.
         runs: Key for a Redis list containing the history of execution timestamps.
             Used for statistics and monitoring purposes.
         durations_second: Key for a Redis list containing the history of execution
@@ -68,7 +65,6 @@ class TaskKeys:
     """
 
     next_run: str
-    runner_uuid: str
     disabled: str
     runs: str
     durations_second: str
@@ -156,7 +152,6 @@ class RedisKeyBuilder:
         """
         return TaskKeys(
             next_run=self._build_key(group, task, "next_run"),
-            runner_uuid=self._build_key(group, task, "runner_uuid"),
             disabled=self._build_key(group, task, "disabled"),
             runs=self._build_key(group, task, "runs"),
             durations_second=self._build_key(group, task, "durations_second"),
@@ -184,22 +179,6 @@ class RedisKeyBuilder:
             The Redis key for the next run timestamp.
         """
         return self._build_key(group, task, "next_run")
-
-    def runner_uuid_key(self, group: str, task: str) -> str:
-        """Build the key for the runner UUID lock.
-
-        This key implements distributed locking to ensure only one application
-        instance executes a task at any given time. The value stored is the
-        UUID of the runner that currently holds the lock.
-
-        Args:
-            group: The task group name.
-            task: The individual task name.
-
-        Returns:
-            The Redis key for the runner UUID lock.
-        """
-        return self._build_key(group, task, "runner_uuid")
 
     def disabled_key(self, group: str, task: str) -> str:
         """Build the key for the disabled flag.

@@ -7,11 +7,10 @@ class HealthResponse(BaseModel):
     """Response for the /health endpoint."""
 
     status: str  # "healthy" or "unhealthy"
-    mode: str  # "polling" or "stream"
     redis_connected: bool
     worker_id: str | None = None
     worker_started_at: str | None = None
-    is_leader: bool | None = None  # Only relevant in stream mode
+    is_leader: bool | None = None
 
 
 class ConfigResponse(BaseModel):
@@ -24,13 +23,10 @@ class ConfigResponse(BaseModel):
 
     # Runner
     poll_interval: float
-    lock_renewal_interval: float
     initial_lock_ttl: int
-    running_lock_ttl: int
     worker_service_name: str
 
     # Streams
-    use_streams: bool
     stream_max_len: int
     stream_block_ms: int
 

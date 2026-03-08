@@ -17,21 +17,15 @@ class Config(BaseModel):
     # --------- End of redis config variables ---------
 
     # --------- Runner config variables ---------
-    # Interval between task polling cycles (seconds)
+    # Interval between coordinator scheduling cycles (seconds)
     poll_interval: float = 0.1
-    # Interval between lock renewals during task execution (seconds)
-    lock_renewal_interval: float = 2.0
     # Initial TTL for task lock before execution starts (seconds)
     initial_lock_ttl: int = 15
-    # TTL for task lock during execution, renewed periodically (seconds)
-    running_lock_ttl: int = 5
     # Service name used for worker identification
     worker_service_name: str = "fastapi-task-manager"
     # --------- End of runner config variables ---------
 
     # --------- Streams config variables ---------
-    # Feature flag to enable Redis Streams mode instead of polling
-    use_streams: bool = False
     # Maximum number of entries in the task stream (uses approximate trimming)
     stream_max_len: int = 10000
     # Block timeout for XREADGROUP in milliseconds
