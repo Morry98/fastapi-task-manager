@@ -17,11 +17,11 @@ Dynamic tasks allow you to create and delete scheduled tasks at runtime via the 
 
 Before you can create dynamic tasks, you need to register the functions that will be available. Use the `@task_group.register_function()` decorator:
 
-{* ./docs_src/tutorial/dynamic_tasks_py310.py ln[1:31] *}
-
 //// note | Static tasks auto-register
 Functions decorated with `@task_group.add_task()` are **automatically registered** in the function registry (unless you pass `register=False`). This means you can also create dynamic tasks from the same functions used by static tasks.
 ////
+
+{* ./docs_src/tutorial/dynamic_tasks_py310.py ln[1:31] *}
 
 ---
 

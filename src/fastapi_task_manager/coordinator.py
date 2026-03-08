@@ -30,6 +30,8 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger("fastapi.task-manager.coordinator")
 
+INITIAL_LOCK_TTL: int = 15
+
 
 class Coordinator:
     """Evaluates cron expressions and publishes ready tasks to stream.
@@ -255,11 +257,11 @@ class Coordinator:
         keys = self._keys.get_task_keys(task_group.name, task.name)
         next_run = next(CronSim(task.expression, datetime.now(timezone.utc)))
 
-        # Calculate TTL: at least initial_lock_ttl, or 2x the time until next run
+        # Calculate TTL: at least INITIAL_LOCK_TTL, or 2x the time until next run
         time_until_next = (next_run - datetime.now(timezone.utc)).total_seconds()
         ttl = max(
             int(time_until_next) * 2,
-            self._task_manager.config.initial_lock_ttl,
+            INITIAL_LOCK_TTL,
         )
         await self._redis.set(keys.next_run, next_run.timestamp(), ex=ttl)
 

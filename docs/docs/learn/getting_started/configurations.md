@@ -8,16 +8,6 @@ We will see each config in detail with his own section in the next parts of this
 
 ## App Configuration
 
-### Log Level
-{* ./docs_src/tutorial/configurations_py310.py ln[4] *}
-
-//// note | Logger name
-The package uses the standard logging library from python and the logger is named `fastapi.task-manager`
-////
-
-This configuration is used to set the `log_level` used by the package logger.
-The default value is set to `NOTSET` and the suggestion is to keep the default value and manage the logging level, handler and formatters in your application logging configuration.
-
 ### Redis Key Prefix
 {* ./docs_src/tutorial/configurations_py310.py ln[5] *}
 
@@ -67,7 +57,7 @@ Default value is `None`.
 {* ./docs_src/tutorial/configurations_py310.py ln[13] *}
 
 The Redis database number to use. Redis supports multiple databases (0-15 by default).
-Default value is `1`.
+Default value is `0`.
 
 ---
 
@@ -81,14 +71,8 @@ These settings control the core task scheduling loop.
 The interval (in seconds) between coordinator scheduling cycles. Lower values mean tasks are picked up faster but increase Redis load.
 Default value is `0.1`.
 
-### Initial Lock TTL
-{* ./docs_src/tutorial/configurations_py310.py ln[16] *}
-
-The initial TTL (in seconds) for the task lock before execution starts. This prevents duplicate execution during task pickup.
-Default value is `15`.
-
 ### Worker Service Name
-{* ./docs_src/tutorial/configurations_py310.py ln[17] *}
+{* ./docs_src/tutorial/configurations_py310.py ln[16] *}
 
 The service name used for worker identification. This appears in health check responses and logs to help identify which service a worker belongs to.
 Default value is `"fastapi-task-manager"`.
@@ -100,19 +84,19 @@ Default value is `"fastapi-task-manager"`.
 These settings control the Redis Streams-based task distribution system.
 
 ### Stream Max Length
-{* ./docs_src/tutorial/configurations_py310.py ln[19] *}
+{* ./docs_src/tutorial/configurations_py310.py ln[18] *}
 
 The maximum number of entries retained in the task stream. Uses approximate trimming (`MAXLEN ~`) to keep the stream size bounded. Older entries are automatically removed.
 Default value is `10000`.
 
 ### Stream Block Timeout
-{* ./docs_src/tutorial/configurations_py310.py ln[20] *}
+{* ./docs_src/tutorial/configurations_py310.py ln[19] *}
 
 The block timeout (in milliseconds) for `XREADGROUP` when consumers wait for new messages. Higher values reduce Redis round-trips but increase shutdown latency.
 Default value is `1000`.
 
 ### Stream Consumer Group
-{* ./docs_src/tutorial/configurations_py310.py ln[21] *}
+{* ./docs_src/tutorial/configurations_py310.py ln[20] *}
 
 The name of the Redis consumer group used by task workers. All workers in the same deployment should use the same consumer group name to distribute tasks evenly.
 Default value is `"task-workers"`.
@@ -124,20 +108,20 @@ Default value is `"task-workers"`.
 FastAPI Task Manager uses distributed leader election via Redis to ensure that only one instance schedules tasks at a time, while all instances can execute them.
 
 ### Leader Lock TTL
-{* ./docs_src/tutorial/configurations_py310.py ln[23] *}
+{* ./docs_src/tutorial/configurations_py310.py ln[22] *}
 
 The TTL (in seconds) for the leader lock key in Redis. If the leader crashes without releasing the lock, a new leader is elected after this period.
 Should be greater than `leader_heartbeat_interval * 3` to tolerate transient delays.
 Default value is `10`.
 
 ### Leader Heartbeat Interval
-{* ./docs_src/tutorial/configurations_py310.py ln[24] *}
+{* ./docs_src/tutorial/configurations_py310.py ln[23] *}
 
 The interval (in seconds) between leader lock renewals. The leader periodically renews its lock to signal it is still alive.
 Default value is `3.0`.
 
 ### Leader Retry Interval
-{* ./docs_src/tutorial/configurations_py310.py ln[25] *}
+{* ./docs_src/tutorial/configurations_py310.py ln[24] *}
 
 The interval (in seconds) between leadership acquisition attempts for follower instances. When a worker is not the leader, it tries to acquire leadership at this interval.
 Default value is `5.0`.
@@ -149,25 +133,25 @@ Default value is `5.0`.
 The reconciler detects and recovers stale or failed tasks. It runs only on the leader instance.
 
 ### Reconciliation Enabled
-{* ./docs_src/tutorial/configurations_py310.py ln[27] *}
+{* ./docs_src/tutorial/configurations_py310.py ln[26] *}
 
 Enable or disable the reconciliation loop. When disabled, stale tasks are not automatically recovered.
 Default value is `True`.
 
 ### Reconciliation Interval
-{* ./docs_src/tutorial/configurations_py310.py ln[28] *}
+{* ./docs_src/tutorial/configurations_py310.py ln[27] *}
 
 The interval (in seconds) between reconciliation checks. The reconciler scans for overdue or stuck tasks at this interval.
 Default value is `30`.
 
 ### Reconciliation Overdue Seconds
-{* ./docs_src/tutorial/configurations_py310.py ln[29] *}
+{* ./docs_src/tutorial/configurations_py310.py ln[28] *}
 
 How long (in seconds) a task must be overdue before the reconciler republishes it to the stream. Safe to keep low thanks to the running heartbeat: if the running key is absent, no worker is executing the task.
 Default value is `30`.
 
 ### Pending Message Timeout
-{* ./docs_src/tutorial/configurations_py310.py ln[30] *}
+{* ./docs_src/tutorial/configurations_py310.py ln[29] *}
 
 How long (in milliseconds) a pending message must be idle before being reclaimed by the reconciler. Should be greater than `running_heartbeat_ttl * 3` to tolerate transient delays.
 Default value is `30000`.
@@ -179,7 +163,7 @@ Default value is `30000`.
 When a task fails, FastAPI Task Manager applies exponential backoff to delay re-execution. This prevents rapid failure loops and gives external dependencies time to recover.
 
 ### Retry Backoff
-{* ./docs_src/tutorial/configurations_py310.py ln[32] *}
+{* ./docs_src/tutorial/configurations_py310.py ln[31] *}
 
 The initial backoff delay (in seconds) after a task failure. The first retry will be delayed by this amount.
 Default value is `1.0`.
@@ -189,7 +173,7 @@ This setting can be overridden on individual tasks via the `retry_backoff` param
 ////
 
 ### Retry Backoff Max
-{* ./docs_src/tutorial/configurations_py310.py ln[33] *}
+{* ./docs_src/tutorial/configurations_py310.py ln[32] *}
 
 The maximum backoff delay (in seconds). The delay will never exceed this value, regardless of how many consecutive failures occur.
 Default value is `60.0`.
@@ -199,13 +183,13 @@ This setting can be overridden on individual tasks via the `retry_backoff_max` p
 ////
 
 ### Retry Backoff Multiplier
-{* ./docs_src/tutorial/configurations_py310.py ln[34] *}
+{* ./docs_src/tutorial/configurations_py310.py ln[33] *}
 
 The multiplier applied to the current delay after each consecutive failure. For example, with default settings: 1s, 2s, 4s, 8s, 16s, 32s, 60s (capped).
 Default value is `2.0`.
 
 ### Retry Key TTL
-{* ./docs_src/tutorial/configurations_py310.py ln[35] *}
+{* ./docs_src/tutorial/configurations_py310.py ln[34] *}
 
 The TTL (in seconds) for retry state keys in Redis. This acts as a safety net: if no new failures occur within this period, the retry state is automatically cleaned up.
 Default value is `86400` (24 hours).
@@ -217,13 +201,13 @@ Default value is `86400` (24 hours).
 While a task is executing, the worker periodically renews a heartbeat key in Redis. If a worker crashes, the key expires, signaling that the task is no longer being executed.
 
 ### Running Heartbeat TTL
-{* ./docs_src/tutorial/configurations_py310.py ln[37] *}
+{* ./docs_src/tutorial/configurations_py310.py ln[36] *}
 
 The TTL (in seconds) for the running heartbeat key. When a worker crashes, the key expires after this time. Must be greater than `running_heartbeat_interval * 2` to tolerate a missed heartbeat.
 Default value is `10`.
 
 ### Running Heartbeat Interval
-{* ./docs_src/tutorial/configurations_py310.py ln[38] *}
+{* ./docs_src/tutorial/configurations_py310.py ln[37] *}
 
 The interval (in seconds) between heartbeat renewals while a task is executing. The worker renews the running key at this interval.
 Default value is `3.0`.

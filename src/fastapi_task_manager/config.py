@@ -13,14 +13,12 @@ class Config(BaseModel):
     redis_host: str
     redis_port: int = 6379
     redis_password: str | None = None
-    redis_db: int = 1  # Default Redis database to use
+    redis_db: int = 0  # Default Redis database to use
     # --------- End of redis config variables ---------
 
     # --------- Runner config variables ---------
     # Interval between coordinator scheduling cycles (seconds)
     poll_interval: float = 0.1
-    # Initial TTL for task lock before execution starts (seconds)
-    initial_lock_ttl: int = 15
     # Service name used for worker identification
     worker_service_name: str = "fastapi-task-manager"
     # --------- End of runner config variables ---------

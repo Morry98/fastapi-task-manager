@@ -18,7 +18,7 @@ Welcome to the FastAPI Task Manager Getting Started Guide! This guide will walk 
 Before you begin, make sure you have:
 
 - A **FastAPI** project set up ([FastAPI installation guide](https://fastapi.tiangolo.com/#installation){ .external-link target="_blank" })
-- A running **Redis** server ([Redis installation guide](https://redis.io/docs/getting-started/){ .external-link target="_blank" })
+- A running **Redis** server ([Redis installation guide](https://redis.io/docs/latest/operate/rs/installing-upgrading/){ .external-link target="_blank" })
 - **Python 3.10+**
 
 ---

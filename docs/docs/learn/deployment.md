@@ -106,7 +106,7 @@ config = Config(
     redis_host="redis.internal",
     redis_port=6379,
     redis_password="your-secure-password",
-    redis_db=1,
+    redis_db=0,
 
     # Use a unique prefix per application
     redis_key_prefix="myapp-tasks",
@@ -183,9 +183,23 @@ async def health():
 
 ## Logging
 
-FastAPI Task Manager uses Python's standard logging library. The logger is named `fastapi.task-manager`.
+FastAPI Task Manager uses Python's standard logging library. The root logger is named `fastapi.task-manager`, and each internal component uses a dedicated sub-logger.
 
-Configure it in your application's logging setup:
+### Sub-loggers
+
+| Logger name | Component | Description |
+|---|---|---|
+| `fastapi.task-manager` | TaskManager | Root logger. Lifecycle events (start/stop), dynamic task loading |
+| `fastapi.task-manager.runner` | Runner | Runner start/stop, worker identity |
+| `fastapi.task-manager.leader` | LeaderElection | Leadership acquisition, renewal, release, and errors |
+| `fastapi.task-manager.coordinator` | Coordinator | Task scheduling decisions, due-task detection, stream publishing |
+| `fastapi.task-manager.consumer` | StreamConsumer | Task execution, success/failure, heartbeat renewal, pending message recovery |
+| `fastapi.task-manager.reconciler` | Reconciler | Overdue task detection, stale task republishing, pending message reclaim |
+| `fastapi.task-manager.group` | TaskGroup | Dynamic task addition and removal from groups |
+| `fastapi.task-manager.api` | Task Router Services | API-driven task creation and deletion |
+| `fastapi.task-manager.statistics` | Statistics | Task execution history tracking |
+
+Since all sub-loggers are children of `fastapi.task-manager`, setting the level on the root logger controls all of them. You can also fine-tune individual components:
 
 ```python
 import logging
@@ -195,16 +209,19 @@ logging.basicConfig(
     format="%(asctime)s %(name)s %(levelname)s %(message)s",
 )
 
-# Reduce task manager verbosity if needed
+# Reduce all task manager verbosity
 logging.getLogger("fastapi.task-manager").setLevel(logging.WARNING)
+
+# But keep reconciler at INFO to monitor recovery events
+logging.getLogger("fastapi.task-manager.reconciler").setLevel(logging.INFO)
 ```
 
-Key log events to monitor:
+### Key log events to monitor
 
-- **Leader election**: `"Acquired leadership"` / `"Lost leadership"`
-- **Task execution**: `"Executing task"` / `"Task completed"` / `"Task failed"`
+- **Leader election**: `"Worker <id> became LEADER"` / `"Worker <id> released leadership"`
+- **Task execution**: `"Task <group>/<name> failed"`
 - **Reconciliation**: `"Reclaimed pending message"` / `"Republished overdue task"`
-- **Dynamic tasks**: `"Dynamic task created"` / `"Loaded N dynamic task(s) from Redis"`
+- **Dynamic tasks**: `"Dynamic task '<name>' created in group '<group>'"` / `"Loaded N dynamic task(s) from Redis"`
 
 ---
 
@@ -233,10 +250,10 @@ If multiple applications share the same Redis instance, use distinct `redis_key_
 
 ```python
 # Application A
-config_a = Config(redis_host="redis", redis_key_prefix="app-a-tasks", redis_db=1)
+config_a = Config(redis_host="redis", redis_key_prefix="app-a-tasks", redis_db=0)
 
 # Application B
-config_b = Config(redis_host="redis", redis_key_prefix="app-b-tasks", redis_db=1)
+config_b = Config(redis_host="redis", redis_key_prefix="app-b-tasks", redis_db=0)
 ```
 
 Alternatively, use different `redis_db` numbers for complete isolation.

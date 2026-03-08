@@ -10,10 +10,9 @@ config = Config(
     redis_host="localhost",
     redis_port=6379,
     redis_password=None,
-    redis_db=1,
+    redis_db=0,
     # --------- Runner config ---------
     poll_interval=0.1,
-    initial_lock_ttl=15,
     worker_service_name="fastapi-task-manager",
     # --------- Streams config ---------
     stream_max_len=10000,

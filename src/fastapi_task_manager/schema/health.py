@@ -23,7 +23,6 @@ class ConfigResponse(BaseModel):
 
     # Runner
     poll_interval: float
-    initial_lock_ttl: int
     worker_service_name: str
 
     # Streams

@@ -380,7 +380,6 @@ class Config(BaseModel):
     # Fase 0 - Quick wins
     poll_interval: float = 0.1
     lock_renewal_interval: float = 2.0
-    initial_lock_ttl: int = 15
     running_lock_ttl: int = 5
 
     # Fase 1 - Foundation
