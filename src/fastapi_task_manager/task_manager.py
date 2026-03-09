@@ -387,9 +387,7 @@ class TaskManager:
         loaded_count = 0
         for _field, raw_value in raw_definitions.items():
             try:
-                # Decode bytes if needed
-                value = raw_value.decode("utf-8") if isinstance(raw_value, bytes) else raw_value
-                definition = json.loads(value)
+                definition = json.loads(raw_value)
 
                 # Find the target TaskGroup
                 target_group: TaskGroup | None = None

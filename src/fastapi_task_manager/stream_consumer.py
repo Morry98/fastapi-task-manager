@@ -303,9 +303,7 @@ class StreamConsumer:
         # Response format: [(stream_name, [(message_id, data), ...])]
         for _stream_name, stream_messages in messages:
             for msg_id, data in stream_messages:
-                # Decode message_id if bytes
-                decoded_id = msg_id.decode("utf-8") if isinstance(msg_id, bytes) else msg_id
-                return decoded_id, data
+                return msg_id, data
 
         return None
 
@@ -351,9 +349,9 @@ class StreamConsumer:
 
         # Execute with semaphore to respect concurrency limits
         async with self._semaphore:
-            # Extract and decode message fields
-            group_name = self._decode_field(data.get("group", ""))
-            task_name = self._decode_field(data.get("task", ""))
+            # Extract message fields
+            group_name = data.get("group", "")
+            task_name = data.get("task", "")
 
             priority_label = "high" if is_high_priority else "low"
             logger.debug(
@@ -376,19 +374,6 @@ class StreamConsumer:
                 return
 
             await self._execute_and_ack(message_id, group_name, task, is_high_priority)
-
-    def _decode_field(self, value: str | bytes) -> str:
-        """Decode a field value from bytes to string if necessary.
-
-        Args:
-            value: The field value, potentially as bytes.
-
-        Returns:
-            The decoded string value.
-        """
-        if isinstance(value, bytes):
-            return value.decode("utf-8")
-        return value
 
     async def _execute_and_ack(
         self,
@@ -631,8 +616,7 @@ class StreamConsumer:
                 )
 
                 for msg_id, data in claimed_messages:
-                    decoded_id = msg_id.decode("utf-8") if isinstance(msg_id, bytes) else msg_id
-                    self._spawn_task(decoded_id, data, is_high_priority=is_high)
+                    self._spawn_task(msg_id, data, is_high_priority=is_high)
 
             except ResponseError as e:
                 # XAUTOCLAIM requires Redis >= 6.2; log and continue if unavailable

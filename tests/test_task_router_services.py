@@ -193,9 +193,9 @@ class TestGetTasks:
         pipe.execute = AsyncMock(
             return_value=[
                 [
-                    (b"1700000000000-0", {b"ts": b"100.0", b"dur": b"1.0"}),
-                    (b"1700000001000-0", {b"ts": b"200.0", b"dur": b"2.0"}),
-                    (b"1700000002000-0", {b"ts": b"300.0", b"dur": b"3.0"}),
+                    ("1700000000000-0", {"ts": "100.0", "dur": "1.0"}),
+                    ("1700000001000-0", {"ts": "200.0", "dur": "2.0"}),
+                    ("1700000002000-0", {"ts": "300.0", "dur": "3.0"}),
                 ],
                 None,
                 None,
@@ -229,8 +229,8 @@ class TestGetTasks:
                 [],
                 None,
                 None,
-                future_ts.encode(),  # retry_after
-                b"4.0",  # retry_delay
+                future_ts,  # retry_after
+                "4.0",  # retry_delay
                 0,
             ],
         )
@@ -252,8 +252,8 @@ class TestGetTasks:
         pipe.exists = MagicMock()
         pipe.execute = AsyncMock(
             return_value=[
-                [(b"1700000000000-0", {b"ts": b"1700000000.0", b"dur": b"1.5"})],
-                b"1700000060.0",  # next_run
+                [("1700000000000-0", {"ts": "1700000000.0", "dur": "1.5"})],
+                "1700000060.0",  # next_run
                 None,  # disabled
                 None,  # retry_after
                 None,  # retry_delay

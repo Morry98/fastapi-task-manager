@@ -194,10 +194,6 @@ class Reconciler:
             await self._republish_task(task_group, task)
             return
 
-        # Decode the next_run value
-        if isinstance(next_run_b, bytes):
-            next_run_b = next_run_b.decode("utf-8")
-
         next_run = datetime.fromtimestamp(float(next_run_b), tz=timezone.utc)
         now = datetime.now(timezone.utc)
 
@@ -238,10 +234,6 @@ class Reconciler:
         # Track in the scheduled set
         await self._redis.sadd(self._keys.scheduled_set_key(), task_id)  # ty: ignore[invalid-await]
 
-        # Decode message_id for logging
-        if isinstance(message_id, bytes):
-            message_id = message_id.decode("utf-8")
-
         priority = "high" if task.high_priority else "low"
         logger.info(
             "Reconciliation: republished task %s/%s to %s stream (msg_id: %s)",
@@ -263,8 +255,7 @@ class Reconciler:
         members = await self._redis.smembers(scheduled_set_key)  # ty: ignore[invalid-await]
 
         for member in members:
-            # Decode member if bytes
-            task_id = member.decode("utf-8") if isinstance(member, bytes) else member
+            task_id = member
 
             # Parse "group:task" format
             if ":" not in task_id:
@@ -335,10 +326,6 @@ class Reconciler:
                     if message_id is None:
                         continue
 
-                    # Decode message_id if bytes
-                    if isinstance(message_id, bytes):
-                        message_id = message_id.decode("utf-8")
-
                     await self._requeue_pending_message(
                         stream_key,
                         stream_keys.consumer_group,
@@ -396,21 +383,12 @@ class Reconciler:
         new_message_id = await self._redis.xadd(
             stream_key,
             {
-                **{
-                    (k.decode("utf-8") if isinstance(k, bytes) else k): (
-                        v.decode("utf-8") if isinstance(v, bytes) else v
-                    )
-                    for k, v in data.items()
-                },
+                **data,
                 "requeued_from": message_id,
             },
             maxlen=STREAM_MAX_LEN,
             approximate=True,
         )
-
-        # Decode new_message_id for logging
-        if isinstance(new_message_id, bytes):
-            new_message_id = new_message_id.decode("utf-8")
 
         logger.warning(
             "Reconciliation: requeued stuck %s priority message %s -> %s",

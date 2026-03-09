@@ -85,18 +85,6 @@ class TestSetupConsumerGroups:
             await consumer.setup_consumer_groups()
 
 
-class TestDecodeField:
-    """Tests for _decode_field."""
-
-    def test_decodes_bytes(self):
-        consumer, _, _, _ = _make_consumer()
-        assert consumer._decode_field(b"hello") == "hello"
-
-    def test_passes_string_through(self):
-        consumer, _, _, _ = _make_consumer()
-        assert consumer._decode_field("hello") == "hello"
-
-
 class TestFindTask:
     """Tests for _find_task."""
 
@@ -138,7 +126,7 @@ class TestProcessMessage:
 
         await consumer._process_message(
             "1-0",
-            {b"group": b"g1", b"task": b"unknown"},
+            {"group": "g1", "task": "unknown"},
             is_high_priority=False,
         )
 
@@ -236,7 +224,7 @@ class TestApplyBackoff:
         """Subsequent failures should increase the delay."""
         consumer, redis, _, _ = _make_consumer()
         task = _make_task("t1")
-        redis.get = AsyncMock(return_value=b"2.0")  # Current delay = 2s
+        redis.get = AsyncMock(return_value="2.0")  # Current delay = 2s
         redis.set = AsyncMock()
 
         await consumer._apply_backoff("g1", task)
@@ -254,8 +242,8 @@ class TestRecoverPendingOnStartup:
         consumer, redis, _, _ = _make_consumer()
         redis.xautoclaim = AsyncMock(
             return_value=[
-                b"0-0",
-                [(b"1-0", {b"group": b"g1", b"task": b"t1"})],
+                "0-0",
+                [("1-0", {"group": "g1", "task": "t1"})],
                 [],
             ],
         )
@@ -283,7 +271,7 @@ class TestTryReadStream:
         consumer, redis, _, _ = _make_consumer()
         redis.xreadgroup = AsyncMock(
             return_value=[
-                (b"stream", [(b"1-0", {b"group": b"g1", b"task": b"t1"})]),
+                ("stream", [("1-0", {"group": "g1", "task": "t1"})]),
             ],
         )
 
@@ -357,7 +345,7 @@ class TestConsumeLoop:
             call_count += 1
             if call_count == 1:
                 # First call (high priority, block_ms=0) returns a message
-                return [(b"stream", [(b"1-0", {b"group": b"g1", b"task": b"t1"})])]
+                return [("stream", [("1-0", {"group": "g1", "task": "t1"})])]
             # Stop after first message
             consumer._running = False
             return []
@@ -385,7 +373,7 @@ class TestConsumeLoop:
                 return []
             if call_count == 2:
                 # Low priority returns a message
-                return [(b"stream", [(b"2-0", {b"group": b"g1", b"task": b"t1"})])]
+                return [("stream", [("2-0", {"group": "g1", "task": "t1"})])]
             consumer._running = False
             return []
 

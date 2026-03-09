@@ -64,7 +64,7 @@ class TestHeartbeatLoop:
         """When we own the lock, heartbeat renews it."""
         elector, redis = _make_elector()
         redis.set = AsyncMock(return_value=True)
-        redis.get = AsyncMock(return_value=b"worker_1")
+        redis.get = AsyncMock(return_value="worker_1")
 
         await elector.try_acquire_leadership()
         # Let the heartbeat run at least once

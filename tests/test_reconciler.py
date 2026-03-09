@@ -171,7 +171,7 @@ class TestCleanupStaleTracking:
 
     async def test_removes_stale_entries_for_unregistered_tasks(self):
         reconciler, redis = _make_reconciler(task_groups=[])
-        redis.smembers = AsyncMock(return_value=[b"g1:t1"])
+        redis.smembers = AsyncMock(return_value=["g1:t1"])
         redis.exists = AsyncMock(return_value=False)  # not running
         redis.srem = AsyncMock()
 
@@ -181,7 +181,7 @@ class TestCleanupStaleTracking:
 
     async def test_keeps_entries_for_running_tasks(self):
         reconciler, redis = _make_reconciler()
-        redis.smembers = AsyncMock(return_value=[b"g1:t1"])
+        redis.smembers = AsyncMock(return_value=["g1:t1"])
         redis.exists = AsyncMock(return_value=True)  # running
 
         await reconciler._cleanup_stale_tracking()
@@ -190,7 +190,7 @@ class TestCleanupStaleTracking:
 
     async def test_removes_malformed_entries(self):
         reconciler, redis = _make_reconciler()
-        redis.smembers = AsyncMock(return_value=[b"malformed_no_colon"])
+        redis.smembers = AsyncMock(return_value=["malformed_no_colon"])
         redis.srem = AsyncMock()
 
         await reconciler._cleanup_stale_tracking()

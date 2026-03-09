@@ -133,10 +133,6 @@ class LeaderElector:
                     self._is_leader = False
                     break
 
-                # Decode the value if it's bytes
-                if isinstance(current_value, bytes):
-                    current_value = current_value.decode("utf-8")
-
                 if current_value != self._worker.redis_safe_id:
                     logger.warning(
                         "Worker %s lost leadership - lock stolen by another worker",

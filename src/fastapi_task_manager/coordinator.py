@@ -171,8 +171,6 @@ class Coordinator:
         # Check if task is in backoff (retry_after timestamp in the future)
         retry_after_raw = await self._redis.get(keys.retry_after)
         if retry_after_raw is not None:
-            if isinstance(retry_after_raw, bytes):
-                retry_after_raw = retry_after_raw.decode("utf-8")
             if time.time() < float(retry_after_raw):
                 logger.debug(
                     "Task %s/%s in backoff until %.0f, skipping",
@@ -187,10 +185,6 @@ class Coordinator:
         if next_run_b is None:
             # Never run before, due immediately
             return True
-
-        # Decode the value if it's bytes
-        if isinstance(next_run_b, bytes):
-            next_run_b = next_run_b.decode("utf-8")
 
         next_run = datetime.fromtimestamp(float(next_run_b), tz=timezone.utc)
         return next_run <= datetime.now(timezone.utc)
@@ -234,10 +228,6 @@ class Coordinator:
 
         # Track the published task in the scheduled set for reconciliation
         await self._redis.sadd(self._keys.scheduled_set_key(), task_id)  # ty: ignore[invalid-await]
-
-        # Decode message_id if bytes
-        if isinstance(message_id, bytes):
-            message_id = message_id.decode("utf-8")
 
         priority = "high" if task.high_priority else "low"
         logger.debug(

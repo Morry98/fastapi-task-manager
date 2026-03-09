@@ -125,7 +125,7 @@ class TestPublishTask:
         coordinator, redis, _tm = _make_coordinator()
         task = _make_task()
         group = _make_task_group()
-        redis.xadd = AsyncMock(return_value=b"1-0")
+        redis.xadd = AsyncMock(return_value="1-0")
         redis.sadd = AsyncMock()
 
         msg_id = await coordinator._publish_task("test_task_stream_low", group, task)

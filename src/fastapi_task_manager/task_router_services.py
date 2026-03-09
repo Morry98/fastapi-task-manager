@@ -146,8 +146,8 @@ async def get_tasks(
             # Parse stream entries (already in chronological order from XRANGE)
             task_runs: list[TaskRun] = []
             for _entry_id, fields in stats_entries:
-                ts_val = fields.get(b"ts", fields.get("ts"))
-                dur_val = fields.get(b"dur", fields.get("dur"))
+                ts_val = fields.get("ts")
+                dur_val = fields.get("dur")
                 if ts_val is not None and dur_val is not None:
                     task_runs.append(
                         TaskRun(
@@ -159,14 +159,14 @@ async def get_tasks(
             # Parse next run timestamp (sentinel value = year 2000 = never scheduled)
             next_run = datetime(year=2000, month=1, day=1, tzinfo=timezone.utc)
             if next_run_b is not None:
-                next_run = datetime.fromtimestamp(float(next_run_b.decode("utf-8")), tz=timezone.utc)
+                next_run = datetime.fromtimestamp(float(next_run_b), tz=timezone.utc)
 
             is_active = disabled_b is None
 
             retry_after = None
             if retry_after_b is not None:
-                retry_after = datetime.fromtimestamp(float(retry_after_b.decode("utf-8")), tz=timezone.utc)
-            retry_delay = float(retry_delay_b.decode("utf-8")) if retry_delay_b is not None else None
+                retry_after = datetime.fromtimestamp(float(retry_after_b), tz=timezone.utc)
+            retry_delay = float(retry_delay_b) if retry_delay_b is not None else None
 
             list_to_return.append(
                 TaskDetailed(
