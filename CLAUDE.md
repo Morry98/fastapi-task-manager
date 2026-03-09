@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-FastAPI Task Manager is a Python library (v0.8.0) that provides scheduled task management for FastAPI applications using Redis for distributed locking and task state. It enables cron-based task scheduling with single-instance execution safety across multiple app instances.
+FastAPI Task Manager is a Python library (v1.0.0) that provides scheduled task management for FastAPI applications using Redis for distributed locking and task state. It enables cron-based task scheduling with single-instance execution safety across multiple app instances.
 
 - **Package**: `fastapi-task-manager` on PyPI (also published to TestPyPI)
 - **Python**: >=3.10 (supports 3.10–3.14)
