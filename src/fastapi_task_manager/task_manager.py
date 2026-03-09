@@ -326,6 +326,7 @@ class TaskManager:
             port=self._config.redis_port,
             password=self._config.redis_password,
             db=self._config.redis_db,
+            decode_responses=True,
         )
 
         # Load persisted dynamic tasks from Redis before starting the Runner
