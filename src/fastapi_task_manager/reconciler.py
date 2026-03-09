@@ -388,8 +388,9 @@ class Reconciler:
         # Extract the original message data
         _msg_id, data = messages[0]
 
-        # ACK the old message to remove it from the PEL
+        # ACK the old message to remove it from the PEL and delete it from the stream
         await self._redis.xack(stream_key, group_name, message_id)
+        await self._redis.xdel(stream_key, message_id)
 
         # Re-publish as a new message so all consumers can compete for it
         new_message_id = await self._redis.xadd(
