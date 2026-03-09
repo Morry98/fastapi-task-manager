@@ -897,10 +897,60 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#complete-example" class="md-nav__link">
+  <a href="#programmatic-api-python" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Complete Example
+        Programmatic API (Python)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Programmatic API (Python)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#creating-tasks-from-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Creating Tasks from Code
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#removing-tasks-from-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Removing Tasks from Code
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#complete-python-api-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Complete Python API Example
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#complete-rest-api-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Complete REST API Example
       
     </span>
   </a>
@@ -1214,10 +1264,60 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#complete-example" class="md-nav__link">
+  <a href="#programmatic-api-python" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Complete Example
+        Programmatic API (Python)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Programmatic API (Python)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#creating-tasks-from-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Creating Tasks from Code
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#removing-tasks-from-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Removing Tasks from Code
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#complete-python-api-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Complete Python API Example
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#complete-rest-api-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Complete REST API Example
       
     </span>
   </a>
@@ -1578,52 +1678,383 @@
 </ol>
 <p>If a registered function has been removed from the code since the task was created, the task is <strong>silently skipped</strong> with a warning log. You can clean up orphaned definitions by deleting them via the API or directly from Redis.</p>
 <hr>
-<h2 id="complete-example">Complete Example<a class="headerlink" href="#complete-example" title="Permanent link">¶</a></h2>
+<h2 id="programmatic-api-python">Programmatic API (Python)<a class="headerlink" href="#programmatic-api-python" title="Permanent link">¶</a></h2>
+<p>In addition to the REST API, you can create and remove dynamic tasks directly from Python code. This is useful when you want to create tasks from your own endpoints, CLI commands, startup logic, or event handlers.</p>
+<h3 id="creating-tasks-from-code">Creating Tasks from Code<a class="headerlink" href="#creating-tasks-from-code" title="Permanent link">¶</a></h3>
+<p>Use <code>task_group.add_dynamic_task()</code> to create a task at runtime:</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="5:1"><input checked="checked" id="__tabbed_5_1" name="__tabbed_5" type="radio"><div class="tabbed-labels"><label for="__tabbed_5_1">Python 3.10+</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><span id="__span-12-1"><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<div class="highlight"><pre><span></span><code><span id="__span-12-1"><span class="c1"># Code above omitted 👆</span>
 </span><span id="__span-12-2">
-</span><span id="__span-12-3"><span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">APIRouter</span><span class="p">,</span> <span class="n">FastAPI</span>
-</span><span id="__span-12-4">
-</span><span id="__span-12-5"><span class="kn">from</span><span class="w"> </span><span class="nn">fastapi_task_manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">Config</span><span class="p">,</span> <span class="n">TaskGroup</span><span class="p">,</span> <span class="n">TaskManager</span>
-</span><span id="__span-12-6">
-</span><span id="__span-12-7"><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
-</span><span id="__span-12-8">
-</span><span id="__span-12-9"><span class="n">app</span> <span class="o">=</span> <span class="n">FastAPI</span><span class="p">()</span>
-</span><span id="__span-12-10"><span class="n">router</span> <span class="o">=</span> <span class="n">APIRouter</span><span class="p">()</span>
-</span><span id="__span-12-11">
-</span><span id="__span-12-12"><span class="c1"># Create the task manager and a task group</span>
-</span><span id="__span-12-13"><span class="n">task_manager</span> <span class="o">=</span> <span class="n">TaskManager</span><span class="p">(</span>
-</span><span id="__span-12-14">    <span class="n">app</span><span class="o">=</span><span class="n">app</span><span class="p">,</span>
-</span><span id="__span-12-15">    <span class="n">config</span><span class="o">=</span><span class="n">Config</span><span class="p">(</span><span class="n">redis_host</span><span class="o">=</span><span class="s2">"localhost"</span><span class="p">),</span>
-</span><span id="__span-12-16"><span class="p">)</span>
-</span><span id="__span-12-17"><span class="n">reports_group</span> <span class="o">=</span> <span class="n">TaskGroup</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">"Reports"</span><span class="p">,</span> <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s2">"reports"</span><span class="p">])</span>
-</span><span id="__span-12-18"><span class="n">task_manager</span><span class="o">.</span><span class="n">add_task_group</span><span class="p">(</span><span class="n">reports_group</span><span class="p">)</span>
-</span><span id="__span-12-19">
-</span><span id="__span-12-20">
-</span><span id="__span-12-21"><span class="c1"># Register functions available for dynamic task creation</span>
-</span><span id="__span-12-22"><span class="nd">@reports_group</span><span class="o">.</span><span class="n">register_function</span><span class="p">()</span>
-</span><span id="__span-12-23"><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">send_report</span><span class="p">(</span><span class="n">recipient</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"default@example.com"</span><span class="p">,</span> <span class="n">report_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"daily"</span><span class="p">):</span>
-</span><span id="__span-12-24">    <span class="c1"># Logic to generate and send a report</span>
-</span><span id="__span-12-25">    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Sending </span><span class="si">%s</span><span class="s2"> report to </span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span> <span class="n">report_type</span><span class="p">,</span> <span class="n">recipient</span><span class="p">)</span>
-</span><span id="__span-12-26">
-</span><span id="__span-12-27">
-</span><span id="__span-12-28"><span class="nd">@reports_group</span><span class="o">.</span><span class="n">register_function</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">"generate_export"</span><span class="p">)</span>
-</span><span id="__span-12-29"><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">export_data</span><span class="p">(</span><span class="n">file_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"csv"</span><span class="p">):</span>
-</span><span id="__span-12-30">    <span class="c1"># Logic to export data</span>
-</span><span id="__span-12-31">    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Exporting data as </span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span> <span class="n">file_format</span><span class="p">)</span>
-</span><span id="__span-12-32">
-</span><span id="__span-12-33">
-</span><span id="__span-12-34"><span class="c1"># Include the management router to expose task CRUD endpoints</span>
-</span><span id="__span-12-35"><span class="n">manager_router</span> <span class="o">=</span> <span class="n">task_manager</span><span class="o">.</span><span class="n">get_manager_router</span><span class="p">()</span>
-</span><span id="__span-12-36"><span class="n">router</span><span class="o">.</span><span class="n">include_router</span><span class="p">(</span>
-</span><span id="__span-12-37">    <span class="n">manager_router</span><span class="p">,</span>
-</span><span id="__span-12-38">    <span class="n">prefix</span><span class="o">=</span><span class="s2">"/task-manager"</span><span class="p">,</span>
-</span><span id="__span-12-39">    <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s2">"task-manager"</span><span class="p">],</span>
-</span><span id="__span-12-40"><span class="p">)</span>
-</span><span id="__span-12-41">
-</span><span id="__span-12-42"><span class="n">app</span><span class="o">.</span><span class="n">include_router</span><span class="p">(</span><span class="n">router</span><span class="p">)</span>
+</span><span id="__span-12-3"><span class="nd">@app</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">"/custom/create-report-task"</span><span class="p">)</span>
+</span><span id="__span-12-4"><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">create_custom_report_task</span><span class="p">(</span><span class="n">recipient</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">cron</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"0 8 * * MON"</span><span class="p">):</span>
+</span><span id="__span-12-5">    <span class="c1"># Create a dynamic task from application code (e.g., from an endpoint, a CLI, or startup logic)</span>
+</span><span id="__span-12-6">    <span class="n">task</span> <span class="o">=</span> <span class="n">reports_group</span><span class="o">.</span><span class="n">add_dynamic_task</span><span class="p">(</span>
+</span><span id="__span-12-7">        <span class="n">function_name</span><span class="o">=</span><span class="s2">"send_report"</span><span class="p">,</span>
+</span><span id="__span-12-8">        <span class="n">cron_expression</span><span class="o">=</span><span class="n">cron</span><span class="p">,</span>
+</span><span id="__span-12-9">        <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">"recipient"</span><span class="p">:</span> <span class="n">recipient</span><span class="p">,</span> <span class="s2">"report_type"</span><span class="p">:</span> <span class="s2">"weekly"</span><span class="p">},</span>
+</span><span id="__span-12-10">        <span class="n">description</span><span class="o">=</span><span class="sa">f</span><span class="s2">"Weekly report for </span><span class="si">{</span><span class="n">recipient</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+</span><span id="__span-12-11">        <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s2">"reports"</span><span class="p">,</span> <span class="s2">"weekly"</span><span class="p">],</span>
+</span><span id="__span-12-12">    <span class="p">)</span>
+</span><span id="__span-12-13">    <span class="k">return</span> <span class="p">{</span><span class="s2">"created"</span><span class="p">:</span> <span class="n">task</span><span class="o">.</span><span class="n">name</span><span class="p">}</span>
+</span><span id="__span-12-14">
+</span><span id="__span-12-15">
+</span><span id="__span-12-16"><span class="nd">@app</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s2">"/custom/delete-report-task"</span><span class="p">)</span>
+</span><span id="__span-12-17">
+</span><span id="__span-12-18"><span class="c1"># Code below omitted 👇</span>
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<details>
+<summary>👀 Full file preview</summary>
+<div class="tabbed-set tabbed-alternate" data-tabs="6:1"><input checked="checked" id="__tabbed_6_1" name="__tabbed_6" type="radio"><div class="tabbed-labels"><label for="__tabbed_6_1">Python 3.10+</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span id="__span-13-1"><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+</span><span id="__span-13-2">
+</span><span id="__span-13-3"><span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">APIRouter</span><span class="p">,</span> <span class="n">FastAPI</span>
+</span><span id="__span-13-4">
+</span><span id="__span-13-5"><span class="kn">from</span><span class="w"> </span><span class="nn">fastapi_task_manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">Config</span><span class="p">,</span> <span class="n">TaskGroup</span><span class="p">,</span> <span class="n">TaskManager</span>
+</span><span id="__span-13-6">
+</span><span id="__span-13-7"><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+</span><span id="__span-13-8">
+</span><span id="__span-13-9"><span class="n">app</span> <span class="o">=</span> <span class="n">FastAPI</span><span class="p">()</span>
+</span><span id="__span-13-10"><span class="n">router</span> <span class="o">=</span> <span class="n">APIRouter</span><span class="p">()</span>
+</span><span id="__span-13-11">
+</span><span id="__span-13-12"><span class="c1"># Create the task manager and a task group</span>
+</span><span id="__span-13-13"><span class="n">task_manager</span> <span class="o">=</span> <span class="n">TaskManager</span><span class="p">(</span>
+</span><span id="__span-13-14">    <span class="n">app</span><span class="o">=</span><span class="n">app</span><span class="p">,</span>
+</span><span id="__span-13-15">    <span class="n">config</span><span class="o">=</span><span class="n">Config</span><span class="p">(</span><span class="n">redis_host</span><span class="o">=</span><span class="s2">"localhost"</span><span class="p">),</span>
+</span><span id="__span-13-16"><span class="p">)</span>
+</span><span id="__span-13-17"><span class="n">reports_group</span> <span class="o">=</span> <span class="n">TaskGroup</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">"Reports"</span><span class="p">,</span> <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s2">"reports"</span><span class="p">])</span>
+</span><span id="__span-13-18"><span class="n">task_manager</span><span class="o">.</span><span class="n">add_task_group</span><span class="p">(</span><span class="n">reports_group</span><span class="p">)</span>
+</span><span id="__span-13-19">
+</span><span id="__span-13-20">
+</span><span id="__span-13-21"><span class="c1"># Register functions available for dynamic task creation</span>
+</span><span id="__span-13-22"><span class="nd">@reports_group</span><span class="o">.</span><span class="n">register_function</span><span class="p">()</span>
+</span><span id="__span-13-23"><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">send_report</span><span class="p">(</span><span class="n">recipient</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"default@example.com"</span><span class="p">,</span> <span class="n">report_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"daily"</span><span class="p">):</span>
+</span><span id="__span-13-24">    <span class="c1"># Logic to generate and send a report</span>
+</span><span id="__span-13-25">    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Sending </span><span class="si">%s</span><span class="s2"> report to </span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span> <span class="n">report_type</span><span class="p">,</span> <span class="n">recipient</span><span class="p">)</span>
+</span><span id="__span-13-26">
+</span><span id="__span-13-27">
+</span><span id="__span-13-28"><span class="c1"># Static tasks auto-register their function by default</span>
+</span><span id="__span-13-29"><span class="nd">@reports_group</span><span class="o">.</span><span class="n">add_task</span><span class="p">(</span><span class="s2">"0 9 * * *"</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"daily_cleanup"</span><span class="p">)</span>
+</span><span id="__span-13-30"><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">daily_cleanup</span><span class="p">():</span>
+</span><span id="__span-13-31">    <span class="c1"># This function is also available in the registry as "daily_cleanup"</span>
+</span><span id="__span-13-32">    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Running daily cleanup"</span><span class="p">)</span>
+</span><span id="__span-13-33">
+</span><span id="__span-13-34">
+</span><span id="__span-13-35"><span class="c1"># --- Creating dynamic tasks programmatically ---</span>
+</span><span id="__span-13-36">
+</span><span id="__span-13-37">
+</span><span id="__span-13-38"><span class="nd">@app</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">"/custom/create-report-task"</span><span class="p">)</span>
+</span><span id="__span-13-39"><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">create_custom_report_task</span><span class="p">(</span><span class="n">recipient</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">cron</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"0 8 * * MON"</span><span class="p">):</span>
+</span><span id="__span-13-40">    <span class="c1"># Create a dynamic task from application code (e.g., from an endpoint, a CLI, or startup logic)</span>
+</span><span id="__span-13-41">    <span class="n">task</span> <span class="o">=</span> <span class="n">reports_group</span><span class="o">.</span><span class="n">add_dynamic_task</span><span class="p">(</span>
+</span><span id="__span-13-42">        <span class="n">function_name</span><span class="o">=</span><span class="s2">"send_report"</span><span class="p">,</span>
+</span><span id="__span-13-43">        <span class="n">cron_expression</span><span class="o">=</span><span class="n">cron</span><span class="p">,</span>
+</span><span id="__span-13-44">        <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">"recipient"</span><span class="p">:</span> <span class="n">recipient</span><span class="p">,</span> <span class="s2">"report_type"</span><span class="p">:</span> <span class="s2">"weekly"</span><span class="p">},</span>
+</span><span id="__span-13-45">        <span class="n">description</span><span class="o">=</span><span class="sa">f</span><span class="s2">"Weekly report for </span><span class="si">{</span><span class="n">recipient</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+</span><span id="__span-13-46">        <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s2">"reports"</span><span class="p">,</span> <span class="s2">"weekly"</span><span class="p">],</span>
+</span><span id="__span-13-47">    <span class="p">)</span>
+</span><span id="__span-13-48">    <span class="k">return</span> <span class="p">{</span><span class="s2">"created"</span><span class="p">:</span> <span class="n">task</span><span class="o">.</span><span class="n">name</span><span class="p">}</span>
+</span><span id="__span-13-49">
+</span><span id="__span-13-50">
+</span><span id="__span-13-51"><span class="nd">@app</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s2">"/custom/delete-report-task"</span><span class="p">)</span>
+</span><span id="__span-13-52"><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">delete_custom_report_task</span><span class="p">(</span><span class="n">task_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="__span-13-53">    <span class="c1"># Remove a dynamic task programmatically</span>
+</span><span id="__span-13-54">    <span class="n">removed</span> <span class="o">=</span> <span class="n">reports_group</span><span class="o">.</span><span class="n">remove_dynamic_task</span><span class="p">(</span><span class="n">task_name</span><span class="p">)</span>
+</span><span id="__span-13-55">    <span class="k">return</span> <span class="p">{</span><span class="s2">"removed"</span><span class="p">:</span> <span class="n">removed</span><span class="o">.</span><span class="n">name</span><span class="p">}</span>
+</span><span id="__span-13-56">
+</span><span id="__span-13-57">
+</span><span id="__span-13-58"><span class="c1"># Include the management router</span>
+</span><span id="__span-13-59"><span class="n">manager_router</span> <span class="o">=</span> <span class="n">task_manager</span><span class="o">.</span><span class="n">get_manager_router</span><span class="p">()</span>
+</span><span id="__span-13-60"><span class="n">router</span><span class="o">.</span><span class="n">include_router</span><span class="p">(</span><span class="n">manager_router</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">"/task-manager"</span><span class="p">,</span> <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s2">"task-manager"</span><span class="p">])</span>
+</span><span id="__span-13-61"><span class="n">app</span><span class="o">.</span><span class="n">include_router</span><span class="p">(</span><span class="n">router</span><span class="p">)</span>
+</span></code></pre></div>
+</div>
+</div>
+</div>
+</details>
+<p>The method accepts the same parameters available in the REST API:</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>function_name</code></td>
+<td><code>str</code></td>
+<td>Yes</td>
+<td>Name of a registered function</td>
+</tr>
+<tr>
+<td><code>cron_expression</code></td>
+<td><code>str</code></td>
+<td>Yes</td>
+<td>Cron schedule expression</td>
+</tr>
+<tr>
+<td><code>kwargs</code></td>
+<td><code>dict</code></td>
+<td>No</td>
+<td>Arguments passed to the function</td>
+</tr>
+<tr>
+<td><code>name</code></td>
+<td><code>str</code></td>
+<td>No</td>
+<td>Custom task name (auto-generated if omitted)</td>
+</tr>
+<tr>
+<td><code>description</code></td>
+<td><code>str</code></td>
+<td>No</td>
+<td>Human-readable description</td>
+</tr>
+<tr>
+<td><code>high_priority</code></td>
+<td><code>bool</code></td>
+<td>No</td>
+<td>Use the high-priority stream</td>
+</tr>
+<tr>
+<td><code>tags</code></td>
+<td><code>list[str]</code></td>
+<td>No</td>
+<td>Tags for filtering</td>
+</tr>
+<tr>
+<td><code>retry_backoff</code></td>
+<td><code>float</code></td>
+<td>No</td>
+<td>Initial retry delay in seconds</td>
+</tr>
+<tr>
+<td><code>retry_backoff_max</code></td>
+<td><code>float</code></td>
+<td>No</td>
+<td>Maximum retry delay in seconds</td>
+</tr>
+</tbody>
+</table>
+<p>The method returns the created <code>Task</code> object and raises <code>RuntimeError</code> if the function is not registered or the task name is already taken.</p>
+<h3 id="removing-tasks-from-code">Removing Tasks from Code<a class="headerlink" href="#removing-tasks-from-code" title="Permanent link">¶</a></h3>
+<p>Use <code>task_group.remove_dynamic_task()</code> to remove a dynamic task:</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="7:1"><input checked="checked" id="__tabbed_7_1" name="__tabbed_7" type="radio"><div class="tabbed-labels"><label for="__tabbed_7_1">Python 3.10+</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span id="__span-14-1"><span class="c1"># Code above omitted 👆</span>
+</span><span id="__span-14-2">
+</span><span id="__span-14-3">    <span class="n">removed</span> <span class="o">=</span> <span class="n">reports_group</span><span class="o">.</span><span class="n">remove_dynamic_task</span><span class="p">(</span><span class="n">task_name</span><span class="p">)</span>
+</span><span id="__span-14-4">    <span class="k">return</span> <span class="p">{</span><span class="s2">"removed"</span><span class="p">:</span> <span class="n">removed</span><span class="o">.</span><span class="n">name</span><span class="p">}</span>
+</span><span id="__span-14-5">
+</span><span id="__span-14-6">
+</span><span id="__span-14-7">
+</span><span id="__span-14-8"><span class="c1"># Code below omitted 👇</span>
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<details>
+<summary>👀 Full file preview</summary>
+<div class="tabbed-set tabbed-alternate" data-tabs="8:1"><input checked="checked" id="__tabbed_8_1" name="__tabbed_8" type="radio"><div class="tabbed-labels"><label for="__tabbed_8_1">Python 3.10+</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span id="__span-15-1"><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+</span><span id="__span-15-2">
+</span><span id="__span-15-3"><span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">APIRouter</span><span class="p">,</span> <span class="n">FastAPI</span>
+</span><span id="__span-15-4">
+</span><span id="__span-15-5"><span class="kn">from</span><span class="w"> </span><span class="nn">fastapi_task_manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">Config</span><span class="p">,</span> <span class="n">TaskGroup</span><span class="p">,</span> <span class="n">TaskManager</span>
+</span><span id="__span-15-6">
+</span><span id="__span-15-7"><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+</span><span id="__span-15-8">
+</span><span id="__span-15-9"><span class="n">app</span> <span class="o">=</span> <span class="n">FastAPI</span><span class="p">()</span>
+</span><span id="__span-15-10"><span class="n">router</span> <span class="o">=</span> <span class="n">APIRouter</span><span class="p">()</span>
+</span><span id="__span-15-11">
+</span><span id="__span-15-12"><span class="c1"># Create the task manager and a task group</span>
+</span><span id="__span-15-13"><span class="n">task_manager</span> <span class="o">=</span> <span class="n">TaskManager</span><span class="p">(</span>
+</span><span id="__span-15-14">    <span class="n">app</span><span class="o">=</span><span class="n">app</span><span class="p">,</span>
+</span><span id="__span-15-15">    <span class="n">config</span><span class="o">=</span><span class="n">Config</span><span class="p">(</span><span class="n">redis_host</span><span class="o">=</span><span class="s2">"localhost"</span><span class="p">),</span>
+</span><span id="__span-15-16"><span class="p">)</span>
+</span><span id="__span-15-17"><span class="n">reports_group</span> <span class="o">=</span> <span class="n">TaskGroup</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">"Reports"</span><span class="p">,</span> <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s2">"reports"</span><span class="p">])</span>
+</span><span id="__span-15-18"><span class="n">task_manager</span><span class="o">.</span><span class="n">add_task_group</span><span class="p">(</span><span class="n">reports_group</span><span class="p">)</span>
+</span><span id="__span-15-19">
+</span><span id="__span-15-20">
+</span><span id="__span-15-21"><span class="c1"># Register functions available for dynamic task creation</span>
+</span><span id="__span-15-22"><span class="nd">@reports_group</span><span class="o">.</span><span class="n">register_function</span><span class="p">()</span>
+</span><span id="__span-15-23"><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">send_report</span><span class="p">(</span><span class="n">recipient</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"default@example.com"</span><span class="p">,</span> <span class="n">report_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"daily"</span><span class="p">):</span>
+</span><span id="__span-15-24">    <span class="c1"># Logic to generate and send a report</span>
+</span><span id="__span-15-25">    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Sending </span><span class="si">%s</span><span class="s2"> report to </span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span> <span class="n">report_type</span><span class="p">,</span> <span class="n">recipient</span><span class="p">)</span>
+</span><span id="__span-15-26">
+</span><span id="__span-15-27">
+</span><span id="__span-15-28"><span class="c1"># Static tasks auto-register their function by default</span>
+</span><span id="__span-15-29"><span class="nd">@reports_group</span><span class="o">.</span><span class="n">add_task</span><span class="p">(</span><span class="s2">"0 9 * * *"</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"daily_cleanup"</span><span class="p">)</span>
+</span><span id="__span-15-30"><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">daily_cleanup</span><span class="p">():</span>
+</span><span id="__span-15-31">    <span class="c1"># This function is also available in the registry as "daily_cleanup"</span>
+</span><span id="__span-15-32">    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Running daily cleanup"</span><span class="p">)</span>
+</span><span id="__span-15-33">
+</span><span id="__span-15-34">
+</span><span id="__span-15-35"><span class="c1"># --- Creating dynamic tasks programmatically ---</span>
+</span><span id="__span-15-36">
+</span><span id="__span-15-37">
+</span><span id="__span-15-38"><span class="nd">@app</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">"/custom/create-report-task"</span><span class="p">)</span>
+</span><span id="__span-15-39"><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">create_custom_report_task</span><span class="p">(</span><span class="n">recipient</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">cron</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"0 8 * * MON"</span><span class="p">):</span>
+</span><span id="__span-15-40">    <span class="c1"># Create a dynamic task from application code (e.g., from an endpoint, a CLI, or startup logic)</span>
+</span><span id="__span-15-41">    <span class="n">task</span> <span class="o">=</span> <span class="n">reports_group</span><span class="o">.</span><span class="n">add_dynamic_task</span><span class="p">(</span>
+</span><span id="__span-15-42">        <span class="n">function_name</span><span class="o">=</span><span class="s2">"send_report"</span><span class="p">,</span>
+</span><span id="__span-15-43">        <span class="n">cron_expression</span><span class="o">=</span><span class="n">cron</span><span class="p">,</span>
+</span><span id="__span-15-44">        <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">"recipient"</span><span class="p">:</span> <span class="n">recipient</span><span class="p">,</span> <span class="s2">"report_type"</span><span class="p">:</span> <span class="s2">"weekly"</span><span class="p">},</span>
+</span><span id="__span-15-45">        <span class="n">description</span><span class="o">=</span><span class="sa">f</span><span class="s2">"Weekly report for </span><span class="si">{</span><span class="n">recipient</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+</span><span id="__span-15-46">        <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s2">"reports"</span><span class="p">,</span> <span class="s2">"weekly"</span><span class="p">],</span>
+</span><span id="__span-15-47">    <span class="p">)</span>
+</span><span id="__span-15-48">    <span class="k">return</span> <span class="p">{</span><span class="s2">"created"</span><span class="p">:</span> <span class="n">task</span><span class="o">.</span><span class="n">name</span><span class="p">}</span>
+</span><span id="__span-15-49">
+</span><span id="__span-15-50">
+</span><span id="__span-15-51"><span class="nd">@app</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s2">"/custom/delete-report-task"</span><span class="p">)</span>
+</span><span id="__span-15-52"><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">delete_custom_report_task</span><span class="p">(</span><span class="n">task_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="__span-15-53">    <span class="c1"># Remove a dynamic task programmatically</span>
+</span><span id="__span-15-54">    <span class="n">removed</span> <span class="o">=</span> <span class="n">reports_group</span><span class="o">.</span><span class="n">remove_dynamic_task</span><span class="p">(</span><span class="n">task_name</span><span class="p">)</span>
+</span><span id="__span-15-55">    <span class="k">return</span> <span class="p">{</span><span class="s2">"removed"</span><span class="p">:</span> <span class="n">removed</span><span class="o">.</span><span class="n">name</span><span class="p">}</span>
+</span><span id="__span-15-56">
+</span><span id="__span-15-57">
+</span><span id="__span-15-58"><span class="c1"># Include the management router</span>
+</span><span id="__span-15-59"><span class="n">manager_router</span> <span class="o">=</span> <span class="n">task_manager</span><span class="o">.</span><span class="n">get_manager_router</span><span class="p">()</span>
+</span><span id="__span-15-60"><span class="n">router</span><span class="o">.</span><span class="n">include_router</span><span class="p">(</span><span class="n">manager_router</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">"/task-manager"</span><span class="p">,</span> <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s2">"task-manager"</span><span class="p">])</span>
+</span><span id="__span-15-61"><span class="n">app</span><span class="o">.</span><span class="n">include_router</span><span class="p">(</span><span class="n">router</span><span class="p">)</span>
+</span></code></pre></div>
+</div>
+</div>
+</div>
+</details>
+<p>Only dynamic tasks can be removed — static tasks (defined with <code>@add_task()</code>) raise a <code>RuntimeError</code>.</p>
+<div class="admonition warning">
+<p class="admonition-title">No automatic Redis persistence</p>
+<p>When using the Python API directly, the task is added <strong>only in-memory</strong>. It will <strong>not</strong> survive application restarts unless you also persist it to Redis (as the REST API does automatically). If you need persistence, use the REST API (<code>POST /tasks</code>) or replicate the Redis Hash logic from <code>task_router_services.create_dynamic_task()</code>.</p>
+</div>
+<h3 id="complete-python-api-example">Complete Python API Example<a class="headerlink" href="#complete-python-api-example" title="Permanent link">¶</a></h3>
+<div class="tabbed-set tabbed-alternate" data-tabs="9:1"><input checked="checked" id="__tabbed_9_1" name="__tabbed_9" type="radio"><div class="tabbed-labels"><label for="__tabbed_9_1">Python 3.10+</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span id="__span-16-1"><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+</span><span id="__span-16-2">
+</span><span id="__span-16-3"><span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">APIRouter</span><span class="p">,</span> <span class="n">FastAPI</span>
+</span><span id="__span-16-4">
+</span><span id="__span-16-5"><span class="kn">from</span><span class="w"> </span><span class="nn">fastapi_task_manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">Config</span><span class="p">,</span> <span class="n">TaskGroup</span><span class="p">,</span> <span class="n">TaskManager</span>
+</span><span id="__span-16-6">
+</span><span id="__span-16-7"><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+</span><span id="__span-16-8">
+</span><span id="__span-16-9"><span class="n">app</span> <span class="o">=</span> <span class="n">FastAPI</span><span class="p">()</span>
+</span><span id="__span-16-10"><span class="n">router</span> <span class="o">=</span> <span class="n">APIRouter</span><span class="p">()</span>
+</span><span id="__span-16-11">
+</span><span id="__span-16-12"><span class="c1"># Create the task manager and a task group</span>
+</span><span id="__span-16-13"><span class="n">task_manager</span> <span class="o">=</span> <span class="n">TaskManager</span><span class="p">(</span>
+</span><span id="__span-16-14">    <span class="n">app</span><span class="o">=</span><span class="n">app</span><span class="p">,</span>
+</span><span id="__span-16-15">    <span class="n">config</span><span class="o">=</span><span class="n">Config</span><span class="p">(</span><span class="n">redis_host</span><span class="o">=</span><span class="s2">"localhost"</span><span class="p">),</span>
+</span><span id="__span-16-16"><span class="p">)</span>
+</span><span id="__span-16-17"><span class="n">reports_group</span> <span class="o">=</span> <span class="n">TaskGroup</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">"Reports"</span><span class="p">,</span> <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s2">"reports"</span><span class="p">])</span>
+</span><span id="__span-16-18"><span class="n">task_manager</span><span class="o">.</span><span class="n">add_task_group</span><span class="p">(</span><span class="n">reports_group</span><span class="p">)</span>
+</span><span id="__span-16-19">
+</span><span id="__span-16-20">
+</span><span id="__span-16-21"><span class="c1"># Register functions available for dynamic task creation</span>
+</span><span id="__span-16-22"><span class="nd">@reports_group</span><span class="o">.</span><span class="n">register_function</span><span class="p">()</span>
+</span><span id="__span-16-23"><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">send_report</span><span class="p">(</span><span class="n">recipient</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"default@example.com"</span><span class="p">,</span> <span class="n">report_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"daily"</span><span class="p">):</span>
+</span><span id="__span-16-24">    <span class="c1"># Logic to generate and send a report</span>
+</span><span id="__span-16-25">    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Sending </span><span class="si">%s</span><span class="s2"> report to </span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span> <span class="n">report_type</span><span class="p">,</span> <span class="n">recipient</span><span class="p">)</span>
+</span><span id="__span-16-26">
+</span><span id="__span-16-27">
+</span><span id="__span-16-28"><span class="c1"># Static tasks auto-register their function by default</span>
+</span><span id="__span-16-29"><span class="nd">@reports_group</span><span class="o">.</span><span class="n">add_task</span><span class="p">(</span><span class="s2">"0 9 * * *"</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"daily_cleanup"</span><span class="p">)</span>
+</span><span id="__span-16-30"><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">daily_cleanup</span><span class="p">():</span>
+</span><span id="__span-16-31">    <span class="c1"># This function is also available in the registry as "daily_cleanup"</span>
+</span><span id="__span-16-32">    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Running daily cleanup"</span><span class="p">)</span>
+</span><span id="__span-16-33">
+</span><span id="__span-16-34">
+</span><span id="__span-16-35"><span class="c1"># --- Creating dynamic tasks programmatically ---</span>
+</span><span id="__span-16-36">
+</span><span id="__span-16-37">
+</span><span id="__span-16-38"><span class="nd">@app</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">"/custom/create-report-task"</span><span class="p">)</span>
+</span><span id="__span-16-39"><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">create_custom_report_task</span><span class="p">(</span><span class="n">recipient</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">cron</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"0 8 * * MON"</span><span class="p">):</span>
+</span><span id="__span-16-40">    <span class="c1"># Create a dynamic task from application code (e.g., from an endpoint, a CLI, or startup logic)</span>
+</span><span id="__span-16-41">    <span class="n">task</span> <span class="o">=</span> <span class="n">reports_group</span><span class="o">.</span><span class="n">add_dynamic_task</span><span class="p">(</span>
+</span><span id="__span-16-42">        <span class="n">function_name</span><span class="o">=</span><span class="s2">"send_report"</span><span class="p">,</span>
+</span><span id="__span-16-43">        <span class="n">cron_expression</span><span class="o">=</span><span class="n">cron</span><span class="p">,</span>
+</span><span id="__span-16-44">        <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">"recipient"</span><span class="p">:</span> <span class="n">recipient</span><span class="p">,</span> <span class="s2">"report_type"</span><span class="p">:</span> <span class="s2">"weekly"</span><span class="p">},</span>
+</span><span id="__span-16-45">        <span class="n">description</span><span class="o">=</span><span class="sa">f</span><span class="s2">"Weekly report for </span><span class="si">{</span><span class="n">recipient</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+</span><span id="__span-16-46">        <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s2">"reports"</span><span class="p">,</span> <span class="s2">"weekly"</span><span class="p">],</span>
+</span><span id="__span-16-47">    <span class="p">)</span>
+</span><span id="__span-16-48">    <span class="k">return</span> <span class="p">{</span><span class="s2">"created"</span><span class="p">:</span> <span class="n">task</span><span class="o">.</span><span class="n">name</span><span class="p">}</span>
+</span><span id="__span-16-49">
+</span><span id="__span-16-50">
+</span><span id="__span-16-51"><span class="nd">@app</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s2">"/custom/delete-report-task"</span><span class="p">)</span>
+</span><span id="__span-16-52"><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">delete_custom_report_task</span><span class="p">(</span><span class="n">task_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="__span-16-53">    <span class="c1"># Remove a dynamic task programmatically</span>
+</span><span id="__span-16-54">    <span class="n">removed</span> <span class="o">=</span> <span class="n">reports_group</span><span class="o">.</span><span class="n">remove_dynamic_task</span><span class="p">(</span><span class="n">task_name</span><span class="p">)</span>
+</span><span id="__span-16-55">    <span class="k">return</span> <span class="p">{</span><span class="s2">"removed"</span><span class="p">:</span> <span class="n">removed</span><span class="o">.</span><span class="n">name</span><span class="p">}</span>
+</span><span id="__span-16-56">
+</span><span id="__span-16-57">
+</span><span id="__span-16-58"><span class="c1"># Include the management router</span>
+</span><span id="__span-16-59"><span class="n">manager_router</span> <span class="o">=</span> <span class="n">task_manager</span><span class="o">.</span><span class="n">get_manager_router</span><span class="p">()</span>
+</span><span id="__span-16-60"><span class="n">router</span><span class="o">.</span><span class="n">include_router</span><span class="p">(</span><span class="n">manager_router</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">"/task-manager"</span><span class="p">,</span> <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s2">"task-manager"</span><span class="p">])</span>
+</span><span id="__span-16-61"><span class="n">app</span><span class="o">.</span><span class="n">include_router</span><span class="p">(</span><span class="n">router</span><span class="p">)</span>
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<hr>
+<h2 id="complete-rest-api-example">Complete REST API Example<a class="headerlink" href="#complete-rest-api-example" title="Permanent link">¶</a></h2>
+<div class="tabbed-set tabbed-alternate" data-tabs="10:1"><input checked="checked" id="__tabbed_10_1" name="__tabbed_10" type="radio"><div class="tabbed-labels"><label for="__tabbed_10_1">Python 3.10+</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span id="__span-17-1"><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+</span><span id="__span-17-2">
+</span><span id="__span-17-3"><span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">APIRouter</span><span class="p">,</span> <span class="n">FastAPI</span>
+</span><span id="__span-17-4">
+</span><span id="__span-17-5"><span class="kn">from</span><span class="w"> </span><span class="nn">fastapi_task_manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">Config</span><span class="p">,</span> <span class="n">TaskGroup</span><span class="p">,</span> <span class="n">TaskManager</span>
+</span><span id="__span-17-6">
+</span><span id="__span-17-7"><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+</span><span id="__span-17-8">
+</span><span id="__span-17-9"><span class="n">app</span> <span class="o">=</span> <span class="n">FastAPI</span><span class="p">()</span>
+</span><span id="__span-17-10"><span class="n">router</span> <span class="o">=</span> <span class="n">APIRouter</span><span class="p">()</span>
+</span><span id="__span-17-11">
+</span><span id="__span-17-12"><span class="c1"># Create the task manager and a task group</span>
+</span><span id="__span-17-13"><span class="n">task_manager</span> <span class="o">=</span> <span class="n">TaskManager</span><span class="p">(</span>
+</span><span id="__span-17-14">    <span class="n">app</span><span class="o">=</span><span class="n">app</span><span class="p">,</span>
+</span><span id="__span-17-15">    <span class="n">config</span><span class="o">=</span><span class="n">Config</span><span class="p">(</span><span class="n">redis_host</span><span class="o">=</span><span class="s2">"localhost"</span><span class="p">),</span>
+</span><span id="__span-17-16"><span class="p">)</span>
+</span><span id="__span-17-17"><span class="n">reports_group</span> <span class="o">=</span> <span class="n">TaskGroup</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">"Reports"</span><span class="p">,</span> <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s2">"reports"</span><span class="p">])</span>
+</span><span id="__span-17-18"><span class="n">task_manager</span><span class="o">.</span><span class="n">add_task_group</span><span class="p">(</span><span class="n">reports_group</span><span class="p">)</span>
+</span><span id="__span-17-19">
+</span><span id="__span-17-20">
+</span><span id="__span-17-21"><span class="c1"># Register functions available for dynamic task creation</span>
+</span><span id="__span-17-22"><span class="nd">@reports_group</span><span class="o">.</span><span class="n">register_function</span><span class="p">()</span>
+</span><span id="__span-17-23"><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">send_report</span><span class="p">(</span><span class="n">recipient</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"default@example.com"</span><span class="p">,</span> <span class="n">report_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"daily"</span><span class="p">):</span>
+</span><span id="__span-17-24">    <span class="c1"># Logic to generate and send a report</span>
+</span><span id="__span-17-25">    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Sending </span><span class="si">%s</span><span class="s2"> report to </span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span> <span class="n">report_type</span><span class="p">,</span> <span class="n">recipient</span><span class="p">)</span>
+</span><span id="__span-17-26">
+</span><span id="__span-17-27">
+</span><span id="__span-17-28"><span class="nd">@reports_group</span><span class="o">.</span><span class="n">register_function</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">"generate_export"</span><span class="p">)</span>
+</span><span id="__span-17-29"><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">export_data</span><span class="p">(</span><span class="n">file_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"csv"</span><span class="p">):</span>
+</span><span id="__span-17-30">    <span class="c1"># Logic to export data</span>
+</span><span id="__span-17-31">    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Exporting data as </span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span> <span class="n">file_format</span><span class="p">)</span>
+</span><span id="__span-17-32">
+</span><span id="__span-17-33">
+</span><span id="__span-17-34"><span class="c1"># Include the management router to expose task CRUD endpoints</span>
+</span><span id="__span-17-35"><span class="n">manager_router</span> <span class="o">=</span> <span class="n">task_manager</span><span class="o">.</span><span class="n">get_manager_router</span><span class="p">()</span>
+</span><span id="__span-17-36"><span class="n">router</span><span class="o">.</span><span class="n">include_router</span><span class="p">(</span>
+</span><span id="__span-17-37">    <span class="n">manager_router</span><span class="p">,</span>
+</span><span id="__span-17-38">    <span class="n">prefix</span><span class="o">=</span><span class="s2">"/task-manager"</span><span class="p">,</span>
+</span><span id="__span-17-39">    <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s2">"task-manager"</span><span class="p">],</span>
+</span><span id="__span-17-40"><span class="p">)</span>
+</span><span id="__span-17-41">
+</span><span id="__span-17-42"><span class="n">app</span><span class="o">.</span><span class="n">include_router</span><span class="p">(</span><span class="n">router</span><span class="p">)</span>
 </span></code></pre></div>
 </div>
 </div>

@@ -1388,7 +1388,7 @@
 <hr>
 <h2 id="redis-requirements">Redis Requirements<a class="headerlink" href="#redis-requirements" title="Permanent link">¶</a></h2>
 <h3 id="minimum-version">Minimum Version<a class="headerlink" href="#minimum-version" title="Permanent link">¶</a></h3>
-<p>FastAPI Task Manager uses Redis Streams (<code>XADD</code>, <code>XREADGROUP</code>, <code>XACK</code>, <code>XCLAIM</code>), which require <strong>Redis 5.0+</strong>. Redis 7.0+ is recommended.</p>
+<p>FastAPI Task Manager uses Redis Streams (<code>XADD</code>, <code>XREADGROUP</code>, <code>XACK</code>, <code>XDEL</code>, <code>XCLAIM</code>), which require <strong>Redis 5.0+</strong>. Redis 7.0+ is recommended.</p>
 <h3 id="persistence">Persistence<a class="headerlink" href="#persistence" title="Permanent link">¶</a></h3>
 <p>For production, enable Redis persistence to survive restarts:</p>
 <div class="highlight"><pre><span></span><code><span id="__span-2-1"># redis.conf
@@ -1400,7 +1400,6 @@
 <p>Redis memory usage depends on:</p>
 <ul>
 <li>Number of tasks and their statistics history (<code>statistics_history_runs</code>)</li>
-<li>Stream length (<code>stream_max_len</code>)</li>
 <li>Number of dynamic task definitions</li>
 </ul>
 <p>For most deployments, a few hundred MB is sufficient.</p>

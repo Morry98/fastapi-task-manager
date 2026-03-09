@@ -1167,7 +1167,8 @@ Whether you're running a single instance with multiple uvicorn workers or a dist
 <li><code>GET /health</code> - System health check with worker and leader info</li>
 <li><code>GET /config</code> - Current configuration inspection</li>
 <li><code>GET /task-groups</code> - List all task groups</li>
-<li><code>GET /tasks</code> - List all tasks with execution statistics and retry state</li>
+<li><code>GET /tasks</code> - List all tasks with running state and retry info</li>
+<li><code>GET /tasks/{task_group_name}/{task_name}/statistics</code> - Get execution statistics for a single task</li>
 <li><code>POST /tasks/disable</code> - Disable task execution</li>
 <li><code>POST /tasks/enable</code> - Enable task execution</li>
 <li><code>POST /tasks/trigger</code> - Trigger immediate task execution</li>

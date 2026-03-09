@@ -832,6 +832,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#get-taskstask_group_nametask_namestatistics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GET /tasks/{task_group_name}/{task_name}/statistics
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#post-tasksdisable" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1239,6 +1250,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#get-taskstask_group_nametask_namestatistics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GET /tasks/{task_group_name}/{task_name}/statistics
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#post-tasksdisable" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1518,7 +1540,7 @@
 <hr>
 <h2 id="tasks">Tasks<a class="headerlink" href="#tasks" title="Permanent link">¶</a></h2>
 <h3 id="get-tasks">GET /tasks<a class="headerlink" href="#get-tasks" title="Permanent link">¶</a></h3>
-<p>Retrieve detailed information for all tasks, including execution statistics, running state, and retry backoff status.</p>
+<p>Retrieve detailed information for all tasks, including running state and retry backoff status.</p>
 <p><strong>Query parameters:</strong></p>
 <table>
 <thead>
@@ -1558,19 +1580,52 @@
 </span><span id="__span-2-9"><span class="w">    </span><span class="nt">"retry_backoff_max"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
 </span><span id="__span-2-10"><span class="w">    </span><span class="nt">"dynamic"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
 </span><span id="__span-2-11"><span class="w">    </span><span class="nt">"task_group_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"My Example Task Group"</span><span class="p">,</span>
-</span><span id="__span-2-12"><span class="w">    </span><span class="nt">"next_run"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2026-03-08T10:05:00Z"</span><span class="p">,</span>
-</span><span id="__span-2-13"><span class="w">    </span><span class="nt">"is_active"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
-</span><span id="__span-2-14"><span class="w">    </span><span class="nt">"is_running"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
-</span><span id="__span-2-15"><span class="w">    </span><span class="nt">"retry_after"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
-</span><span id="__span-2-16"><span class="w">    </span><span class="nt">"retry_delay"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
-</span><span id="__span-2-17"><span class="w">    </span><span class="nt">"runs"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-</span><span id="__span-2-18"><span class="w">      </span><span class="p">{</span>
-</span><span id="__span-2-19"><span class="w">        </span><span class="nt">"run_date"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2026-03-08T10:00:00Z"</span><span class="p">,</span>
-</span><span id="__span-2-20"><span class="w">        </span><span class="nt">"durations_second"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.42</span>
-</span><span id="__span-2-21"><span class="w">      </span><span class="p">}</span>
-</span><span id="__span-2-22"><span class="w">    </span><span class="p">]</span>
-</span><span id="__span-2-23"><span class="w">  </span><span class="p">}</span>
-</span><span id="__span-2-24"><span class="p">]</span>
+</span><span id="__span-2-12"><span class="w">    </span><span class="nt">"kwargs"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+</span><span id="__span-2-13"><span class="w">    </span><span class="nt">"function_name"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+</span><span id="__span-2-14"><span class="w">    </span><span class="nt">"next_run"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2026-03-08T10:05:00Z"</span><span class="p">,</span>
+</span><span id="__span-2-15"><span class="w">    </span><span class="nt">"is_active"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+</span><span id="__span-2-16"><span class="w">    </span><span class="nt">"is_running"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+</span><span id="__span-2-17"><span class="w">    </span><span class="nt">"retry_after"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+</span><span id="__span-2-18"><span class="w">    </span><span class="nt">"retry_delay"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span>
+</span><span id="__span-2-19"><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-2-20"><span class="p">]</span>
+</span></code></pre></div>
+<hr>
+<h3 id="get-taskstask_group_nametask_namestatistics">GET /tasks/{task_group_name}/{task_name}/statistics<a class="headerlink" href="#get-taskstask_group_nametask_namestatistics" title="Permanent link">¶</a></h3>
+<p>Retrieve execution statistics for a single task. Returns the run history with timestamps and durations.</p>
+<p><strong>Path parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>task_group_name</code></td>
+<td><code>string</code> (required)</td>
+<td>Task group name</td>
+</tr>
+<tr>
+<td><code>task_name</code></td>
+<td><code>string</code> (required)</td>
+<td>Task name</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Response model:</strong> <code>TaskStatistics</code></p>
+<div class="highlight"><pre><span></span><code><span id="__span-3-1"><span class="p">{</span>
+</span><span id="__span-3-2"><span class="w">  </span><span class="nt">"task_group_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"My Example Task Group"</span><span class="p">,</span>
+</span><span id="__span-3-3"><span class="w">  </span><span class="nt">"task_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"my_scheduled_task"</span><span class="p">,</span>
+</span><span id="__span-3-4"><span class="w">  </span><span class="nt">"runs"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-3-5"><span class="w">    </span><span class="p">{</span>
+</span><span id="__span-3-6"><span class="w">      </span><span class="nt">"run_date"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2026-03-08T10:00:00Z"</span><span class="p">,</span>
+</span><span id="__span-3-7"><span class="w">      </span><span class="nt">"durations_second"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.42</span>
+</span><span id="__span-3-8"><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-3-9"><span class="w">  </span><span class="p">]</span>
+</span><span id="__span-3-10"><span class="p">}</span>
 </span></code></pre></div>
 <hr>
 <h3 id="post-tasksdisable">POST /tasks/disable<a class="headerlink" href="#post-tasksdisable" title="Permanent link">¶</a></h3>
@@ -1603,12 +1658,12 @@
 </tbody>
 </table>
 <p><strong>Response model:</strong> <code>TaskActionResponse</code></p>
-<div class="highlight"><pre><span></span><code><span id="__span-3-1"><span class="p">{</span>
-</span><span id="__span-3-2"><span class="w">  </span><span class="nt">"affected_tasks"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-</span><span id="__span-3-3"><span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="nt">"task_group"</span><span class="p">:</span><span class="w"> </span><span class="s2">"My Example Task Group"</span><span class="p">,</span><span class="w"> </span><span class="nt">"task"</span><span class="p">:</span><span class="w"> </span><span class="s2">"my_scheduled_task"</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-3-4"><span class="w">  </span><span class="p">],</span>
-</span><span id="__span-3-5"><span class="w">  </span><span class="nt">"count"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span>
-</span><span id="__span-3-6"><span class="p">}</span>
+<div class="highlight"><pre><span></span><code><span id="__span-4-1"><span class="p">{</span>
+</span><span id="__span-4-2"><span class="w">  </span><span class="nt">"affected_tasks"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-4-3"><span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="nt">"task_group"</span><span class="p">:</span><span class="w"> </span><span class="s2">"My Example Task Group"</span><span class="p">,</span><span class="w"> </span><span class="nt">"task"</span><span class="p">:</span><span class="w"> </span><span class="s2">"my_scheduled_task"</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-4-4"><span class="w">  </span><span class="p">],</span>
+</span><span id="__span-4-5"><span class="w">  </span><span class="nt">"count"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span>
+</span><span id="__span-4-6"><span class="p">}</span>
 </span></code></pre></div>
 <hr>
 <h3 id="post-tasksenable">POST /tasks/enable<a class="headerlink" href="#post-tasksenable" title="Permanent link">¶</a></h3>
@@ -1653,32 +1708,32 @@
 </tbody>
 </table>
 <p><strong>Response model:</strong> <code>RegisteredFunctionsResponse</code></p>
-<div class="highlight"><pre><span></span><code><span id="__span-4-1"><span class="p">{</span>
-</span><span id="__span-4-2"><span class="w">  </span><span class="nt">"functions"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-</span><span id="__span-4-3"><span class="w">    </span><span class="p">{</span>
-</span><span id="__span-4-4"><span class="w">      </span><span class="nt">"task_group_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"My Example Task Group"</span><span class="p">,</span>
-</span><span id="__span-4-5"><span class="w">      </span><span class="nt">"function_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"send_report"</span>
-</span><span id="__span-4-6"><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-4-7"><span class="w">  </span><span class="p">],</span>
-</span><span id="__span-4-8"><span class="w">  </span><span class="nt">"count"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span>
-</span><span id="__span-4-9"><span class="p">}</span>
+<div class="highlight"><pre><span></span><code><span id="__span-5-1"><span class="p">{</span>
+</span><span id="__span-5-2"><span class="w">  </span><span class="nt">"functions"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-5-3"><span class="w">    </span><span class="p">{</span>
+</span><span id="__span-5-4"><span class="w">      </span><span class="nt">"task_group_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"My Example Task Group"</span><span class="p">,</span>
+</span><span id="__span-5-5"><span class="w">      </span><span class="nt">"function_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"send_report"</span>
+</span><span id="__span-5-6"><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-5-7"><span class="w">  </span><span class="p">],</span>
+</span><span id="__span-5-8"><span class="w">  </span><span class="nt">"count"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span>
+</span><span id="__span-5-9"><span class="p">}</span>
 </span></code></pre></div>
 <hr>
 <h3 id="post-tasks">POST /tasks<a class="headerlink" href="#post-tasks" title="Permanent link">¶</a></h3>
 <p>Create a new dynamic task from a registered function.</p>
 <p><strong>Request body:</strong> <code>CreateDynamicTaskRequest</code></p>
-<div class="highlight"><pre><span></span><code><span id="__span-5-1"><span class="p">{</span>
-</span><span id="__span-5-2"><span class="w">  </span><span class="nt">"task_group_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"My Example Task Group"</span><span class="p">,</span>
-</span><span id="__span-5-3"><span class="w">  </span><span class="nt">"function_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"send_report"</span><span class="p">,</span>
-</span><span id="__span-5-4"><span class="w">  </span><span class="nt">"cron_expression"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0 9 * * MON"</span><span class="p">,</span>
-</span><span id="__span-5-5"><span class="w">  </span><span class="nt">"kwargs"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">"recipient"</span><span class="p">:</span><span class="w"> </span><span class="s2">"team@example.com"</span><span class="w"> </span><span class="p">},</span>
-</span><span id="__span-5-6"><span class="w">  </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"weekly_report"</span><span class="p">,</span>
-</span><span id="__span-5-7"><span class="w">  </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Send weekly report every Monday at 9am"</span><span class="p">,</span>
-</span><span id="__span-5-8"><span class="w">  </span><span class="nt">"high_priority"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
-</span><span id="__span-5-9"><span class="w">  </span><span class="nt">"tags"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"reports"</span><span class="p">],</span>
-</span><span id="__span-5-10"><span class="w">  </span><span class="nt">"retry_backoff"</span><span class="p">:</span><span class="w"> </span><span class="mf">5.0</span><span class="p">,</span>
-</span><span id="__span-5-11"><span class="w">  </span><span class="nt">"retry_backoff_max"</span><span class="p">:</span><span class="w"> </span><span class="mf">120.0</span>
-</span><span id="__span-5-12"><span class="p">}</span>
+<div class="highlight"><pre><span></span><code><span id="__span-6-1"><span class="p">{</span>
+</span><span id="__span-6-2"><span class="w">  </span><span class="nt">"task_group_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"My Example Task Group"</span><span class="p">,</span>
+</span><span id="__span-6-3"><span class="w">  </span><span class="nt">"function_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"send_report"</span><span class="p">,</span>
+</span><span id="__span-6-4"><span class="w">  </span><span class="nt">"cron_expression"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0 9 * * MON"</span><span class="p">,</span>
+</span><span id="__span-6-5"><span class="w">  </span><span class="nt">"kwargs"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">"recipient"</span><span class="p">:</span><span class="w"> </span><span class="s2">"team@example.com"</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-6-6"><span class="w">  </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"weekly_report"</span><span class="p">,</span>
+</span><span id="__span-6-7"><span class="w">  </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Send weekly report every Monday at 9am"</span><span class="p">,</span>
+</span><span id="__span-6-8"><span class="w">  </span><span class="nt">"high_priority"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+</span><span id="__span-6-9"><span class="w">  </span><span class="nt">"tags"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"reports"</span><span class="p">],</span>
+</span><span id="__span-6-10"><span class="w">  </span><span class="nt">"retry_backoff"</span><span class="p">:</span><span class="w"> </span><span class="mf">5.0</span><span class="p">,</span>
+</span><span id="__span-6-11"><span class="w">  </span><span class="nt">"retry_backoff_max"</span><span class="p">:</span><span class="w"> </span><span class="mf">120.0</span>
+</span><span id="__span-6-12"><span class="p">}</span>
 </span></code></pre></div>
 <table>
 <thead>
@@ -1753,14 +1808,14 @@
 </tbody>
 </table>
 <p><strong>Response model:</strong> <code>DynamicTaskResponse</code></p>
-<div class="highlight"><pre><span></span><code><span id="__span-6-1"><span class="p">{</span>
-</span><span id="__span-6-2"><span class="w">  </span><span class="nt">"task_group_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"My Example Task Group"</span><span class="p">,</span>
-</span><span id="__span-6-3"><span class="w">  </span><span class="nt">"task_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"weekly_report"</span><span class="p">,</span>
-</span><span id="__span-6-4"><span class="w">  </span><span class="nt">"function_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"send_report"</span><span class="p">,</span>
-</span><span id="__span-6-5"><span class="w">  </span><span class="nt">"cron_expression"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0 9 * * MON"</span><span class="p">,</span>
-</span><span id="__span-6-6"><span class="w">  </span><span class="nt">"kwargs"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">"recipient"</span><span class="p">:</span><span class="w"> </span><span class="s2">"team@example.com"</span><span class="w"> </span><span class="p">},</span>
-</span><span id="__span-6-7"><span class="w">  </span><span class="nt">"dynamic"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
-</span><span id="__span-6-8"><span class="p">}</span>
+<div class="highlight"><pre><span></span><code><span id="__span-7-1"><span class="p">{</span>
+</span><span id="__span-7-2"><span class="w">  </span><span class="nt">"task_group_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"My Example Task Group"</span><span class="p">,</span>
+</span><span id="__span-7-3"><span class="w">  </span><span class="nt">"task_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"weekly_report"</span><span class="p">,</span>
+</span><span id="__span-7-4"><span class="w">  </span><span class="nt">"function_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"send_report"</span><span class="p">,</span>
+</span><span id="__span-7-5"><span class="w">  </span><span class="nt">"cron_expression"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0 9 * * MON"</span><span class="p">,</span>
+</span><span id="__span-7-6"><span class="w">  </span><span class="nt">"kwargs"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">"recipient"</span><span class="p">:</span><span class="w"> </span><span class="s2">"team@example.com"</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-7-7"><span class="w">  </span><span class="nt">"dynamic"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+</span><span id="__span-7-8"><span class="p">}</span>
 </span></code></pre></div>
 <hr>
 <h3 id="delete-tasks">DELETE /tasks<a class="headerlink" href="#delete-tasks" title="Permanent link">¶</a></h3>
