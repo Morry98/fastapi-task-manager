@@ -17,7 +17,6 @@ config = Config(
     # --------- Streams config ---------
     stream_max_len=10000,
     stream_block_ms=1000,
-    stream_consumer_group="task-workers",
     # --------- Leader election config ---------
     leader_heartbeat_interval=3.0,
     leader_retry_interval=5.0,

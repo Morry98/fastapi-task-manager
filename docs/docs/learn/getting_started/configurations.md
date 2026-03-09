@@ -95,12 +95,6 @@ Default value is `10000`.
 The block timeout (in milliseconds) for `XREADGROUP` when consumers wait for new messages. Higher values reduce Redis round-trips but increase shutdown latency.
 Default value is `1000`.
 
-### Stream Consumer Group
-{* ./docs_src/tutorial/configurations_py310.py ln[20] *}
-
-The name of the Redis consumer group used by task workers. All workers in the same deployment should use the same consumer group name to distribute tasks evenly.
-Default value is `"task-workers"`.
-
 ---
 
 ## Leader Election Configuration
@@ -108,13 +102,13 @@ Default value is `"task-workers"`.
 FastAPI Task Manager uses distributed leader election via Redis to ensure that only one instance schedules tasks at a time, while all instances can execute them.
 
 ### Leader Heartbeat Interval
-{* ./docs_src/tutorial/configurations_py310.py ln[22] *}
+{* ./docs_src/tutorial/configurations_py310.py ln[21] *}
 
 The interval (in seconds) between leader lock renewals. The leader periodically renews its lock to signal it is still alive.
 Default value is `3.0`.
 
 ### Leader Retry Interval
-{* ./docs_src/tutorial/configurations_py310.py ln[23] *}
+{* ./docs_src/tutorial/configurations_py310.py ln[22] *}
 
 The interval (in seconds) between leadership acquisition attempts for follower instances. When a worker is not the leader, it tries to acquire leadership at this interval.
 Default value is `5.0`.
@@ -126,7 +120,7 @@ Default value is `5.0`.
 The reconciler detects and recovers stale or failed tasks. It runs only on the leader instance.
 
 ### Reconciliation Interval
-{* ./docs_src/tutorial/configurations_py310.py ln[25] *}
+{* ./docs_src/tutorial/configurations_py310.py ln[24] *}
 
 The interval (in seconds) between reconciliation checks. The reconciler scans for overdue or stuck tasks at this interval.
 Default value is `30`.
@@ -138,7 +132,7 @@ Default value is `30`.
 When a task fails, FastAPI Task Manager applies exponential backoff to delay re-execution. This prevents rapid failure loops and gives external dependencies time to recover.
 
 ### Retry Backoff
-{* ./docs_src/tutorial/configurations_py310.py ln[27] *}
+{* ./docs_src/tutorial/configurations_py310.py ln[26] *}
 
 The initial backoff delay (in seconds) after a task failure. The first retry will be delayed by this amount.
 Default value is `1.0`.
@@ -148,7 +142,7 @@ This setting can be overridden on individual tasks via the `retry_backoff` param
 ////
 
 ### Retry Backoff Max
-{* ./docs_src/tutorial/configurations_py310.py ln[28] *}
+{* ./docs_src/tutorial/configurations_py310.py ln[27] *}
 
 The maximum backoff delay (in seconds). The delay will never exceed this value, regardless of how many consecutive failures occur.
 Default value is `60.0`.
@@ -158,7 +152,7 @@ This setting can be overridden on individual tasks via the `retry_backoff_max` p
 ////
 
 ### Retry Backoff Multiplier
-{* ./docs_src/tutorial/configurations_py310.py ln[29] *}
+{* ./docs_src/tutorial/configurations_py310.py ln[28] *}
 
 The multiplier applied to the current delay after each consecutive failure. For example, with default settings: 1s, 2s, 4s, 8s, 16s, 32s, 60s (capped).
 Default value is `2.0`.
@@ -170,7 +164,7 @@ Default value is `2.0`.
 While a task is executing, the worker periodically renews a heartbeat key in Redis. If a worker crashes, the key expires, signaling that the task is no longer being executed.
 
 ### Running Heartbeat Interval
-{* ./docs_src/tutorial/configurations_py310.py ln[31] *}
+{* ./docs_src/tutorial/configurations_py310.py ln[30] *}
 
 The interval (in seconds) between heartbeat renewals while a task is executing. The worker renews the running key at this interval.
 Default value is `3.0`.

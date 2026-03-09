@@ -29,7 +29,6 @@ class TestConfigDefaults:
         config = Config(redis_host="localhost")
         assert config.stream_max_len == 10000
         assert config.stream_block_ms == 1000
-        assert config.stream_consumer_group == "task-workers"
 
     def test_leader_election_defaults(self):
         config = Config(redis_host="localhost")

@@ -28,8 +28,6 @@ class Config(BaseModel):
     stream_max_len: int = 10000
     # Block timeout for XREADGROUP in milliseconds
     stream_block_ms: int = 1000
-    # Consumer group name for task workers
-    stream_consumer_group: str = "task-workers"
     # --------- End of streams config variables ---------
 
     # --------- Leader election config variables ---------
