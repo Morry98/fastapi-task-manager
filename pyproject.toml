@@ -1,7 +1,7 @@
 [project]
 name = "fastapi-task-manager"
 version = "1.0.0"
-description = "A task manager for Fastapi. Robust Scheduling, Distributed Safety"
+description = "A task manager for FastAPI. Robust Scheduling, Distributed Safety"
 readme = "README.md"
 authors = [
     { name = "Matteo Morando", email = "matteo.morando98@gmail.com" }
@@ -12,11 +12,13 @@ keywords = [
     "task-manager",
     "task-scheduler",
     "distributed",
-    "safety",
-    "robust",
+    "cron",
+    "redis",
+    "scheduling",
+    "background-tasks",
 ]
 license = { file = "LICENSE" }
-urls = { "Homepage" = "https://github.com/Morry98/fastapi-task-manager", "Bug Tracker"  = "https://github.com/Morry98/fastapi-task-manager/repo/issues" }
+urls = { "Homepage" = "https://github.com/Morry98/fastapi-task-manager", "Bug Tracker" = "https://github.com/Morry98/fastapi-task-manager/issues", "Documentation" = "https://fastapi-task-manager.morando.uk", "Changelog" = "https://github.com/Morry98/fastapi-task-manager/blob/main/CHANGELOG.md" }
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
@@ -29,6 +31,7 @@ classifiers = [
     "Programming Language :: Python :: 3.14",
     "Framework :: FastAPI",
     "Operating System :: OS Independent",
+    "Topic :: Software Development :: Libraries",
 ]
 dependencies = [
     "cronsim>=2.7",
@@ -96,7 +99,6 @@ select = [
     "T10", # flake8-debugger
     "EXE", # flake8-executable
     # "DTZ", # flake8-datetimez
-    "DJ", # flake8-django
     "EM", # flake8-errmsg
     "ISC", # flake8-implicit-str-concat
     "ICN", # flake8-import-conventions
@@ -121,15 +123,12 @@ select = [
     # "PGH", # pygrep-hooks
     "PL", # Pylint
     "TRY", # tryceratops
-    "NPY", # NumPy-specific rules
     "RUF", # Ruff-specific rules
 ]
 ignore = [
     "B008",
     "N801",
     "N806",
-    "PD003",
-    "PD011",
     "Q000",
     "S101",
     "S113",
