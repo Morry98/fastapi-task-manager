@@ -12,6 +12,7 @@ jobs:
     outputs:
       should_publish: ${{ steps.check.outputs.should_publish }}
       version: ${{ steps.check.outputs.version }}
+      is_official: ${{ steps.check.outputs.is_official }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -20,13 +21,22 @@ jobs:
       - name: Install uv
         uses: astral-sh/setup-uv@v6
 
-      # Extract version from pyproject.toml and check if the tag already exists
-      - name: Check if version tag exists
+      # Extract version from pyproject.toml, check if tag exists, and determine version type
+      - name: Check version
         id: check
         run: |
           VERSION=$(uv run python -c "import tomllib; print(tomllib.load(open('pyproject.toml', 'rb'))['project']['version'])")
           TAG="v${VERSION}"
           echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+
+          # Check if version matches x.y.z (official) or has pre-release suffix
+          if echo "$VERSION" | grep -qP '^\d+\.\d+\.\d+$'; then
+            echo "is_official=true" >> "$GITHUB_OUTPUT"
+            echo "Version $VERSION is an official release"
+          else
+            echo "is_official=false" >> "$GITHUB_OUTPUT"
+            echo "Version $VERSION is a pre-release"
+          fi
 
           if git tag -l "$TAG" | grep -q "$TAG"; then
             echo "Tag $TAG already exists, skipping publish"
@@ -36,9 +46,47 @@ jobs:
             echo "should_publish=true" >> "$GITHUB_OUTPUT"
           fi
 
+  # Pre-release versions (e.g. 1.0.0-rc.1, 1.0.0-beta.1) are published from PRs
+  publish-prerelease:
+    needs: check-version
+    if: >-
+      needs.check-version.outputs.should_publish == 'true'
+      && needs.check-version.outputs.is_official == 'false'
+      && github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+    permissions:
+      id-token: write
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+
+      - name: Build
+        run: uv build
+
+      - name: Publish to PyPI
+        run: uv publish
+
+      - name: Create git tag and GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="v${{ needs.check-version.outputs.version }}"
+          git tag "$TAG"
+          git push origin "$TAG"
+          gh release create "$TAG" dist/* --generate-notes --prerelease
+
+  # Official versions (x.y.z) are published only from pushes to main
   publish:
     needs: check-version
-    if: needs.check-version.outputs.should_publish == 'true' && github.event_name == 'push'
+    if: >-
+      needs.check-version.outputs.should_publish == 'true'
+      && needs.check-version.outputs.is_official == 'true'
+      && github.event_name == 'push'
     runs-on: ubuntu-latest
     environment:
       name: pypi
