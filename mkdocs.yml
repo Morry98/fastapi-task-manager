@@ -1,0 +1,152 @@
+site_name: FastAPI Task Manager
+site_description: FastAPI framework ...
+repo_url: https://github.com/Morry98/fastapi-task-manager
+repo_name: Morry98/fastapi-task-manager
+docs_dir: docs/docs
+site_dir: docs/site
+use_directory_urls: false   # generate file.html instead of folders with index.html
+strict: true                # build fail if there are any warnings
+
+theme:
+  custom_dir: docs/docs/overrides
+  name: material
+  language: en
+  features:
+    - content.code.annotate
+    - content.code.copy
+    - content.footnote.tooltips
+    - content.tabs.link
+    - content.tooltips
+    - navigation.indexes
+    - navigation.instant
+    - navigation.instant.prefetch
+    - navigation.instant.progress
+    - navigation.path
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.top
+    - navigation.tracking
+    - navigation.footer
+    - search.highlight
+    - search.share
+    - search.suggest
+    - toc.follow
+
+  palette:
+    - media: (prefers-color-scheme)
+      toggle:
+        icon: material/lightbulb-auto
+        name: Switch to light mode
+    - media: '(prefers-color-scheme: light)'
+      scheme: default
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/lightbulb
+        name: Switch to dark mode
+    - media: '(prefers-color-scheme: dark)'
+      scheme: slate
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/lightbulb-outline
+        name: Switch to system preference
+  icon:
+    repo: fontawesome/brands/github-alt
+  logo: assets/images/logo-white.svg
+  favicon: assets/images/logo-circle-purple.svg
+
+plugins:
+  - search
+  - glightbox
+  - termynal:
+      title: bash
+      buttons: macos
+      prompt_literal_start:
+        - "$"
+
+markdown_extensions:
+  # Python Markdown
+  abbr:
+  attr_list:
+  footnotes:
+  md_in_html:
+  tables:
+  toc:
+    permalink: true
+
+  # Python Markdown Extensions
+  pymdownx.betterem:
+    smart_enable: all
+  pymdownx.caret:
+  pymdownx.highlight:
+    line_spans: __span
+  pymdownx.inlinehilite:
+  pymdownx.keys:
+  pymdownx.mark:
+  pymdownx.superfences:
+    custom_fences:
+    - name: mermaid
+      class: mermaid
+      format: !!python/name:pymdownx.superfences.fence_code_format
+  pymdownx.tilde:
+
+  # pymdownx blocks
+  pymdownx.blocks.admonition:
+    types:
+    - note
+    - attention
+    - caution
+    - danger
+    - error
+    - tip
+    - hint
+    - warning
+    # Custom types
+    - info
+  pymdownx.blocks.details:
+  pymdownx.blocks.tab:
+      alternate_style: true
+
+  # Emoji support
+  pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+  # Other extensions
+  mdx_include:
+  markdown_include_variants:
+
+
+extra_css:
+  - assets/brand-colors.css
+  - assets/extra.css
+
+extra:
+  social:
+    - icon: fontawesome/brands/github-alt
+      link: https://github.com/Morry98/fastapi-task-manager
+    - icon: fontawesome/brands/linkedin
+      link: https://www.linkedin.com/in/morandomatteo
+    - icon: custom/ciuf
+      name: CIUF
+      link: https://ciuf.io
+
+extra_javascript:
+  - assets/javascripts/termynal-reload.js
+
+nav:
+  - FastAPI Task Manager: index.md
+  - features.md
+  - Learn:
+    - Getting Started:
+      - learn/getting_started/index.md
+      - learn/getting_started/installation.md
+      - learn/getting_started/configurations.md
+    - learn/api-reference.md
+    - learn/dynamic-tasks.md
+    - learn/architecture.md
+    - learn/deployment.md
+  - About: about/index.md
+  - People: about/people.md
+  - Release Notes: release_notes/index.md

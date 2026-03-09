@@ -54,3 +54,9 @@ cover/
 # Environments
 .env
 .venv
+
+# Docs
+docs/site
+
+# AI
+.claude

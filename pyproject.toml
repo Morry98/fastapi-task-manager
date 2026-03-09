@@ -1,7 +1,7 @@
 [project]
 name = "fastapi-task-manager"
-version = "0.8.0"
-description = "A task manager for Fastapi. Robust Scheduling, Distributed Safety"
+version = "1.0.0"
+description = "A task manager for FastAPI. Robust Scheduling, Distributed Safety"
 readme = "README.md"
 authors = [
     { name = "Matteo Morando", email = "matteo.morando98@gmail.com" }
@@ -12,13 +12,15 @@ keywords = [
     "task-manager",
     "task-scheduler",
     "distributed",
-    "safety",
-    "robust",
+    "cron",
+    "redis",
+    "scheduling",
+    "background-tasks",
 ]
 license = { file = "LICENSE" }
-urls = { "Homepage" = "https://github.com/Morry98/fastapi-task-manager", "Bug Tracker"  = "https://github.com/Morry98/fastapi-task-manager/repo/issues" }
+urls = { "Homepage" = "https://github.com/Morry98/fastapi-task-manager", "Bug Tracker" = "https://github.com/Morry98/fastapi-task-manager/issues", "Documentation" = "https://fastapi-task-manager.morando.uk", "Changelog" = "https://github.com/Morry98/fastapi-task-manager/blob/main/CHANGELOG.md" }
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
@@ -29,6 +31,7 @@ classifiers = [
     "Programming Language :: Python :: 3.14",
     "Framework :: FastAPI",
     "Operating System :: OS Independent",
+    "Topic :: Software Development :: Libraries",
 ]
 dependencies = [
     "cronsim>=2.7",
@@ -37,8 +40,30 @@ dependencies = [
     "redis>=6.2.0",
 ]
 
+[dependency-groups]
+dev = [
+    "coverage>=7.8.0",
+    "pydantic-settings>=2.12.0",
+    "pytest>=8.3.5",
+    "pytest-asyncio>=1.3.0",
+    "ruff>=0.14.10",
+    "setuptools>=80.8.0",  # Added to fix pycharm test discovery
+    "ty>=0.0.5",
+]
+docs = [
+    "markdown-include-variants>=0.0.4",
+    "mdx-include>=1.4.2",
+    "mkdocs-awesome-pages-plugin>=2.10.1",
+    "mkdocs-glightbox>=0.5.1",
+    "mkdocs-macros-plugin>=1.3.9",
+    "mkdocs-material>=9.6.20",
+    "pymdown-extensions>=10.16.1",
+    "click<=8.2.1",
+    "termynal>=0.13.1",
+]
+
 [build-system]
-requires = ["uv_build>=0.9.0,<0.10.0"]
+requires = ["uv_build>=0.9.0,<0.11.0"]
 build-backend = "uv_build"
 
 [[tool.uv.index]]
@@ -74,7 +99,6 @@ select = [
     "T10", # flake8-debugger
     "EXE", # flake8-executable
     # "DTZ", # flake8-datetimez
-    "DJ", # flake8-django
     "EM", # flake8-errmsg
     "ISC", # flake8-implicit-str-concat
     "ICN", # flake8-import-conventions
@@ -99,15 +123,12 @@ select = [
     # "PGH", # pygrep-hooks
     "PL", # Pylint
     "TRY", # tryceratops
-    "NPY", # NumPy-specific rules
     "RUF", # Ruff-specific rules
 ]
 ignore = [
     "B008",
     "N801",
     "N806",
-    "PD003",
-    "PD011",
     "Q000",
     "S101",
     "S113",
@@ -129,13 +150,5 @@ max-complexity = 12
 [tool.ruff.lint.pylint]
 max-args = 8
 
-[tool.mypy]
-no_implicit_optional = true
-check_untyped_defs = true
-warn_redundant_casts = true
-warn_unused_ignores = true
-warn_no_return = true
-warn_unreachable = true
-pretty = true
-ignore_missing_imports = true
-plugins = []
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
