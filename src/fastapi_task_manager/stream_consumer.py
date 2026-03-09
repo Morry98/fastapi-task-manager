@@ -242,7 +242,7 @@ class StreamConsumer:
                     result = await self._try_read_stream(
                         stream_keys.task_stream_high,
                         stream_keys.consumer_group,
-                        block_ms=0,  # Non-blocking for high priority
+                        block_ms=None,  # None = non-blocking; 0 would block forever
                     )
 
                     if result:
@@ -276,14 +276,14 @@ class StreamConsumer:
         self,
         stream_key: str,
         group_name: str,
-        block_ms: int,
+        block_ms: int | None,
     ) -> tuple[str, dict] | None:
         """Try to read a single message from a stream.
 
         Args:
             stream_key: The Redis stream key to read from.
             group_name: The consumer group name.
-            block_ms: How long to block waiting for a message (0 = non-blocking).
+            block_ms: How long to block waiting for a message (None = non-blocking, 0 = forever).
 
         Returns:
             Tuple of (message_id, data) if a message was read, None otherwise.
