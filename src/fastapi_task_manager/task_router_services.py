@@ -26,6 +26,7 @@ from fastapi_task_manager.schema.task import (
     TaskActionResponse,
     TaskDetailed,
     TaskRun,
+    TaskStatistics,
 )
 from fastapi_task_manager.schema.task_group import TaskGroup as TaskGroupSchema
 
@@ -101,10 +102,10 @@ async def get_tasks(
     name: str | None = None,
     tag: str | None = None,
 ) -> list[TaskDetailed]:
-    """Retrieve detailed task information with statistics from Redis.
+    """Retrieve detailed task information from Redis.
 
     Uses the shared async Redis connection and pipelines for efficient batch reads.
-    Includes running state detection for both polling and stream modes.
+    Includes running state detection. Statistics are available via the dedicated endpoint.
     """
     redis_client = task_manager.redis_client
     key_builder = RedisKeyBuilder(task_manager.config.redis_key_prefix)
@@ -123,7 +124,6 @@ async def get_tasks(
 
             # Build async pipeline with all reads for this task
             pipe = redis_client.pipeline()
-            pipe.xrange(keys.stats_stream)
             pipe.get(keys.next_run)
             pipe.get(keys.disabled)
             pipe.get(keys.retry_after)
@@ -136,25 +136,11 @@ async def get_tasks(
             results = await pipe.execute()
 
             # Unpack pipeline results
-            stats_entries: list[tuple[bytes, dict]] = results[0]
-            next_run_b: bytes | None = results[1]
-            disabled_b: bytes | None = results[2]
-            retry_after_b: bytes | None = results[3]
-            retry_delay_b: bytes | None = results[4]
-            is_running: bool = bool(results[5])
-
-            # Parse stream entries (already in chronological order from XRANGE)
-            task_runs: list[TaskRun] = []
-            for _entry_id, fields in stats_entries:
-                ts_val = fields.get("ts")
-                dur_val = fields.get("dur")
-                if ts_val is not None and dur_val is not None:
-                    task_runs.append(
-                        TaskRun(
-                            run_date=datetime.fromtimestamp(float(ts_val), timezone.utc),
-                            durations_second=float(dur_val),
-                        ),
-                    )
+            next_run_b: str | None = results[0]
+            disabled_b: str | None = results[1]
+            retry_after_b: str | None = results[2]
+            retry_delay_b: str | None = results[3]
+            is_running: bool = bool(results[4])
 
             # Parse next run timestamp (sentinel value = year 2000 = never scheduled)
             next_run = datetime(year=2000, month=1, day=1, tzinfo=timezone.utc)
@@ -175,17 +161,61 @@ async def get_tasks(
                     tags=t.tags,
                     expression=t.expression,
                     high_priority=t.high_priority,
+                    retry_backoff=t.retry_backoff,
+                    retry_backoff_max=t.retry_backoff_max,
+                    dynamic=t.dynamic,
                     task_group_name=tg.name,
+                    kwargs=t.kwargs,
+                    function_name=t.function_name,
                     next_run=next_run,
                     is_active=is_active,
                     is_running=is_running,
                     retry_after=retry_after,
                     retry_delay=retry_delay,
-                    runs=task_runs,
                 ),
             )
 
     return list_to_return
+
+
+async def get_task_statistics(
+    task_manager: "TaskManager",
+    task_group_name: str,
+    task_name: str,
+) -> TaskStatistics:
+    """Retrieve execution statistics for a single task.
+
+    Reads the stats stream from Redis and returns the run history.
+    Raises 404 if the task is not found.
+    """
+    # Verify the task exists
+    matches = _find_tasks(task_manager, task_group_name=task_group_name, name=task_name)
+    tg, t = matches[0]
+
+    redis_client = task_manager.redis_client
+    key_builder = RedisKeyBuilder(task_manager.config.redis_key_prefix)
+    keys = key_builder.get_task_keys(tg.name, t.name)
+
+    # Read all stats entries from the stream
+    stats_entries = await redis_client.xrange(keys.stats_stream)
+
+    task_runs: list[TaskRun] = []
+    for _entry_id, fields in stats_entries:
+        ts_val = fields.get("ts")
+        dur_val = fields.get("dur")
+        if ts_val is not None and dur_val is not None:
+            task_runs.append(
+                TaskRun(
+                    run_date=datetime.fromtimestamp(float(ts_val), timezone.utc),
+                    durations_second=float(dur_val),
+                ),
+            )
+
+    return TaskStatistics(
+        task_group_name=tg.name,
+        task_name=t.name,
+        runs=task_runs,
+    )
 
 
 # ---------------------------------------------------------------------------

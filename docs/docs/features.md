@@ -62,7 +62,8 @@ Get full control over your tasks through FastAPI's native router system. Pause t
 - `GET /health` - System health check with worker and leader info
 - `GET /config` - Current configuration inspection
 - `GET /task-groups` - List all task groups
-- `GET /tasks` - List all tasks with execution statistics and retry state
+- `GET /tasks` - List all tasks with running state and retry info
+- `GET /tasks/{task_group_name}/{task_name}/statistics` - Get execution statistics for a single task
 - `POST /tasks/disable` - Disable task execution
 - `POST /tasks/enable` - Enable task execution
 - `POST /tasks/trigger` - Trigger immediate task execution

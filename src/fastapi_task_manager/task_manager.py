@@ -16,6 +16,7 @@ from fastapi_task_manager.schema.task import (
     RegisteredFunctionsResponse,
     TaskActionResponse,
     TaskDetailed,
+    TaskStatistics,
 )
 from fastapi_task_manager.schema.task_group import TaskGroup as TaskGroupSchema
 from fastapi_task_manager.task_group import TaskGroup
@@ -29,6 +30,7 @@ from fastapi_task_manager.task_router_services import (
     get_health,
     get_registered_functions,
     get_task_groups,
+    get_task_statistics,
     get_tasks,
     reset_retry,
     trigger_tasks,
@@ -173,8 +175,18 @@ class TaskManager:
                     "/tasks",
                     response_model_by_alias=True,
                     response_model=list[TaskDetailed],
-                    description="Get tasks with execution statistics and running state",
+                    description="Get tasks with running state",
                     name="Get tasks",
+                ),
+            ),
+            (
+                cast("Callable[..., Any]", get_task_statistics),
+                router.get(
+                    "/tasks/{task_group_name}/{task_name}/statistics",
+                    response_model_by_alias=True,
+                    response_model=TaskStatistics,
+                    description="Get execution statistics for a single task",
+                    name="Get task statistics",
                 ),
             ),
             (

@@ -76,7 +76,6 @@ class TestTaskDetailed:
             task_group_name="g1",
             next_run=datetime(2024, 1, 1, tzinfo=timezone.utc),
             is_active=True,
-            runs=[],
         )
         assert td.is_running is False
         assert td.retry_after is None

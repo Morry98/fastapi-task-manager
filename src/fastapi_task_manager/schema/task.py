@@ -24,13 +24,22 @@ class TaskRun(BaseModel):
 
 class TaskDetailed(TaskBase):
     task_group_name: str
+    kwargs: dict | None = None
+    function_name: str | None = None
     next_run: datetime
     is_active: bool
     is_running: bool = False
-    runs: list[TaskRun]
     # Retry backoff state (None = no backoff active, task running normally)
     retry_after: datetime | None = None
     retry_delay: float | None = None
+
+
+class TaskStatistics(BaseModel):
+    """Execution statistics for a single task."""
+
+    task_group_name: str
+    task_name: str
+    runs: list[TaskRun]
 
 
 class Task(TaskBase):

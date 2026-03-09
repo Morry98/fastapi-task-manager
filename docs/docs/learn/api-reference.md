@@ -73,7 +73,7 @@ List all task groups with optional filtering.
 
 ### GET /tasks
 
-Retrieve detailed information for all tasks, including execution statistics, running state, and retry backoff status.
+Retrieve detailed information for all tasks, including running state and retry backoff status.
 
 **Query parameters:**
 
@@ -97,19 +97,43 @@ Retrieve detailed information for all tasks, including execution statistics, run
     "retry_backoff_max": null,
     "dynamic": false,
     "task_group_name": "My Example Task Group",
+    "kwargs": null,
+    "function_name": null,
     "next_run": "2026-03-08T10:05:00Z",
     "is_active": true,
     "is_running": false,
     "retry_after": null,
-    "retry_delay": null,
-    "runs": [
-      {
-        "run_date": "2026-03-08T10:00:00Z",
-        "durations_second": 0.42
-      }
-    ]
+    "retry_delay": null
   }
 ]
+```
+
+---
+
+### GET /tasks/{task_group_name}/{task_name}/statistics
+
+Retrieve execution statistics for a single task. Returns the run history with timestamps and durations.
+
+**Path parameters:**
+
+| Parameter | Type | Description |
+|---|---|---|
+| `task_group_name` | `string` (required) | Task group name |
+| `task_name` | `string` (required) | Task name |
+
+**Response model:** `TaskStatistics`
+
+```json
+{
+  "task_group_name": "My Example Task Group",
+  "task_name": "my_scheduled_task",
+  "runs": [
+    {
+      "run_date": "2026-03-08T10:00:00Z",
+      "durations_second": 0.42
+    }
+  ]
+}
 ```
 
 ---
