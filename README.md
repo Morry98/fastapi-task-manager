@@ -14,7 +14,7 @@ Lightweight, efficient and fast to code scheduled task management system built o
 [![PyPI - License](https://img.shields.io/pypi/l/fastapi-task-manager?style=plastic&color=964de0)](https://github.com/Morry98/fastapi-task-manager/blob/main/LICENSE)
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/fastapi-task-manager?style=plastic&color=964de0)](https://pypi.org/project/fastapi-task-manager/)
 [![Pepy Total Downloads](https://img.shields.io/pepy/dt/fastapi-task-manager?style=plastic&color=964de0)](https://pepy.tech/project/fastapi-task-manager)
-[![Coveralls](https://img.shields.io/coverallsCoverage/github/morry98/fastapi-task-manager?style=plastic&color=964de0)](https://coveralls.io/github/Morry98/fastapi-task-manager)
+[![Coveralls](https://img.shields.io/coverallsCoverage/github/Morry98/fastapi-task-manager?style=plastic&color=964de0)](https://coveralls.io/github/Morry98/fastapi-task-manager)
 
 ---
 
