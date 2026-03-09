@@ -166,6 +166,50 @@ If a registered function has been removed from the code since the task was creat
 
 ---
 
-## Complete Example
+## Programmatic API (Python)
+
+In addition to the REST API, you can create and remove dynamic tasks directly from Python code. This is useful when you want to create tasks from your own endpoints, CLI commands, startup logic, or event handlers.
+
+### Creating Tasks from Code
+
+Use `task_group.add_dynamic_task()` to create a task at runtime:
+
+{* ./docs_src/tutorial/dynamic_tasks_python_py310.py ln[38:51] *}
+
+The method accepts the same parameters available in the REST API:
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `function_name` | `str` | Yes | Name of a registered function |
+| `cron_expression` | `str` | Yes | Cron schedule expression |
+| `kwargs` | `dict` | No | Arguments passed to the function |
+| `name` | `str` | No | Custom task name (auto-generated if omitted) |
+| `description` | `str` | No | Human-readable description |
+| `high_priority` | `bool` | No | Use the high-priority stream |
+| `tags` | `list[str]` | No | Tags for filtering |
+| `retry_backoff` | `float` | No | Initial retry delay in seconds |
+| `retry_backoff_max` | `float` | No | Maximum retry delay in seconds |
+
+The method returns the created `Task` object and raises `RuntimeError` if the function is not registered or the task name is already taken.
+
+### Removing Tasks from Code
+
+Use `task_group.remove_dynamic_task()` to remove a dynamic task:
+
+{* ./docs_src/tutorial/dynamic_tasks_python_py310.py ln[54:57] *}
+
+Only dynamic tasks can be removed — static tasks (defined with `@add_task()`) raise a `RuntimeError`.
+
+//// warning | No automatic Redis persistence
+When using the Python API directly, the task is added **only in-memory**. It will **not** survive application restarts unless you also persist it to Redis (as the REST API does automatically). If you need persistence, use the REST API (`POST /tasks`) or replicate the Redis Hash logic from `task_router_services.create_dynamic_task()`.
+////
+
+### Complete Python API Example
+
+{* ./docs_src/tutorial/dynamic_tasks_python_py310.py *}
+
+---
+
+## Complete REST API Example
 
 {* ./docs_src/tutorial/dynamic_tasks_py310.py *}
