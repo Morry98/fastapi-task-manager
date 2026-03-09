@@ -177,13 +177,48 @@ class StreamConsumer:
         return asyncio.create_task(self._consume_loop(), name="StreamConsumer")
 
     async def stop(self) -> None:
-        """Stop the consumer loop and wait for running tasks to complete."""
+        """Stop the consumer loop, wait for running tasks, and remove consumer from group."""
         self._running = False
 
         # Wait for all running tasks to complete
         if self._running_tasks:
             logger.info("Waiting for %d running tasks to complete...", len(self._running_tasks))
             await asyncio.gather(*self._running_tasks, return_exceptions=True)
+
+        # Remove this consumer from both consumer groups so it doesn't linger in Redis
+        await self._deregister_consumer()
+
+    async def _deregister_consumer(self) -> None:
+        """Remove this consumer from both stream consumer groups on shutdown.
+
+        Uses XGROUP DELCONSUMER to cleanly remove the consumer entry from Redis,
+        preventing stale consumers from lingering after the worker stops.
+        """
+        stream_keys = self._keys.get_stream_keys()
+        consumer_name = self._worker.redis_safe_id
+
+        for stream_key, label in [
+            (stream_keys.task_stream_high, "high"),
+            (stream_keys.task_stream_low, "low"),
+        ]:
+            try:
+                await self._redis.xgroup_delconsumer(
+                    stream_key,
+                    stream_keys.consumer_group,
+                    consumer_name,
+                )
+                logger.info(
+                    "Removed consumer '%s' from %s priority group",
+                    consumer_name,
+                    label,
+                )
+            except Exception:
+                logger.warning(
+                    "Failed to remove consumer '%s' from %s priority group",
+                    consumer_name,
+                    label,
+                    exc_info=True,
+                )
 
     async def _consume_loop(self) -> None:
         """Main consumer loop with dual-queue priority logic.
