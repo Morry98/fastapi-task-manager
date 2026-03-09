@@ -156,7 +156,6 @@ class TestConfigResponse:
             statistics_redis_expiration=432000,
             poll_interval=0.1,
             worker_service_name="svc",
-            stream_max_len=10000,
             stream_block_ms=1000,
             leader_heartbeat_interval=3.0,
             leader_retry_interval=5.0,

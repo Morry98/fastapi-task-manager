@@ -32,6 +32,10 @@ logger = logging.getLogger("fastapi.task-manager.coordinator")
 
 INITIAL_LOCK_TTL: int = 15
 
+# Safety-net cap for stream length. Messages are deleted after ACK,
+# so this limit is only reached if deletes fail or consumers are down.
+STREAM_MAX_LEN: int = 10_000
+
 
 class Coordinator:
     """Evaluates cron expressions and publishes ready tasks to stream.
@@ -201,7 +205,8 @@ class Coordinator:
 
         Creates a message in the appropriate task stream (high or low priority)
         containing the task group name, task name, and scheduling timestamp.
-        The stream is automatically trimmed to the configured max length.
+        The stream has a hardcoded safety-net MAXLEN cap; consumed messages
+        are deleted individually via XDEL after acknowledgement.
 
         After publishing, the task identifier is added to the scheduled tracking
         SET so the Reconciler can detect lost tasks.
@@ -223,7 +228,7 @@ class Coordinator:
                 "task": task.name,
                 "scheduled_at": str(datetime.now(timezone.utc).timestamp()),
             },
-            maxlen=self._task_manager.config.stream_max_len,
+            maxlen=STREAM_MAX_LEN,
             approximate=True,  # Use ~ for efficiency
         )
 

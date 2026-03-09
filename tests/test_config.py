@@ -27,7 +27,6 @@ class TestConfigDefaults:
 
     def test_streams_config_defaults(self):
         config = Config(redis_host="localhost")
-        assert config.stream_max_len == 10000
         assert config.stream_block_ms == 1000
 
     def test_leader_election_defaults(self):

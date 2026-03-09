@@ -371,7 +371,6 @@ def get_config(task_manager: "TaskManager") -> ConfigResponse:
         statistics_redis_expiration=c.statistics_redis_expiration,
         poll_interval=c.poll_interval,
         worker_service_name=c.worker_service_name,
-        stream_max_len=c.stream_max_len,
         stream_block_ms=c.stream_block_ms,
         leader_heartbeat_interval=c.leader_heartbeat_interval,
         leader_retry_interval=c.leader_retry_interval,

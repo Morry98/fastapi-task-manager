@@ -68,7 +68,7 @@ The leader election system ensures only one instance schedules tasks, while all 
 
 ### Minimum Version
 
-FastAPI Task Manager uses Redis Streams (`XADD`, `XREADGROUP`, `XACK`, `XCLAIM`), which require **Redis 5.0+**. Redis 7.0+ is recommended.
+FastAPI Task Manager uses Redis Streams (`XADD`, `XREADGROUP`, `XACK`, `XDEL`, `XCLAIM`), which require **Redis 5.0+**. Redis 7.0+ is recommended.
 
 ### Persistence
 
@@ -87,7 +87,6 @@ This ensures dynamic task definitions and task state are not lost if Redis resta
 Redis memory usage depends on:
 
 - Number of tasks and their statistics history (`statistics_history_runs`)
-- Stream length (`stream_max_len`)
 - Number of dynamic task definitions
 
 For most deployments, a few hundred MB is sufficient.

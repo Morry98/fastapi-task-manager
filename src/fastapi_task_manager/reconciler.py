@@ -27,6 +27,7 @@ from redis.asyncio import Redis
 from redis.exceptions import ResponseError
 
 from fastapi_task_manager.async_utils import interruptible_sleep
+from fastapi_task_manager.coordinator import STREAM_MAX_LEN
 from fastapi_task_manager.leader_election import LeaderElector
 from fastapi_task_manager.redis_keys import RedisKeyBuilder
 from fastapi_task_manager.schema.task import Task
@@ -230,7 +231,7 @@ class Reconciler:
                 "scheduled_at": str(datetime.now(timezone.utc).timestamp()),
                 "reconciled": "1",
             },
-            maxlen=self._task_manager.config.stream_max_len,
+            maxlen=STREAM_MAX_LEN,
             approximate=True,
         )
 
@@ -402,7 +403,7 @@ class Reconciler:
                 },
                 "requeued_from": message_id,
             },
-            maxlen=self._task_manager.config.stream_max_len,
+            maxlen=STREAM_MAX_LEN,
             approximate=True,
         )
 

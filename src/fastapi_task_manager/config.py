@@ -24,8 +24,6 @@ class Config(BaseModel):
     # --------- End of runner config variables ---------
 
     # --------- Streams config variables ---------
-    # Maximum number of entries in the task stream (uses approximate trimming)
-    stream_max_len: int = 10000
     # Block timeout for XREADGROUP in milliseconds
     stream_block_ms: int = 1000
     # --------- End of streams config variables ---------

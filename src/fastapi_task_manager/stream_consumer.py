@@ -532,6 +532,9 @@ class StreamConsumer:
             message_id,
         )
 
+        # Remove the message from the stream to keep memory usage low
+        await self._redis.xdel(stream_key, message_id)
+
     def _find_task(self, group_name: str, task_name: str) -> Task | None:
         """Find a task by group and task name.
 

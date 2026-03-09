@@ -26,7 +26,6 @@ class ConfigResponse(BaseModel):
     worker_service_name: str
 
     # Streams
-    stream_max_len: int
     stream_block_ms: int
 
     # Leader election

@@ -15,7 +15,6 @@ config = Config(
     poll_interval=0.1,
     worker_service_name="fastapi-task-manager",
     # --------- Streams config ---------
-    stream_max_len=10000,
     stream_block_ms=1000,
     # --------- Leader election config ---------
     leader_heartbeat_interval=3.0,
