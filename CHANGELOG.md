@@ -21,7 +21,7 @@
 
 ### Docs
 
-* 📝 Add first implementation of docs available at [https://fastapi-task-manager.morando.uk](https://fastapi-task-manager.morando.uk)
+* 📝 Add first implementation of docs available at [https://fastapi-task-manager.morry98.com](https://fastapi-task-manager.morry98.com)
 
 ### Internals
 

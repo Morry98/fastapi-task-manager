@@ -18,7 +18,7 @@ keywords = [
     "background-tasks",
 ]
 license = { file = "LICENSE" }
-urls = { "Homepage" = "https://github.com/Morry98/fastapi-task-manager", "Bug Tracker" = "https://github.com/Morry98/fastapi-task-manager/issues", "Documentation" = "https://fastapi-task-manager.morando.uk", "Changelog" = "https://github.com/Morry98/fastapi-task-manager/blob/main/CHANGELOG.md" }
+urls = { "Homepage" = "https://github.com/Morry98/fastapi-task-manager", "Bug Tracker" = "https://github.com/Morry98/fastapi-task-manager/issues", "Documentation" = "https://fastapi-task-manager.morry98.com", "Changelog" = "https://github.com/Morry98/fastapi-task-manager/blob/main/CHANGELOG.md" }
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",

@@ -17,6 +17,6 @@ This project is licensed under the terms of the [MIT license](https://github.com
 
 ## Links
 
-- **Documentation**: [https://fastapi-task-manager.morando.uk](https://fastapi-task-manager.morando.uk){ .external-link target="_blank" }
+- **Documentation**: [https://fastapi-task-manager.morry98.com](https://fastapi-task-manager.morry98.com){ .external-link target="_blank" }
 - **Source Code**: [https://github.com/Morry98/fastapi-task-manager](https://github.com/Morry98/fastapi-task-manager){ .external-link target="_blank" }
 - **PyPI**: [https://pypi.org/project/fastapi-task-manager](https://pypi.org/project/fastapi-task-manager){ .external-link target="_blank" }

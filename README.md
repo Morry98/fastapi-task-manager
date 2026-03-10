@@ -1,6 +1,6 @@
 
 <p align="center">
-  <a href="https://fastapi-task-manager.morando.uk"><img src="https://fastapi-task-manager.morando.uk/assets/images/logo-text-purple.svg" alt="FastAPI Task Manager"></a>
+  <a href="https://fastapi-task-manager.morry98.com"><img src="https://fastapi-task-manager.morry98.com/assets/images/logo-text-purple.svg" alt="FastAPI Task Manager"></a>
 </p>
 <p align="center">
     <em>Lightweight, efficient and fast to code scheduled task management system built on FastAPI</em>
@@ -18,7 +18,7 @@ Lightweight, efficient and fast to code scheduled task management system built o
 
 ---
 
-**Documentation**: [https://fastapi-task-manager.morando.uk](https://fastapi-task-manager.morando.uk)
+**Documentation**: [https://fastapi-task-manager.morry98.com](https://fastapi-task-manager.morry98.com)
 
 **Source Code**: [https://github.com/Morry98/fastapi-task-manager](https://github.com/Morry98/fastapi-task-manager)
 
