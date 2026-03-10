@@ -1,6 +1,6 @@
 [project]
 name = "fastapi-task-manager"
-version = "1.0.0"
+version = "1.0.0.post1"
 description = "A task manager for FastAPI. Robust Scheduling, Distributed Safety"
 readme = "README.md"
 authors = [

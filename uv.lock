@@ -363,7 +363,7 @@ wheels = [
 
 [[package]]
 name = "fastapi-task-manager"
-version = "1.0.0"
+version = "1.0.0.post1"
 source = { editable = "." }
 dependencies = [
     { name = "cronsim" },

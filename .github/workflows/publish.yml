@@ -30,7 +30,7 @@ jobs:
           echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
 
           # Check if version matches x.y.z (official) or has pre-release suffix
-          if echo "$VERSION" | grep -qP '^\d+\.\d+\.\d+$'; then
+          if echo "$VERSION" | grep -qP '^\d+\.\d+\.\d+(\.post\d+)?$'; then
             echo "is_official=true" >> "$GITHUB_OUTPUT"
             echo "Version $VERSION is an official release"
           else
