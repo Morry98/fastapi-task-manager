@@ -58,7 +58,7 @@ repos:
 
       - id: ty
         name: ty check
-        entry: uv run ty check .
+        entry: uv run --all-groups ty check .
         language: system
         pass_filenames: false
         exclude: |
