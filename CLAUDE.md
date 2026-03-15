@@ -4,9 +4,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-FastAPI Task Manager is a Python library (v1.0.0) that provides scheduled task management for FastAPI applications using Redis for distributed locking and task state. It enables cron-based task scheduling with single-instance execution safety across multiple app instances.
+FastAPI Task Manager is a Python library that provides scheduled task management for FastAPI applications using Redis for distributed locking and task state. It enables cron-based task scheduling with single-instance execution safety across multiple app instances.
 
-- **Package**: `fastapi-task-manager` on PyPI (also published to TestPyPI)
+- **Package**: `fastapi-task-manager` on PyPI
 - **Python**: >=3.10 (supports 3.10–3.14)
 - **License**: MIT
 - **Build system**: `uv_build`
@@ -43,24 +43,10 @@ uv build
 
 ## Pre-commit
 
-This project uses **pre-commit** to enforce code quality on every commit. The configuration is in `.pre-commit-config.yaml`.
+This project uses **pre-commit** to enforce code quality on every commit. Hooks include formatting (Ruff), security (Bandit), type checking (ty), and more. See `.pre-commit-config.yaml` for the full configuration.
 
-### Hooks (run automatically on `git commit`)
-
-1. **pre-commit-hooks** (v6.0.0): `check-added-large-files`, `check-merge-conflict`, `end-of-file-fixer`, `check-toml`, `check-yaml`, `mixed-line-ending`, `trailing-whitespace`
-2. **remove-tabs** (Lucas-C, v1.5.6)
-3. **uv-lock** (astral-sh): ensures `uv.lock` stays in sync
-4. **ruff-check** + **ruff-format** (astral-sh): lint with `--fix --unsafe-fixes` and format
-5. **bandit** (v1.9.4): security linter
-6. **ty check** (local hook): type checking with Astral's ty
-
-### Exclusions
-
-Pre-commit excludes test files (`.*test.*\.py`, `.*/test/.*`) and markdown (`*.md`) from most hooks.
-
-### Manual-stage hooks
-
-- **prune-stale-tags**: `git fetch origin --prune --prune-tags --tags` (run with `pre-commit run --hook-stage manual prune-stale-tags`)
+- Run manually: `pre-commit run --all-files`
+- Prune stale tags: `pre-commit run --hook-stage manual prune-stale-tags`
 
 ## Architecture
 
@@ -115,17 +101,10 @@ The library exports from `__init__.py`:
 - `Config`
 - `HealthResponse`
 
-## Testing
+## Testing & Documentation
 
-- Framework: **pytest** with **pytest-asyncio** (asyncio_mode = "auto")
-- Coverage: **coverage** package
-- Tests use `pytest-asyncio` for async test support
-
-## Documentation
-
-- Built with **MkDocs** + **Material for MkDocs**
-- Plugins: awesome-pages, glightbox, macros, termynal
-- Serve locally: `uv run mkdocs serve`
+- Tests: **pytest** with **pytest-asyncio** (asyncio_mode = "auto"), coverage via **coverage** package
+- Docs: **MkDocs** + **Material for MkDocs** — serve locally with `uv run mkdocs serve`
 
 ## Code Style
 
@@ -134,6 +113,5 @@ The library exports from `__init__.py`:
 - Type checking with `ty` (Astral's type checker)
 - McCabe complexity limit: 12
 - Max function arguments: 8
-- Pre-commit excludes test files and markdown from some checks
 - **Code must always be commented**: Add clear and concise comments to explain non-obvious logic
 - **Language requirement**: All code (including comments) and documentation must be written in English
