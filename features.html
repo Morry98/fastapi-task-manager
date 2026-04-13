@@ -18,7 +18,7 @@
       
       
       <link rel="icon" href="assets/images/logo-circle-purple.svg">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.4">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
     
       
@@ -1197,6 +1197,7 @@ Whether you're running a single instance with multiple uvicorn workers or a dist
 <p><strong>Built-in safeguards:</strong></p>
 <ul>
 <li>Exponential backoff retry with configurable delays and per-task overrides</li>
+<li>Per-task parallel execution control (<code>allow_parallel=False</code> to prevent overlapping runs)</li>
 <li>Task heartbeat monitoring for crash detection</li>
 <li>Automatic reconciliation of stale and failed tasks</li>
 <li>Health check endpoints for monitoring</li>

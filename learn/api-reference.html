@@ -18,7 +18,7 @@
       
       
       <link rel="icon" href="../assets/images/logo-circle-purple.svg">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.4">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
     
       
@@ -1579,16 +1579,17 @@
 </span><span id="__span-2-8"><span class="w">    </span><span class="nt">"retry_backoff"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
 </span><span id="__span-2-9"><span class="w">    </span><span class="nt">"retry_backoff_max"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
 </span><span id="__span-2-10"><span class="w">    </span><span class="nt">"dynamic"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
-</span><span id="__span-2-11"><span class="w">    </span><span class="nt">"task_group_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"My Example Task Group"</span><span class="p">,</span>
-</span><span id="__span-2-12"><span class="w">    </span><span class="nt">"kwargs"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
-</span><span id="__span-2-13"><span class="w">    </span><span class="nt">"function_name"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
-</span><span id="__span-2-14"><span class="w">    </span><span class="nt">"next_run"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2026-03-08T10:05:00Z"</span><span class="p">,</span>
-</span><span id="__span-2-15"><span class="w">    </span><span class="nt">"is_active"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
-</span><span id="__span-2-16"><span class="w">    </span><span class="nt">"is_running"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
-</span><span id="__span-2-17"><span class="w">    </span><span class="nt">"retry_after"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
-</span><span id="__span-2-18"><span class="w">    </span><span class="nt">"retry_delay"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span>
-</span><span id="__span-2-19"><span class="w">  </span><span class="p">}</span>
-</span><span id="__span-2-20"><span class="p">]</span>
+</span><span id="__span-2-11"><span class="w">    </span><span class="nt">"allow_parallel"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+</span><span id="__span-2-12"><span class="w">    </span><span class="nt">"task_group_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"My Example Task Group"</span><span class="p">,</span>
+</span><span id="__span-2-13"><span class="w">    </span><span class="nt">"kwargs"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+</span><span id="__span-2-14"><span class="w">    </span><span class="nt">"function_name"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+</span><span id="__span-2-15"><span class="w">    </span><span class="nt">"next_run"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2026-03-08T10:05:00Z"</span><span class="p">,</span>
+</span><span id="__span-2-16"><span class="w">    </span><span class="nt">"is_active"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+</span><span id="__span-2-17"><span class="w">    </span><span class="nt">"is_running"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+</span><span id="__span-2-18"><span class="w">    </span><span class="nt">"retry_after"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+</span><span id="__span-2-19"><span class="w">    </span><span class="nt">"retry_delay"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span>
+</span><span id="__span-2-20"><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-2-21"><span class="p">]</span>
 </span></code></pre></div>
 <hr>
 <h3 id="get-taskstask_group_nametask_namestatistics">GET /tasks/{task_group_name}/{task_name}/statistics<a class="headerlink" href="#get-taskstask_group_nametask_namestatistics" title="Permanent link">¶</a></h3>
@@ -1732,8 +1733,9 @@
 </span><span id="__span-6-8"><span class="w">  </span><span class="nt">"high_priority"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
 </span><span id="__span-6-9"><span class="w">  </span><span class="nt">"tags"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"reports"</span><span class="p">],</span>
 </span><span id="__span-6-10"><span class="w">  </span><span class="nt">"retry_backoff"</span><span class="p">:</span><span class="w"> </span><span class="mf">5.0</span><span class="p">,</span>
-</span><span id="__span-6-11"><span class="w">  </span><span class="nt">"retry_backoff_max"</span><span class="p">:</span><span class="w"> </span><span class="mf">120.0</span>
-</span><span id="__span-6-12"><span class="p">}</span>
+</span><span id="__span-6-11"><span class="w">  </span><span class="nt">"retry_backoff_max"</span><span class="p">:</span><span class="w"> </span><span class="mf">120.0</span><span class="p">,</span>
+</span><span id="__span-6-12"><span class="w">  </span><span class="nt">"allow_parallel"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
+</span><span id="__span-6-13"><span class="p">}</span>
 </span></code></pre></div>
 <table>
 <thead>
@@ -1804,6 +1806,12 @@
 <td><code>float</code></td>
 <td>No</td>
 <td>Per-task max backoff override</td>
+</tr>
+<tr>
+<td><code>allow_parallel</code></td>
+<td><code>bool \| null</code></td>
+<td>No</td>
+<td>Allow concurrent executions (<code>null</code> = inherit from group/config)</td>
 </tr>
 </tbody>
 </table>
