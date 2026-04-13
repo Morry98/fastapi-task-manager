@@ -148,6 +148,22 @@ curl -X POST http://localhost:8000/task-manager/tasks \
   }'
 ```
 
+### Disable Parallel Execution
+
+Set `allow_parallel: false` to prevent a task from being scheduled while a previous execution is still running. This is checked via the Redis heartbeat key, so it works correctly across multiple workers.
+
+```bash
+curl -X POST http://localhost:8000/task-manager/tasks \
+  -H "Content-Type: application/json" \
+  -d '{
+    "task_group_name": "Reports",
+    "function_name": "send_report",
+    "cron_expression": "*/5 * * * *",
+    "name": "long_running_report",
+    "allow_parallel": false
+  }'
+```
+
 ### Custom Task Names
 
 If you don't provide a `name`, one is auto-generated from the function name plus a hash of the kwargs and cron expression. Providing explicit names makes tasks easier to manage and monitor.
@@ -189,6 +205,7 @@ The method accepts the same parameters available in the REST API:
 | `tags` | `list[str]` | No | Tags for filtering |
 | `retry_backoff` | `float` | No | Initial retry delay in seconds |
 | `retry_backoff_max` | `float` | No | Maximum retry delay in seconds |
+| `allow_parallel` | `bool \| None` | No | Allow concurrent executions (`None` = inherit from group/config) |
 
 The method returns the created `Task` object and raises `RuntimeError` if the function is not registered or the task name is already taken.
 
