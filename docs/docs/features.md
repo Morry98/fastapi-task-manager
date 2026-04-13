@@ -100,6 +100,7 @@ Built with production environments in mind, FastAPI Task Manager includes compre
 **Built-in safeguards:**
 
 - Exponential backoff retry with configurable delays and per-task overrides
+- Per-task parallel execution control (`allow_parallel=False` to prevent overlapping runs)
 - Task heartbeat monitoring for crash detection
 - Automatic reconciliation of stale and failed tasks
 - Health check endpoints for monitoring

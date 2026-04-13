@@ -89,6 +89,7 @@ def get_task_groups(
         TaskGroupSchema(
             name=x.name,
             tags=x.tags,
+            allow_parallel=x.allow_parallel,
             task_count=len(x.tasks),
         )
         for x in task_manager.task_groups
@@ -164,6 +165,7 @@ async def get_tasks(
                     retry_backoff=t.retry_backoff,
                     retry_backoff_max=t.retry_backoff_max,
                     dynamic=t.dynamic,
+                    allow_parallel=t.allow_parallel,
                     task_group_name=tg.name,
                     kwargs=t.kwargs,
                     function_name=t.function_name,
@@ -399,6 +401,7 @@ def get_config(task_manager: "TaskManager") -> ConfigResponse:
         concurrent_tasks=c.concurrent_tasks,
         statistics_history_runs=c.statistics_history_runs,
         statistics_redis_expiration=c.statistics_redis_expiration,
+        allow_parallel=c.allow_parallel,
         poll_interval=c.poll_interval,
         worker_service_name=c.worker_service_name,
         stream_block_ms=c.stream_block_ms,
@@ -465,6 +468,7 @@ async def create_dynamic_task(
             tags=request.tags,
             retry_backoff=request.retry_backoff,
             retry_backoff_max=request.retry_backoff_max,
+            allow_parallel=request.allow_parallel,
         )
     except RuntimeError as e:
         raise HTTPException(status_code=409, detail=str(e)) from e
@@ -486,6 +490,7 @@ async def create_dynamic_task(
         "tags": request.tags,
         "retry_backoff": request.retry_backoff,
         "retry_backoff_max": request.retry_backoff_max,
+        "allow_parallel": request.allow_parallel,
     }
     await redis_client.hset(hash_key, field, json.dumps(definition))  # ty: ignore[invalid-await]
 
