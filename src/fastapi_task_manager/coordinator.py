@@ -152,7 +152,9 @@ class Coordinator:
 
         A task is due if:
         1. It's not disabled
-        2. Its next_run time is in the past (or not set)
+        2. It's not in backoff
+        3. If allow_parallel is False, it's not already running
+        4. Its next_run time is in the past (or not set)
 
         Args:
             task_group: The TaskGroup containing the task.
@@ -178,6 +180,24 @@ class Coordinator:
                 float(retry_after_raw),
             )
             return False
+
+        # Resolve allow_parallel with cascade: task > task_group > config
+        effective_allow_parallel = task.allow_parallel
+        if effective_allow_parallel is None:
+            effective_allow_parallel = task_group.allow_parallel
+        if effective_allow_parallel is None:
+            effective_allow_parallel = self._task_manager.config.allow_parallel
+
+        # When parallel execution is disabled, skip if the task is already running
+        if not effective_allow_parallel:
+            running_key = self._keys.running_task_key(task_group.name, task.name)
+            if await self._redis.exists(running_key):
+                logger.debug(
+                    "Task %s/%s is already running and allow_parallel=False, skipping",
+                    task_group.name,
+                    task.name,
+                )
+                return False
 
         # Check next_run time
         next_run_b = await self._redis.get(keys.next_run)
