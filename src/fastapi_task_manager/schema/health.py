@@ -20,6 +20,7 @@ class ConfigResponse(BaseModel):
     concurrent_tasks: int
     statistics_history_runs: int
     statistics_redis_expiration: int
+    allow_parallel: bool
 
     # Runner
     poll_interval: float
