@@ -2,6 +2,8 @@
 
 ## Latest
 
+## 1.1.0 - 2026-04-15
+
 ### Features
 
 * 🚀 **Parallel execution control (`allow_parallel`)**:  
