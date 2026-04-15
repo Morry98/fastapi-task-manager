@@ -436,6 +436,7 @@ class TaskManager:
                     tags=definition.get("tags"),
                     retry_backoff=definition.get("retry_backoff"),
                     retry_backoff_max=definition.get("retry_backoff_max"),
+                    allow_parallel=definition.get("allow_parallel"),
                 )
                 loaded_count += 1
 

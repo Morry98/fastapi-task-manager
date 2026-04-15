@@ -153,6 +153,7 @@ class TestConfigResponse:
             concurrent_tasks=2,
             statistics_history_runs=30,
             statistics_redis_expiration=432000,
+            allow_parallel=True,
             poll_interval=0.1,
             worker_service_name="svc",
             stream_block_ms=1000,
