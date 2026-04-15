@@ -1,5 +1,41 @@
 # Release Notes
 
+## Latest
+
+## 1.1.0 - 2026-04-15
+
+### Features
+
+* 🚀 **Parallel execution control (`allow_parallel`)**:  
+     Add configurable `allow_parallel` setting to control whether the same task can run multiple times concurrently.  
+     When set to `False`, the coordinator skips scheduling if the task is already running on any worker (checked via 
+  Redis heartbeat key).  
+     Supports three-level cascade resolution: **task > task group > global config**, the most specific non-null 
+  value wins.  
+     Available on `Config` (global default), `TaskGroup` (group-level override), `@task_group.add_task()` decorator, `task_group.add_dynamic_task()`, and the `POST /tasks` REST API. Dynamic task definitions include the setting in Redis persistence for restart survival.
+
+### Internals
+* ⬆️ Bump dependencies in uv.lock file, for dev purposes:
+     - anyio from 4.12.1 to 4.13.0
+     - charset-normalizer from 3.4.5 to 3.4.7
+     - coverage from 7.13.4 to 7.13.5
+     - fastapi from 0.135.1 to 0.135.3
+     - mkdocs-get-deps from 0.2.0 to 0.2.2
+     - mkdocs-material from 9.7.4 to 9.7.6
+     - platformdirs from 4.9.4 to 4.9.6
+     - pydantic from 2.12.5 to 2.13.0
+     - pydantic-core from 2.41.5 to 2.46.0
+     - pygments from 2.19.2 to 2.20.0
+     - pymdown-extensions from 10.21 to 10.21.2
+     - pytest from 9.0.2 to 9.0.3
+     - redis from 7.3.0 to 7.4.0
+     - requests from 2.32.5 to 2.33.1
+     - ruff from 0.15.5 to 0.15.10
+     - setuptools from 82.0.0 to 82.0.1
+     - starlette from 0.52.1 to 1.0.0
+     - termynal from 0.13.1 to 0.14.0
+     - ty from 0.0.21 to 0.0.29
+
 ## 1.0.0 - 2026-03-09
 
 ### Features
@@ -33,7 +69,7 @@
 * ⬆️ Pre-commit bump uv-pre-commit from 0.9.7 to 0.9.18.
 * ⬆️ Pre-commit bump ruff-pre-commit from 0.14.3 to 0.14.10.
 * ⬆️ Bump dependencies in uv.lock file, for dev purposes:
-*    - annotated-doc added 0.0.4
+     - annotated-doc added 0.0.4
      - anyio from 4.11.0 to 4.12.1
      - backrefs from 6.1 to 6.2
      - certifi from 2026.1.4 to 2026.2.25
