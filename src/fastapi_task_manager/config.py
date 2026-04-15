@@ -7,6 +7,9 @@ class Config(BaseModel):
     concurrent_tasks: int = 2
     statistics_redis_expiration: int = 432_000  # 5 days
     statistics_history_runs: int = 500
+    # Global default for allowing parallel executions of the same task.
+    # Can be overridden at task group or individual task level.
+    allow_parallel: bool = True
     # --------- End of app config variables ---------
 
     # --------- Redis config variables ---------

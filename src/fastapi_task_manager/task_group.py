@@ -12,9 +12,12 @@ class TaskGroup:
         self,
         name: str,
         tags: list[str] | None = None,
+        allow_parallel: bool | None = None,
     ):
         self._name = name
         self._tags = tags
+        # Group-level override for parallel execution (None = use global Config default)
+        self._allow_parallel = allow_parallel
         self._tasks: list[Task] = []
         # Registry of callable functions available for dynamic task creation
         self._function_registry: dict[str, Callable] = {}
@@ -26,6 +29,11 @@ class TaskGroup:
     @property
     def tags(self):
         return self._tags.copy() if self._tags else []
+
+    @property
+    def allow_parallel(self) -> bool | None:
+        """Group-level override for parallel execution (None = use global Config default)."""
+        return self._allow_parallel
 
     @property
     def tasks(self) -> list[Task]:
@@ -68,6 +76,7 @@ class TaskGroup:
         retry_backoff: float | None = None,
         retry_backoff_max: float | None = None,
         register: bool = True,
+        allow_parallel: bool | None = None,
     ):
         """Decorator for creating task.
 
@@ -121,6 +130,7 @@ class TaskGroup:
                     retry_backoff=retry_backoff,
                     retry_backoff_max=retry_backoff_max,
                     dynamic=False,
+                    allow_parallel=allow_parallel,
                 )
                 self._tasks.append(task)
 
@@ -139,6 +149,7 @@ class TaskGroup:
         tags: list[str] | None = None,
         retry_backoff: float | None = None,
         retry_backoff_max: float | None = None,
+        allow_parallel: bool | None = None,
     ) -> Task:
         """Create a dynamic task from a registered function.
 
@@ -182,6 +193,7 @@ class TaskGroup:
             retry_backoff_max=retry_backoff_max,
             dynamic=True,
             function_name=function_name,
+            allow_parallel=allow_parallel,
         )
         self._tasks.append(task)
         logger.info("Dynamic task '%s' added to group '%s'", task_name, self._name)

@@ -15,6 +15,8 @@ class TaskBase(BaseModel):
     retry_backoff_max: float | None = None
     # Whether this task was created dynamically via API (vs. static decorator)
     dynamic: bool = False
+    # Per-task override for parallel execution (None = inherit from task group / global config)
+    allow_parallel: bool | None = None
 
 
 class TaskRun(BaseModel):
@@ -101,6 +103,7 @@ class CreateDynamicTaskRequest(BaseModel):
     tags: list[str] | None = None
     retry_backoff: float | None = None
     retry_backoff_max: float | None = None
+    allow_parallel: bool | None = None
 
 
 class DynamicTaskResponse(BaseModel):
