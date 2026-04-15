@@ -96,6 +96,7 @@ Retrieve detailed information for all tasks, including running state and retry b
     "retry_backoff": null,
     "retry_backoff_max": null,
     "dynamic": false,
+    "allow_parallel": null,
     "task_group_name": "My Example Task Group",
     "kwargs": null,
     "function_name": null,
@@ -246,7 +247,8 @@ Create a new dynamic task from a registered function.
   "high_priority": false,
   "tags": ["reports"],
   "retry_backoff": 5.0,
-  "retry_backoff_max": 120.0
+  "retry_backoff_max": 120.0,
+  "allow_parallel": false
 }
 ```
 
@@ -262,6 +264,7 @@ Create a new dynamic task from a registered function.
 | `tags` | `list[string]` | No | Tags for filtering |
 | `retry_backoff` | `float` | No | Per-task initial backoff override |
 | `retry_backoff_max` | `float` | No | Per-task max backoff override |
+| `allow_parallel` | `bool \| null` | No | Allow concurrent executions (`null` = inherit from group/config) |
 
 **Response model:** `DynamicTaskResponse`
 
