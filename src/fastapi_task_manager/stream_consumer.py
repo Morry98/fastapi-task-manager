@@ -560,14 +560,28 @@ class StreamConsumer:
         stream_keys = self._keys.get_stream_keys()
         stream_key = stream_keys.task_stream_high if is_high_priority else stream_keys.task_stream_low
 
-        await self._redis.xack(
-            stream_key,
-            stream_keys.consumer_group,
-            message_id,
-        )
+        try:
+            await self._redis.xack(
+                stream_key,
+                stream_keys.consumer_group,
+                message_id,
+            )
 
-        # Remove the message from the stream to keep memory usage low
-        await self._redis.xdel(stream_key, message_id)
+            # Remove the message from the stream to keep memory usage low
+            await self._redis.xdel(stream_key, message_id)
+        except ResponseError as e:
+            if "NOGROUP" in str(e):
+                # Consumer group no longer exists (e.g. Redis FLUSHALL); the
+                # message is already gone from the PEL so there is nothing to
+                # acknowledge. Swallow the error to avoid masking a successful
+                # task execution as a failure.
+                logger.warning(
+                    "Could not ACK message %s: consumer group '%s' not found (Redis flush?)",
+                    message_id,
+                    stream_keys.consumer_group,
+                )
+            else:
+                raise
 
     def _find_task(self, group_name: str, task_name: str) -> Task | None:
         """Find a task by group and task name.
