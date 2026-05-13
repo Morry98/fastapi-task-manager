@@ -288,13 +288,27 @@ class StreamConsumer:
         Returns:
             Tuple of (message_id, data) if a message was read, None otherwise.
         """
-        messages = await self._redis.xreadgroup(
-            groupname=group_name,
-            consumername=self._worker.redis_safe_id,
-            streams={stream_key: ">"},
-            count=1,  # Read one message at a time
-            block=block_ms,
-        )
+        try:
+            messages = await self._redis.xreadgroup(
+                groupname=group_name,
+                consumername=self._worker.redis_safe_id,
+                streams={stream_key: ">"},
+                count=1,  # Read one message at a time
+                block=block_ms,
+            )
+        except ResponseError as e:
+            if "NOGROUP" in str(e):
+                # Consumer group was deleted (e.g. Redis FLUSHALL). Recreate it so
+                # the consume loop can resume; the Reconciler will republish any
+                # tasks that were published to the stream before the group existed.
+                logger.warning(
+                    "Consumer group '%s' not found on stream '%s' (Redis flush?), recreating groups",
+                    group_name,
+                    stream_key,
+                )
+                await self.setup_consumer_groups()
+                return None
+            raise
 
         if not messages:
             return None
