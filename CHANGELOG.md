@@ -1,6 +1,6 @@
 # Release Notes
 
-## Latest
+## 1.1.1 - 2026-05-14
 
 ### Bug fixes
 
