@@ -1,6 +1,12 @@
 # Release Notes
 
-## Latest
+## 1.1.1 - 2026-05-14
+
+### Bug fixes
+
+* 🐛 **Consumer group loss after `FLUSHALL`**: `FLUSHALL` at runtime deletes all stream consumer groups. The Coordinator recreates streams via `XADD`, but `xreadgroup` kept throwing `NOGROUP` on every iteration. Catch `NOGROUP` in `_try_read_stream` and call `setup_consumer_groups()` to recover; the Reconciler republishes any tasks queued before the group was restored.
+
+* 🐛 **False "Task failed" after flush**: When a task finishes while the consumer group is gone, `xack` throws `NOGROUP`. The generic handler in `_execute_and_ack` was catching this, logging "Task failed", and applying backoff on a task that actually succeeded. Catch `NOGROUP` in `_ack_message` and log a warning instead — the message is already gone from the PEL.
 
 ## 1.1.0 - 2026-04-15
 
