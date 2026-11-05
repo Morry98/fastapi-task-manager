@@ -147,6 +147,7 @@ nav:
     - learn/dynamic-tasks.md
     - learn/architecture.md
     - learn/deployment.md
+  - Known Issues: known-issues.md
   - About: about/index.md
   - People: about/people.md
   - Release Notes: release_notes/index.md

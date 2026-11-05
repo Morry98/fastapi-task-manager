@@ -45,17 +45,18 @@ FastAPI Task Manager is a lightweight and efficient scheduled task management sy
 
 - **FastAPI Extension** - Built as an extension to FastAPI, making it easy to integrate into existing FastAPI applications and leverage its features
 - **Redis Streams Architecture** - Uses Redis Streams with leader election for distributed task scheduling and single-instance execution safety
-- **Fast to Code** - Increase the speed to develop scheduled tasks by about 400% to 500%, only a wrapper function is needed*
-- **Fewer Bugs** - Reduce about 60% of human (developer) induced errors managing lock, Redis keys and task execution*
+- **Fast to Code** - A decorator turns a function into a scheduled task
+- **Less Boilerplate** - Locking, Redis keys and scheduling state are handled by the library instead of hand-written code in each task
 - **Scheduled Tasks** - Provides a simple and intuitive API for defining and scheduling tasks to run at specific intervals or times
 - **Task Management** - Includes FastAPI router with 12 endpoints to manage tasks: disable, enable, trigger, monitor health, and more
 - **Dynamic Tasks** - Create and delete tasks at runtime via REST API without redeploying
 - **Retry with Backoff** - Automatic exponential backoff on task failures with configurable per-task overrides
 - **Fault Tolerant** - Task heartbeat monitoring, automatic reconciliation of stale tasks, and leader failover
 - **Easy to Use** - Designed to be easy to use and learn. Less time reading docs
-- **Robust** - Get production-ready code
 
-<small>* estimation based on real production task migrated to FastAPI task manager from custom "cron job" solution.</small>
+//// note | Status and guarantees
+Task execution is currently **at-least-once with best-effort deduplication**, not exactly-once, and the management router has no built-in authentication. Read [Known Issues](known-issues.md) before running in production.
+////
 
 ## Requirements
 

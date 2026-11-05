@@ -8,6 +8,9 @@ body:
       value: |
         Thank you for taking the time to report a bug. Please fill out the form below to help us investigate.
 
+        Before opening the issue, check the [Known Issues](https://fastapi-task-manager.morry98.com/known-issues.html) page.
+        **Do not report security vulnerabilities here**: follow the [Security Policy](https://github.com/Morry98/fastapi-task-manager/blob/main/SECURITY.md) instead.
+
   - type: textarea
     id: description
     attributes:
@@ -45,6 +48,33 @@ body:
     validations:
       required: true
 
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: Relevant log output, ideally with the `fastapi.task-manager` loggers at DEBUG or INFO level. Remove secrets before pasting.
+      render: shell
+    validations:
+      required: false
+
+  - type: textarea
+    id: config
+    attributes:
+      label: Configuration
+      description: The `Config` you pass to `TaskManager` (remove passwords) and any per-group or per-task overrides involved.
+      render: python
+    validations:
+      required: false
+
+  - type: input
+    id: deployment
+    attributes:
+      label: Deployment
+      description: Number of app instances and uvicorn workers sharing the same Redis.
+      placeholder: "2 containers x 4 uvicorn workers"
+    validations:
+      required: false
+
   - type: input
     id: version
     attributes:
@@ -64,9 +94,18 @@ body:
       required: true
 
   - type: input
+    id: redis-py-version
+    attributes:
+      label: redis-py Version
+      description: "Output of: pip show redis"
+      placeholder: "7.4.0"
+    validations:
+      required: true
+
+  - type: input
     id: redis-version
     attributes:
-      label: Redis Version
+      label: Redis Server Version
       description: "Output of: redis-server --version"
       placeholder: "7.2.0"
     validations:
