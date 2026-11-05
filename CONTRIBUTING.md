@@ -46,6 +46,29 @@ With coverage:
 uv run coverage run -m pytest && uv run coverage report
 ```
 
+The default run uses mocked Redis only and does not need a Redis server. Any warning raised during the tests fails the run.
+
+### Running Integration Tests
+
+The tests in `tests/integration/` run one or more `TaskManager` instances against a real Redis server. They carry the `integration` marker and are deselected by default.
+
+1. Start a throwaway Redis server on a free port, without persistence:
+   ```bash
+   redis-server --port 6399 --save "" --appendonly no --daemonize yes
+   ```
+2. Point the tests at it with `REDIS_URL` (default: `redis://localhost:6379/15`) and select the marker:
+   ```bash
+   REDIS_URL=redis://localhost:6399/0 uv run pytest -m integration
+   ```
+3. Stop the server when you are done:
+   ```bash
+   redis-cli -p 6399 shutdown nosave
+   ```
+
+If Redis does not answer, the integration tests are skipped (set `REDIS_REQUIRED=1` to make them fail instead, as CI does). Each test uses its own random key prefix and deletes only its own keys at the end: the database is never flushed.
+
+Tests marked `xfail(strict=True)` in `tests/integration/test_known_bugs.py` describe known bugs: they assert the correct behaviour and fail today. When a fix makes one pass, pytest reports it as `XPASS(strict)` and the run fails: remove the marker in the same change, so the scenario becomes a regression test.
+
 ### Code Quality
 
 The project uses pre-commit hooks that run automatically on `git commit`. You can also run them manually:
