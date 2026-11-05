@@ -26,8 +26,8 @@ def _triggers(workflow: dict) -> set[str]:
     if isinstance(on, str):
         return {on}
     if isinstance(on, list):
-        return set(on)
-    return set(on or {})
+        return {str(event) for event in on}
+    return {str(event) for event in (on or {})}
 
 
 def _uses_lines(path: Path) -> list[str]:
