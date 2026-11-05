@@ -18,7 +18,8 @@
 
 - [ ] My code follows the project's code style
 - [ ] I have added/updated comments where necessary
-- [ ] I have added/updated tests for my changes
+- [ ] I have added/updated tests for my changes (bug fixes include a test that fails without the fix)
 - [ ] All tests pass (`uv run pytest`)
 - [ ] Pre-commit hooks pass (`pre-commit run --all-files`)
-- [ ] I have updated the documentation (if applicable)
+- [ ] I have updated the documentation (if applicable) and `uv run mkdocs build --strict` passes
+- [ ] I have added an entry to `CHANGELOG.md` (for user-visible changes)

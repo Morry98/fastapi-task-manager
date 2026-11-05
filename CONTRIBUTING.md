@@ -78,21 +78,40 @@ It's good practice to run this periodically to keep your local tags in sync with
 
 ### Documentation
 
-Documentation is built with MkDocs Material. To preview locally:
+Documentation is built with MkDocs Material and lives in `docs/docs/`. The MkDocs dependencies are in a separate dependency group:
+
+```bash
+uv sync --group docs
+```
+
+Preview locally:
 
 ```bash
 uv run mkdocs serve
 ```
 
+Before opening a PR that touches the documentation, check that it builds without warnings (broken links fail the build):
+
+```bash
+uv run mkdocs build --strict
+```
+
+The documentation site is deployed automatically from `main` by GitHub Actions; there is no manual deploy step.
+
 ## How to Contribute
 
 ### Reporting Bugs
 
+First check the [Known Issues](https://fastapi-task-manager.morry98.com/known-issues.html) page: the behavior may already be documented, with a workaround.
+
 Use the [Bug Report](https://github.com/Morry98/fastapi-task-manager/issues/new?template=bug_report.yml) issue template. Include:
 - Steps to reproduce
 - Expected vs actual behavior
-- Python version and OS
+- Versions of FastAPI Task Manager, Python, redis-py and the Redis server, and your OS
+- Your `Config` (without passwords) and the number of app instances
 - Relevant logs or error messages
+
+Security vulnerabilities must **not** be reported as issues: follow the [Security Policy](SECURITY.md).
 
 ### Suggesting Features
 
@@ -108,8 +127,9 @@ Use the [Feature Request](https://github.com/Morry98/fastapi-task-manager/issues
 3. Write your code following the project's code style
 4. Add or update tests as needed
 5. Ensure all checks pass (`pre-commit run --all-files` and `uv run pytest`)
-6. Update documentation if your change affects the public API
-7. Submit your PR against the `main` branch
+6. Update documentation if your change affects the public API or user-visible behavior
+7. Add an entry to `CHANGELOG.md` for user-visible changes, following the existing style
+8. Submit your PR against the `main` branch
 
 #### PR Guidelines
 

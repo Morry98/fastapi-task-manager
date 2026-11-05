@@ -32,14 +32,21 @@ FastAPI Task Manager is a lightweight and efficient scheduled task management sy
 
 - **FastAPI Extension** - Built as an extension to FastAPI, making it easy to integrate into existing FastAPI applications and leverage its features
 - **Redis-Based** - Uses Redis as the backend for storing task information, ensuring high performance and single-instance execution
-- **Fast to Code** - Increase the speed to develop scheduled tasks by about 400% to 500%, only a wrapper function is needed*
-- **Fewer Bugs** - Reduce about 60% of human (developer) induced errors managing lock, Redis keys and task execution*
+- **Fast to Code** - A decorator turns a function into a scheduled task
+- **Less Boilerplate** - Locking, Redis keys and scheduling state are handled by the library instead of hand-written code in each task
 - **Scheduled Tasks** - Provides a simple and intuitive API for defining and scheduling tasks to run at specific intervals or times
 - **Task Management** - Includes FastAPI router to manage tasks, such as pausing, resuming, and monitoring execution information
 - **Easy to Use** - Designed to be easy to use and learn. Less time reading docs
-- **Robust** - Get production-ready code
 
-<small>* estimation based on real production task migrated to FastAPI task manager from custom "cron job" solution.</small>
+## Status and Guarantees
+
+FastAPI Task Manager runs cron-scheduled tasks inside your FastAPI application. With several instances sharing one Redis, a single elected leader schedules the tasks and every instance can execute them.
+
+- **Delivery semantics**: task execution is currently **at-least-once with best-effort deduplication**, not exactly-once. A run can occasionally execute more than once (for example, long-running tasks in multi-instance deployments) or be skipped, so write tasks that are safe to run twice.
+- **Retries**: after a failure, the backoff delays the next execution; the failed run is not retried before the next cron occurrence.
+- **Management API**: the router returned by `get_manager_router()` has no built-in authentication. Do not expose it to untrusted networks, and protect it with a FastAPI dependency when you include it.
+
+See [Known Issues](https://fastapi-task-manager.morry98.com/known-issues.html) for details and workarounds, and the [issue tracker](https://github.com/Morry98/fastapi-task-manager/issues) for open bugs.
 
 ## Requirements
 
