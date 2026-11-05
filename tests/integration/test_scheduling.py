@@ -71,10 +71,10 @@ async def test_triggered_task_runs_exactly_once(
     stats_key = keys.stats_stream_key("g", name)
 
     async def tracking_cleared() -> bool:
-        return (
-            await redis.xlen(stats_key) >= 1
-            and not await redis.sismember(keys.scheduled_set_key(), f"g:{name}")  # ty: ignore[invalid-await]
-        )
+        if await redis.xlen(stats_key) < 1:
+            return False
+        still_scheduled = await redis.sismember(keys.scheduled_set_key(), f"g:{name}")  # ty: ignore[invalid-await]
+        return not still_scheduled
 
     assert await wait_until(tracking_cleared, timeout=2), "success path did not record stats and clear tracking"
     assert await redis.xlen(stats_key) == 1
