@@ -50,6 +50,12 @@ FAST_CONFIG: dict[str, Any] = {
     "retry_backoff_max": 1.0,
 }
 
+# Upper bound for waits on something that MUST happen. wait_until returns as
+# soon as the condition holds, so a generous bound costs nothing on a passing
+# run and keeps the suite stable on a loaded machine. Windows in which something
+# must NOT happen, and the windows of the known-bug tests, stay short on purpose.
+EVENTUALLY = 15.0
+
 # A cron expression that never fires during a test run (midnight, January 1st).
 # Used together with a pre-seeded next_run so that tasks run only when a test
 # triggers them explicitly.
@@ -235,7 +241,7 @@ def require(condition: object, message: str) -> None:
         raise PreconditionError(message)
 
 
-async def wait_for_leader(managers: list[TaskManager], timeout: float = 5.0) -> TaskManager:
+async def wait_for_leader(managers: list[TaskManager], timeout: float = EVENTUALLY) -> TaskManager:
     """Wait until exactly one of ``managers`` is leader and return it."""
 
     def single_leader() -> bool:

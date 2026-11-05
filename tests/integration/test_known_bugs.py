@@ -26,6 +26,7 @@ from fastapi_task_manager.task_router_services import (
     trigger_tasks,
 )
 from tests.integration.conftest import (
+    EVENTUALLY,
     YEARLY_CRON,
     ManagerFactory,
     require,
@@ -61,6 +62,24 @@ def _long_task_group(starts: list[float], release: asyncio.Event) -> TaskGroup:
 # Reconciliation every second (it is off by default in the integration config).
 LONG_TASK_TIMINGS = {"running_heartbeat_interval": 0.2, "reconciliation_interval": 1}
 
+# Window in which a buggy behaviour that happens on its own (a duplicate start,
+# a run at startup) is given the chance to show up. It starts only once the
+# preconditions of the bug hold, so a slow machine cannot make the bug "vanish"
+# and report a false XPASS.
+BUG_WINDOW = 5.0
+
+
+async def _pending_message_idle(redis: Redis, keys: RedisKeyBuilder) -> bool:
+    """True when a pending message of the low priority stream is older than the 2 s stuck threshold."""
+    pending = await redis.xpending_range(
+        keys.task_stream_low_key(),
+        keys.consumer_group_name(),
+        min="-",
+        max="+",
+        count=10,
+    )
+    return any(entry["time_since_delivered"] > 2_100 for entry in pending)
+
 
 # ---------------------------------------------------------------------------
 # FTM-01: live long-running tasks are executed again
@@ -85,11 +104,16 @@ async def test_reconciler_does_not_restart_a_task_that_is_still_running(
     await wait_for_leader([manager])
 
     await trigger_tasks(manager, task_group_name="g", task_name=name)
-    require(await wait_until(lambda: len(starts) >= 1, timeout=5), "task never started")
+    require(await wait_until(lambda: len(starts) >= 1, timeout=EVENTUALLY), "task never started")
 
-    # The task stays alive (heartbeat renewed) well past the 2 s stuck threshold
-    # and several 1 s reconciliation cycles.
-    await wait_until(lambda: len(starts) > 1, timeout=5)
+    # The task stays alive (heartbeat renewed). Wait until its pending message is
+    # past the 2 s stuck threshold (or the Reconciler already acted on it), then
+    # leave several 1 s reconciliation cycles for a duplicate start to appear.
+    async def message_stuck_or_restarted() -> bool:
+        return len(starts) > 1 or await _pending_message_idle(redis, keys)
+
+    require(await wait_until(message_stuck_or_restarted, timeout=EVENTUALLY), "message never became idle")
+    await wait_until(lambda: len(starts) > 1, timeout=BUG_WINDOW)
     assert len(starts) == 1, (
         f"FTM-01: a running task with allow_parallel=False was started {len(starts)} times, "
         f"at {[round(s - starts[0], 1) for s in starts]} s"
@@ -116,25 +140,18 @@ async def test_starting_instance_does_not_steal_a_running_task(
     await wait_for_leader([first])
 
     await trigger_tasks(first, task_group_name="g", task_name=name)
-    require(await wait_until(lambda: len(starts) >= 1, timeout=5), "task never started")
+    require(await wait_until(lambda: len(starts) >= 1, timeout=EVENTUALLY), "task never started")
 
     # Wait until the pending message is older than the 2 s stuck threshold.
-    async def pending_message_idle() -> bool:
-        pending = await redis.xpending_range(
-            keys.task_stream_low_key(),
-            keys.consumer_group_name(),
-            min="-",
-            max="+",
-            count=10,
-        )
-        return any(entry["time_since_delivered"] > 2_100 for entry in pending)
-
-    require(await wait_until(pending_message_idle, timeout=5), "message never became idle")
+    require(
+        await wait_until(lambda: _pending_message_idle(redis, keys), timeout=EVENTUALLY),
+        "message never became idle",
+    )
 
     # A new replica starts (rolling deploy / autoscaling) while the task is alive.
     await make_manager([_long_task_group(starts, release)], **timings)
 
-    await wait_until(lambda: len(starts) > 1, timeout=2)
+    await wait_until(lambda: len(starts) > 1, timeout=BUG_WINDOW)
     assert len(starts) == 1, (
         f"FTM-01: a task still running on a live instance was started {len(starts)} times "
         "after another instance started"
@@ -244,7 +261,7 @@ async def test_message_for_unknown_task_survives_until_a_capable_instance_runs_i
         groups = await redis.xinfo_groups(keys.task_stream_low_key())
         return any(g["last-delivered-id"] == message_id for g in groups)
 
-    require(await wait_until(delivered, timeout=5), "message was never delivered to the old instance")
+    require(await wait_until(delivered, timeout=EVENTUALLY), "message was never delivered to the old instance")
 
     # The new version comes up; the run must eventually happen there.
     await make_manager([new_group], **LONG_TASK_TIMINGS)
@@ -287,7 +304,7 @@ async def test_failed_task_is_retried_after_backoff(
     await wait_for_leader([manager])
 
     await trigger_tasks(manager, task_group_name="g", task_name=name)
-    require(await wait_until(lambda: len(attempts) >= 1, timeout=5), "task never ran")
+    require(await wait_until(lambda: len(attempts) >= 1, timeout=EVENTUALLY), "task never ran")
 
     # retry_backoff is 1 s: a retry is expected well within 4 s.
     retried = await wait_until(lambda: len(attempts) >= 2, timeout=4)
@@ -344,7 +361,8 @@ async def test_yearly_task_does_not_run_at_first_startup(make_manager: ManagerFa
     manager = await make_manager([group], reconciliation_interval=1)
     await wait_for_leader([manager])
 
-    ran = await wait_until(lambda: len(calls) >= 1, timeout=2)
+    # Covers several Coordinator cycles and Reconciler cycles (1 s).
+    ran = await wait_until(lambda: len(calls) >= 1, timeout=BUG_WINDOW)
     assert not ran, f"FTM-07: a task with cron {YEARLY_CRON!r} ran right at first startup"
 
 

@@ -18,6 +18,7 @@ from fastapi_task_manager import TaskGroup
 from fastapi_task_manager.redis_keys import RedisKeyBuilder
 from fastapi_task_manager.task_router_services import trigger_tasks
 from tests.integration.conftest import (
+    EVENTUALLY,
     YEARLY_CRON,
     ManagerFactory,
     seed_next_run_far_future,
@@ -60,26 +61,28 @@ async def test_triggered_task_runs_exactly_once(
     await wait_for_leader([manager])
     await trigger_tasks(manager, task_group_name="g", task_name=name)
 
-    assert await wait_until(lambda: len(calls) >= 1, timeout=5), "triggered task never ran"
+    assert await wait_until(lambda: len(calls) >= 1, timeout=EVENTUALLY), "triggered task never ran"
     # Several coordinator cycles: a duplicate publish would show up here.
     await wait_until(lambda: len(calls) > 1, timeout=1)
     assert calls == ["A"]
 
-    # Success path side effects: one stats entry, no running key, not tracked as scheduled.
-    # The consumer records stats, deletes the running key, then removes the
-    # scheduled-set member, in this order, once the task returns.
-    stats_key = keys.stats_stream_key("g", name)
+    # Success path side effects: one stats entry, no running key, not tracked as
+    # scheduled. Once the task returns, the consumer records stats, deletes the
+    # running key, removes the scheduled-set member and finally ACKs and deletes
+    # the stream message. The test waits only for that last step, then asserts
+    # every side effect directly.
+    stream_key = keys.task_stream_low_key()
 
-    async def tracking_cleared() -> bool:
-        if await redis.xlen(stats_key) < 1:
-            return False
-        still_scheduled = await redis.sismember(keys.scheduled_set_key(), f"g:{name}")  # ty: ignore[invalid-await]
-        return not still_scheduled
+    async def message_acknowledged() -> bool:
+        # The message was published before the task ran: an empty stream means XDEL happened.
+        return await redis.xlen(stream_key) == 0
 
-    assert await wait_until(tracking_cleared, timeout=2), "success path did not record stats and clear tracking"
-    assert await redis.xlen(stats_key) == 1
-    # Checked right away: the running key also has a TTL (2 s), so waiting
-    # for it to disappear would pass even if the consumer never deleted it.
+    assert await wait_until(message_acknowledged, timeout=EVENTUALLY), "the task message was never acknowledged"
+    assert await redis.xlen(keys.stats_stream_key("g", name)) == 1, "success was not recorded in the statistics"
+    scheduled = await redis.sismember(keys.scheduled_set_key(), f"g:{name}")  # ty: ignore[invalid-await]
+    assert not scheduled, "task still tracked as scheduled after success"
+    # The running key also has a TTL (2 s): checked right after the ACK, before
+    # it could expire on its own, so a missing delete is still caught.
     assert not await redis.exists(keys.running_task_key("g", name)), "running key left behind after success"
 
 
@@ -102,7 +105,7 @@ async def test_cron_task_runs_when_due_and_schedules_next_occurrence(
     manager = await make_manager([group])
     await wait_for_leader([manager])
 
-    assert await wait_until(lambda: len(calls) >= 1, timeout=5), "due task never ran"
+    assert await wait_until(lambda: len(calls) >= 1, timeout=EVENTUALLY), "due task never ran"
     await wait_until(lambda: len(calls) > 1, timeout=1)
     assert calls == ["A"]
 
@@ -110,7 +113,7 @@ async def test_cron_task_runs_when_due_and_schedules_next_occurrence(
     async def next_run_updated() -> bool:
         return float(await redis.get(next_run_key) or 0) != seeded
 
-    assert await wait_until(next_run_updated, timeout=2), "next_run was never updated"
+    assert await wait_until(next_run_updated, timeout=EVENTUALLY), "next_run was never updated"
     next_run = float(await redis.get(next_run_key))
     expected = next(CronSim(YEARLY_CRON, datetime.now(timezone.utc))).timestamp()
     assert next_run == expected
@@ -169,6 +172,8 @@ async def test_instance_that_is_not_leader_never_schedules(
     # Many coordinator and acquisition cycles (retry interval 0.2 s).
     published = await wait_until(lambda: _next_run_changed(redis, next_run_key), timeout=1.5)
     assert not published, "an instance that is not leader rescheduled the task"
+    # Direct checks, independent of the polling helper above.
+    assert await redis.get(next_run_key) == "0", "an instance that is not leader rescheduled the task"
     assert calls == []
     assert manager.runner is not None
     assert not manager.runner.is_leader
@@ -189,8 +194,10 @@ async def test_leadership_fails_over_when_leader_stops(make_manager: ManagerFact
 
     assert await wait_until(
         lambda: second.runner is not None and second.runner.is_leader,
-        timeout=5,
+        timeout=EVENTUALLY,
     ), "the surviving instance never became leader"
+    assert second.runner is not None
+    assert second.runner.is_leader, "the surviving instance never became leader"
 
 
 async def test_triggered_task_runs_once_across_instances(
@@ -212,7 +219,7 @@ async def test_triggered_task_runs_once_across_instances(
 
     await trigger_tasks(first, task_group_name="g", task_name=name)
 
-    assert await wait_until(lambda: len(calls) >= 1, timeout=5), "triggered task never ran"
+    assert await wait_until(lambda: len(calls) >= 1, timeout=EVENTUALLY), "triggered task never ran"
     await wait_until(lambda: len(calls) > 1, timeout=1.5)
     assert len(calls) == 1, f"task ran {len(calls)} times: {calls}"
 
@@ -247,17 +254,19 @@ async def test_allow_parallel_false_waits_for_running_execution(
     await wait_for_leader([manager])
 
     await trigger_tasks(manager, task_group_name="g", task_name=name)
-    assert await wait_until(lambda: len(starts) == 1, timeout=5), "first execution never started"
+    assert await wait_until(lambda: len(starts) == 1, timeout=EVENTUALLY), "first execution never started"
 
     # Second trigger while the first execution is still running.
     await trigger_tasks(manager, task_group_name="g", task_name=name)
     started_again = await wait_until(lambda: len(starts) > 1, timeout=1)
     assert not started_again, "a second execution started while the first was running"
+    assert len(starts) == 1, "a second execution started while the first was running"
 
     # Once the first execution ends, the pending trigger is honoured.
     release.set()
-    assert await wait_until(lambda: len(starts) == 2, timeout=5), "pending trigger never ran"
-    assert max_running == 1
+    assert await wait_until(lambda: len(starts) == 2, timeout=EVENTUALLY), "pending trigger never ran"
+    assert len(starts) == 2, "pending trigger never ran"
+    assert max_running == 1, "two executions overlapped"
 
 
 async def test_consumer_recovers_after_redis_keys_are_flushed(
@@ -291,8 +300,13 @@ async def test_consumer_recovers_after_redis_keys_are_flushed(
             return False
         return any(g["name"] == keys.consumer_group_name() for g in groups)
 
-    assert await wait_until(group_exists, timeout=5), "consumer group was never recreated"
-    assert await wait_until(lambda: manager.runner is not None and manager.runner.is_leader, timeout=5)
+    assert await wait_until(group_exists, timeout=EVENTUALLY), "consumer group was never recreated"
+    # Direct check, independent of the polling helper above.
+    groups = await redis.xinfo_groups(keys.task_stream_low_key())
+    assert keys.consumer_group_name() in [g["name"] for g in groups], "consumer group was never recreated"
+    assert await wait_until(lambda: manager.runner is not None and manager.runner.is_leader, timeout=EVENTUALLY)
+    assert manager.runner is not None
+    assert manager.runner.is_leader, "leadership was not reacquired after the flush"
 
     # Right after the flush the coordinator may publish the task once on its own
     # (next_run is gone). Push next_run away again and count from here, so the
@@ -302,4 +316,6 @@ async def test_consumer_recovers_after_redis_keys_are_flushed(
 
     # A task triggered after the flush still runs.
     await trigger_tasks(manager, task_group_name="g", task_name=name)
-    assert await wait_until(lambda: len(calls) > runs_before_trigger, timeout=5), "task never ran after the flush"
+    ran_again = await wait_until(lambda: len(calls) > runs_before_trigger, timeout=EVENTUALLY)
+    assert ran_again, "task never ran after the flush"
+    assert len(calls) > runs_before_trigger, "task never ran after the flush"
