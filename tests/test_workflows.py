@@ -6,7 +6,9 @@ from pathlib import Path
 import pytest
 import yaml
 
-WORKFLOWS_DIR = Path(__file__).resolve().parent.parent / ".github" / "workflows"
+REPO_ROOT = Path(__file__).resolve().parent.parent
+WORKFLOWS_DIR = REPO_ROOT / ".github" / "workflows"
+PIP_AUDIT_SCRIPT = REPO_ROOT / ".github" / "scripts" / "pip-audit.sh"
 WORKFLOW_FILES = sorted(WORKFLOWS_DIR.glob("*.yml")) + sorted(WORKFLOWS_DIR.glob("*.yaml"))
 
 # Events whose runs can be started by a pull request (directly or through another workflow).
@@ -91,3 +93,31 @@ def test_actions_are_pinned_to_full_sha(path: Path):
             # Local reusable workflows/actions are versioned with the repo itself.
             continue
         assert PINNED_USES.match(uses), f"{path.name}: {uses!r} is not pinned to a full SHA with a version comment"
+
+
+def _supported_pythons() -> set[str]:
+    # Supported versions as declared by the trove classifiers in pyproject.toml.
+    text = (REPO_ROOT / "pyproject.toml").read_text()
+    return set(re.findall(r'"Programming Language :: Python :: (3\.\d+)"', text))
+
+
+def test_pip_audit_runs_in_ci():
+    steps = _load(WORKFLOWS_DIR / "ci.yml")["jobs"]["pip-audit"]["steps"]
+    assert any(step.get("run") == "bash .github/scripts/pip-audit.sh" for step in steps)
+
+
+def test_pip_audit_covers_every_supported_python():
+    script = PIP_AUDIT_SCRIPT.read_text()
+    match = re.search(r"^PYTHON_VERSIONS=\(([^)]*)\)$", script, re.MULTILINE)
+    assert match, "pip-audit.sh must define PYTHON_VERSIONS=(...)"
+    audited = set(re.findall(r'"(3\.\d+)"', match.group(1)))
+
+    # pip-audit drops requirement lines whose markers do not match its interpreter, so every
+    # supported version (classifiers and CI test matrix) must be audited separately.
+    matrix = set(_load(WORKFLOWS_DIR / "ci.yml")["jobs"]["test"]["strategy"]["matrix"]["python-version"])
+    assert _supported_pythons(), "no Python classifiers found in pyproject.toml"
+    assert audited == _supported_pythons() | matrix
+
+    # The loop must iterate over the whole list and pass each version to uvx.
+    assert 'for python_version in "${PYTHON_VERSIONS[@]}"; do' in script
+    assert 'uvx --python "$python_version"' in script
