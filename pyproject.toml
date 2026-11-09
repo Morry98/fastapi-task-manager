@@ -152,3 +152,20 @@ max-args = 8
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
+# Integration tests need a real Redis server: they are deselected by default and
+# run with `pytest -m integration` (the last -m on the command line wins).
+addopts = "-m 'not integration'"
+markers = [
+    "integration: tests that run against a real Redis server (REDIS_URL, default redis://localhost:6379/15)",
+]
+# Any warning raised during the tests is an error.
+filterwarnings = [
+    "error",
+    # Python 3.14 deprecates asyncio.iscoroutinefunction, still used by the
+    # stream consumer: remove this entry once it switches to inspect.iscoroutinefunction.
+    "ignore:'asyncio.iscoroutinefunction' is deprecated:DeprecationWarning",
+]
+
+[tool.coverage.run]
+# The integration suite is deselected in the default (coverage) run.
+omit = ["tests/integration/*"]

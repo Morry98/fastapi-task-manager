@@ -12,7 +12,9 @@ def _make_mock_redis():
     so we use MagicMock for the redis client and configure pipeline accordingly.
     """
     redis = MagicMock()
-    pipe = AsyncMock()
+    # Pipeline command methods (xadd, expire, ...) only queue commands and are
+    # sync in redis-py; only execute() is a coroutine.
+    pipe = MagicMock()
     pipe.execute = AsyncMock(return_value=[])
     # pipeline() is sync but returns an async context manager
     ctx = MagicMock()

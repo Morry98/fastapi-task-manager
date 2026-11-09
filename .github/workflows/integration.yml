@@ -1,0 +1,98 @@
+name: Integration
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  # Integration suite against a real Redis server (tests marked "integration").
+  integration:
+    runs-on: ubuntu-latest
+    # A hung task would otherwise block stop() (no shutdown timeout) for hours.
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        # Oldest and newest supported Python versions.
+        python-version: ["3.10", "3.14"]
+
+    services:
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 2s
+          --health-timeout 3s
+          --health-retries 15
+
+    env:
+      REDIS_URL: redis://localhost:6379/15
+      # Fail instead of skipping when the Redis service is not reachable.
+      REDIS_REQUIRED: "1"
+
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          persist-credentials: false
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78 # v7.6.0
+
+      - name: Set up Python ${{ matrix.python-version }}
+        run: uv python install ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: uv sync --python ${{ matrix.python-version }}
+
+      - name: Run integration tests
+        run: uv run --python ${{ matrix.python-version }} pytest -m integration -v
+
+  # Unit and integration suites with the lowest versions allowed by the
+  # declared dependency ranges, to catch lower bounds that are too loose.
+  lowest-direct:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    services:
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 2s
+          --health-timeout 3s
+          --health-retries 15
+
+    env:
+      REDIS_URL: redis://localhost:6379/15
+      REDIS_REQUIRED: "1"
+      UV_RESOLUTION: lowest-direct
+
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          persist-credentials: false
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78 # v7.6.0
+
+      - name: Set up Python 3.10
+        run: uv python install 3.10
+
+      - name: Install lowest direct dependencies
+        # Re-resolves the lock with the lowest allowed versions (not committed).
+        run: uv sync --python 3.10
+
+      - name: Run unit tests
+        run: uv run --python 3.10 pytest
+
+      - name: Run integration tests
+        run: uv run --python 3.10 pytest -m integration
