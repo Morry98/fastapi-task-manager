@@ -1,0 +1,4 @@
+# Vulnerability IDs accepted by the pip-audit CI job (.github/scripts/pip-audit.sh).
+# One ID per line, followed by a comment explaining why it is accepted and when to revisit it.
+# Example:
+# GHSA-xxxx-xxxx-xxxx  # dev-only tool, not reachable from the library; drop when upstream releases a fix
